@@ -3,12 +3,16 @@ import axios from 'axios';
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import { useSelector } from 'react-redux';
+import storeType from './Components/Redux/Type';
 
 function App() {
+  const login = useSelector<storeType>(value => value.login);
   const [count, setCount] = useState(0);
 
     useEffect(() => {
-        axios.get("/api/ping").then(data => console.log(data.data));
+      console.log(login);
+      axios.get("/api/ping").then(data => console.log(data.data));
     }, []);
 
   return (
