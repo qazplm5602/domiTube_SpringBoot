@@ -1,10 +1,15 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import axios from 'axios';
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
+
+    useEffect(() => {
+        axios.get("/api/ping").then(data => console.log(data.data));
+    }, []);
 
   return (
     <>
