@@ -1,0 +1,92 @@
+.main {
+    position: relative;
+
+    width: 100%;
+    height: 56px;
+
+    padding: 0 10px;
+
+    display: flex;
+    justify-content: space-between;
+}
+
+.main > section {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.main > section > .logo {
+    display: flex;
+
+    margin-left: 20px;
+}
+
+.main > section > .logo > img {
+    height: 20px;
+}
+
+.iconBtn {
+    position: relative;
+
+    width: 40px;
+    height: 40px;
+    padding: 8px;
+
+    border-radius: 50%;
+
+    background-color: transparent;
+    border: none;
+
+    cursor: pointer;
+}
+
+.iconBtn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.iconBtn > span {
+    position: absolute;
+
+    width: max-content;
+
+    left: 50%;
+    bottom: -5px;
+
+    transform: translate(-50%, 100%);
+
+    font-size: 13px;
+    font-weight: 300;
+
+    padding: 3px 8px;
+    background-color: rgb(94, 94, 94);
+    border-radius: 5px;
+
+    display: none;
+}
+
+.iconBtn:hover > span {
+    display: block;
+}
+
+.iconBtn > img {
+    width: 100%;
+    height: 100%;
+}
+
+.login > button {
+    padding: 5px 10px;
+    border-radius: 8px;
+
+    font-size: 13px;
+    font-weight: 300;
+
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+
+    cursor: pointer;
+}
+
+.login > button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
