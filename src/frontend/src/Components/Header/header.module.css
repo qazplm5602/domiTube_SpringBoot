@@ -129,3 +129,16 @@
 .searchMain > button:hover {
     background: none;
 }
+
+.myProfile {
+    padding: 0;
+    /* overflow: hidden; */
+
+    margin-left: 8px;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.myProfile > img {
+    border-radius: 50%;
+    overflow: hidden;
+}
