@@ -1,5 +1,53 @@
 .side {
     position: relative;
 
-    width: 250px;
+    width: 230px;
+
+    margin-top: 10px;
+}
+
+.side > a {
+    text-decoration-line: none;
+}
+
+.side > a > .menu {
+    width: calc(100% - 30px);
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+
+    margin: 0 auto;
+    padding: 8px;
+    
+    border-radius: 8px;
+    background-color: transparent;
+    border: none;
+    
+    cursor: pointer;
+    
+    font-size: 14px;
+    text-align: left;
+}
+
+.side > a > .menu:hover,
+.side > a > .menu.active {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.side > a > .menu.active:hover {
+    background-color: rgba(255, 255, 255, 0.13);
+}
+
+.side > a > .menu > img {
+    margin-right: 20px;
+}
+
+.side > .line {
+    width: calc(100% - 30px);
+    height: 0.5px;
+
+    margin: 10px auto;
+
+    background-color: rgba(255, 255, 255, 0.2);
 }
