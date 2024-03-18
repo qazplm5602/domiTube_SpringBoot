@@ -6,9 +6,7 @@ import './index.css'
 import Store from './Components/Redux/Store.tsx'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
-import App from './App.tsx'
 import Header from './Components/Header/Header.tsx'
-import Aside from './Components/Aside/Aside.tsx'
 import MainLayout from './Components/Layout/MainLayout.tsx'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
@@ -16,7 +14,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <Provider store={Store}>
       <BrowserRouter>
         <Routes>
-          <Route path='/' element={<App />} />
+          <Route path='/' element={<MainLayout>ㅁㄴㅇㄻㄴㅇㄹ</MainLayout>} />
           <Route path='/header' element={<Header />} />
           <Route path='/side' element={<MainLayout>밍밍</MainLayout>} />
         </Routes>
