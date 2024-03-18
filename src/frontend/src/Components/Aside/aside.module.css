@@ -43,6 +43,14 @@
     margin-right: 20px;
 }
 
+.side > a > .channel > img {
+    width: 25px;
+    height: 25px;
+
+    border-radius: 50%;
+    overflow: hidden;
+}
+
 .side > .line {
     width: calc(100% - 30px);
     height: 0.5px;
@@ -50,4 +58,10 @@
     margin: 10px auto;
 
     background-color: rgba(255, 255, 255, 0.2);
+}
+
+.side > .title {
+    margin: 0 15px;
+
+    font-size: 16px;
 }

@@ -21,5 +21,11 @@ function DetailSide() {
         </Link>
 
         <div className={style.line}></div>
+
+        {/* ---- 구독 ---- */}
+        <div className={style.title} style={{margin: "15px 15px", marginBottom: "5px"}}>구독</div>
+        <Link to="/">
+            <Button icon="https://yt3.ggpht.com/_QGPHrnarLactSDLIisKwBFZ58FiqlaGVJNTznx5KaP75-WLNmmpxCPtgCZNh5us9D-8ZZg5KQ=s88-c-k-c0x00ffffff-no-rj" className={[style.menu, style.channel].join(" ")}>도미임</Button>
+        </Link>    
     </aside>;
 }
