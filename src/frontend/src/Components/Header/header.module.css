@@ -9,6 +9,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    flex-shrink: 0;
 }
 
 .main > section {
@@ -64,6 +66,8 @@
     border-radius: 5px;
 
     display: none;
+
+    z-index: 1;
 }
 
 .iconBtn:hover > span {
