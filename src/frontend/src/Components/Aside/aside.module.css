@@ -6,6 +6,20 @@
     margin-top: 10px;
 }
 
+.side.short {
+    width: 100px;
+}
+
+.side.fixed {
+    position: absolute;
+    left: -250px;
+
+    height: calc(100% - 56px);
+
+    margin: 0;
+    background-color: #141517;
+}
+
 .side > a {
     text-decoration-line: none;
 }
@@ -28,6 +42,17 @@
     
     font-size: 14px;
     text-align: left;
+}
+
+.side.short > a > .menu {
+    display: flex;
+    flex-direction: column;
+    height: max-content;
+}
+
+.side.short > a > .menu > img {
+    margin: 0;
+    margin-bottom: 5px;
 }
 
 .side > a > .menu:hover,
