@@ -5,10 +5,10 @@ import youtubeLogo from './youtube.svg';
 import listSVG from './list.svg';
 import searchSVG from './search.svg';
 
-export default function Header(): JSX.Element {
+export default function Header({sideState}: {sideState: [boolean, React.Dispatch<React.SetStateAction<boolean>>]}): JSX.Element {
     return <header className={style.main}>
         <Section>
-            <IconButton icon={listSVG} text="목록" />
+            <IconButton onClick={() => sideState[1](!sideState[0])} icon={listSVG} text="목록" />
             <Link to="/" className={style.logo}><img src={youtubeLogo} /></Link>
         </Section>
 
@@ -21,8 +21,8 @@ export default function Header(): JSX.Element {
     </header>;
 }
 
-function IconButton({icon, text, className}: {icon: string, text?: string, className?: string[]}): JSX.Element {
-    return <button className={[style.iconBtn, ...(className || [])].join(" ")}>
+function IconButton({icon, text, className, onClick}: {icon: string, text?: string, className?: string[], onClick?: React.MouseEventHandler}): JSX.Element {
+    return <button onClick={onClick} className={[style.iconBtn, ...(className || [])].join(" ")}>
         <img src={icon} />
         {text && <span>{text}</span>}
     </button>;

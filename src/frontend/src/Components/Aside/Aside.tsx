@@ -3,11 +3,22 @@ import Button from '../Recycle/Button';
 import style from './aside.module.css';
 
 import homeSvg from './home.svg';
+import { useEffect } from 'react';
 
-export default function Aside() {
+export default function Aside({sideState}: {sideState: [boolean, React.Dispatch<React.SetStateAction<boolean>>]}) {
+    const screenChange = function() {
+        console.log("screenChange");
+    }
+
+    useEffect(() => {
+        const media = window.matchMedia("(min-width: 768px)");
+        media.addEventListener("change", screenChange);
+        
+        return () => media.removeEventListener("change", screenChange);
+    }, []);
+
     return <>
-        <DetailSide fixed={false} />
-        {/* <ShortSide /> */}
+        {sideState[0] ? <DetailSide fixed={false} /> : <ShortSide />}
     </>;
 }
 

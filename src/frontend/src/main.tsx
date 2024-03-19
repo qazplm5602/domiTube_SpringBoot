@@ -15,7 +15,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<MainLayout>ㅁㄴㅇㄻㄴㅇㄹ</MainLayout>} />
-          <Route path='/header' element={<Header />} />
+          {/* <Route path='/header' element={<Header />} /> */}
           <Route path='/side' element={<MainLayout>밍밍</MainLayout>} />
         </Routes>
       </BrowserRouter>
