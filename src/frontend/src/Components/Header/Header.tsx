@@ -4,6 +4,7 @@ import style from './header.module.css';
 import youtubeLogo from './youtube.svg';
 import listSVG from './list.svg';
 import searchSVG from './search.svg';
+import { useState } from 'react';
 
 export default function Header({sideState}: {sideState: [boolean, React.Dispatch<React.SetStateAction<boolean>>]}): JSX.Element {
     return <header className={style.main}>
@@ -35,8 +36,14 @@ function Section({children, ...props}: {children: React.ReactNode, [key: string]
 }
 
 function SearchBox() {
-    return <Section className={style.searchMain}>
-        <input placeholder='검색' type="text" />
+    const classList = [style.searchMain];
+    const [focus, setFocus] = useState(false);
+
+    if (focus)
+        classList.push(style.active);
+
+    return <Section className={classList.join(" ")}>
+        <input placeholder='검색' type="text" onFocus={() => setFocus(true)} onBlur={() => setFocus(false)} />
         <IconButton icon={searchSVG} />
     </Section>;
 }
