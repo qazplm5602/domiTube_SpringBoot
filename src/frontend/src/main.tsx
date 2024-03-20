@@ -8,13 +8,14 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 import Header from './Components/Header/Header.tsx'
 import MainLayout from './Components/Layout/MainLayout.tsx'
+import Home from './Components/Home/Home.tsx'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <Provider store={Store}>
       <BrowserRouter>
         <Routes>
-          <Route path='/' element={<MainLayout>ㅁㄴㅇㄻㄴㅇㄹ</MainLayout>} />
+          <Route path='/' element={<Home />} />
           {/* <Route path='/header' element={<Header />} /> */}
           <Route path='/side' element={<MainLayout>밍밍</MainLayout>} />
         </Routes>
