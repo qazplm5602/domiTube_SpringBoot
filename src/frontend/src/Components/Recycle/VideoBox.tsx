@@ -1,4 +1,7 @@
+import Button from './Button';
 import style from './videoBox.module.css';
+
+import otherSVG from '../Header/other.svg';
 
 export default function VideoBox({className = []}: {className?: string[]}) {
     className.push(style.main); // default 값임
@@ -12,10 +15,11 @@ export default function VideoBox({className = []}: {className?: string[]}) {
         <div className={style.details}>
             <img className={style.channel} src="https://nng-phinf.pstatic.net/MjAyMjA2MTdfNzcg/MDAxNjU1NDYwOTk4MzIx.2GtboKl1AANbxW8mwf7_-3rl1joA5z70GdLSuhVzWssg.ubvmA6JPVkX2fRl0DLLBKY9eBbL2Gh3cN03_MMAwnuAg.PNG/1.png?type=f120_120_na" />
             <div className={style.texts}>
-                <span className={style.title}>제목인뎅_밍글링</span>
+                <div className={style.title}>제목인뎅_밍글링</div>
                 <span className={style.channelT}>도미임</span>
                 <span className={style.sub}>조회수 2.6만회 • 3시간 전</span>
             </div>
+            <Button icon={otherSVG} className={style.otherBtn} />
         </div>
     </div>;
 }

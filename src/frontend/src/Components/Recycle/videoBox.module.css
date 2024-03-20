@@ -54,7 +54,7 @@
 
 .main > .details > .texts {
     margin-left: 5px;
-    width: 100%;
+    flex-grow: 1;
 }
 
 .main > .details > .texts > span {
@@ -70,8 +70,28 @@
     color: white;
 
     margin-bottom: 2px;
+    word-break: break-all;
 }
 
 .main > .details > .texts > .channelT:hover {
     color: white;
+}
+
+.main > .details > .otherBtn {
+    width: 30px;
+    height: 30px;
+
+    padding: 0;
+
+    border: none;
+    background-color: transparent;
+    border-radius: 50%;
+
+    cursor: pointer;
+
+    visibility: hidden;
+}
+
+.main:hover > .details > .otherBtn {
+    visibility: visible;
 }
