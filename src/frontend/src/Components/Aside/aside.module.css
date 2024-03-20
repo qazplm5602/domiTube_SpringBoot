@@ -20,6 +20,8 @@
     margin: 0;
     padding-top: 10px;
     background-color: #141517;
+
+    z-index: 1;
     
     transition: left 250ms;
 }

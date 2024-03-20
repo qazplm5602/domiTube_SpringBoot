@@ -21,3 +21,17 @@
     width: 32.333%;
     height: auto;
 }
+
+@media screen and (max-width: 900px) {
+    .list > .box {
+        width: 48.33%;
+        height: auto;
+    }
+}
+
+@media screen and (min-width: 1300px) {
+    .list > .box {
+        width: 24.1%;
+        height: auto;
+    }
+}
