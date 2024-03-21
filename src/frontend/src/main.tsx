@@ -6,9 +6,9 @@ import './index.css'
 import Store from './Components/Redux/Store.tsx'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
-import Header from './Components/Header/Header.tsx'
 import MainLayout from './Components/Layout/MainLayout.tsx'
 import Home from './Components/Home/Home.tsx'
+import Watch from './Components/Watch/Watch.tsx'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -16,6 +16,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<Home />} />
+          <Route path='/watch' element={<Watch />} />
           {/* <Route path='/header' element={<Header />} /> */}
           <Route path='/side' element={<MainLayout>밍밍</MainLayout>} />
         </Routes>

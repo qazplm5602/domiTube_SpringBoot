@@ -5,17 +5,17 @@ import style from './aside.module.css';
 import homeSvg from './home.svg';
 import { useEffect, useState } from 'react';
 
-export default function Aside({sideState}: {sideState: [boolean, React.Dispatch<React.SetStateAction<boolean>>]}) {
+export default function Aside({sideState, forceHide = false}: {forceHide?: boolean, sideState: [boolean, React.Dispatch<React.SetStateAction<boolean>>]}) {
     const [minimun, setMinimun] = useState(false);
     const screenChange = function(e: MediaQueryListEvent) {
-        setMinimun(e.matches);
+        setMinimun(e.matches || forceHide);
     }
 
     useEffect(() => {
         const media = window.matchMedia("(max-width: 768px)");
-        setMinimun(media.matches);
+        setMinimun(media.matches || forceHide);
         media.addEventListener("change", screenChange);
-        
+
         return () => media.removeEventListener("change", screenChange);
     }, []);
 
@@ -25,7 +25,7 @@ export default function Aside({sideState}: {sideState: [boolean, React.Dispatch<
     }, [minimun]);
 
     return <>
-        {(!sideState[0] || minimun) && <ShortSide />}
+        {((!sideState[0] || minimun) && !forceHide) && <ShortSide />}
         {(sideState[0] || minimun) && <DetailSide fixed={minimun} open={sideState[0]} />}
     </>;
 }

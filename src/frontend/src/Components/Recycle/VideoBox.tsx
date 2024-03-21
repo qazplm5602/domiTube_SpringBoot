@@ -2,11 +2,13 @@ import Button from './Button';
 import style from './videoBox.module.css';
 
 import otherSVG from '../Header/other.svg';
+import { useNavigate } from 'react-router-dom';
 
 export default function VideoBox({className = []}: {className?: string[]}) {
+    const navigate = useNavigate();
     className.push(style.main); // default 값임
 
-    return <div className={className.join(" ")}>
+    return <div onClick={() => navigate("/watch")} className={className.join(" ")}>
         <div className={style.thumnail}>
             <img src="https://i.ytimg.com/vi/O5pHIoO-W-8/hqdefault.jpg?sqp=-oaymwEXCOADEI4CSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLAgVDD6Uumd_A8mchTOYUtOrbAz-A" />
             <span className={style.time}>10:10</span>
