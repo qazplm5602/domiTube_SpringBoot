@@ -26,7 +26,7 @@ export default function Channel() {
                 </div>
 
                 <Section className={style.menus}>
-                    <Button>홈</Button>
+                    <Button className={style.active}>홈</Button>
                     <Button>동영상</Button>
                     <Button>정보</Button>
                 </Section>

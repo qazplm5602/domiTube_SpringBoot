@@ -54,3 +54,30 @@
     font-size: 14px;
     color: rgb(156, 156, 156);
 }
+
+.headWrapper > .head > .menus {
+    gap: 0 20px;
+    display: flex;
+}
+
+.headWrapper > .head > .menus > button {
+    font-size: 15px;
+    padding: 10px 10px;
+    
+    background-color: transparent;
+    border: none;
+
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.headWrapper > .head > .menus > button:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.headWrapper > .head > .menus > button.active {
+    color: white;
+    border-color: white;
+}
