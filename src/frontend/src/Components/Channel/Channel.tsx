@@ -16,6 +16,8 @@ export default function Channel() {
     return <MainLayout>
         <Section className={style.headWrapper}>
             <div className={style.head}>
+                <img className={style.banner} src="https://yt3.googleusercontent.com/hBenzrqZBR7IB6c8JFhD1Vj4l3gPSjFYr05Ijm46-kZQjpbdI6l8HYhm5p15PLQX9IrTzjORIQ=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj" />
+
                 <div className={style.info}>
                     <img className={style.image} src="https://nng-phinf.pstatic.net/MjAyMjA2MTdfNzcg/MDAxNjU1NDYwOTk4MzIx.2GtboKl1AANbxW8mwf7_-3rl1joA5z70GdLSuhVzWssg.ubvmA6JPVkX2fRl0DLLBKY9eBbL2Gh3cN03_MMAwnuAg.PNG/1.png?type=f120_120_na" />
                     
