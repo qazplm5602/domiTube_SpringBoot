@@ -9,6 +9,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import MainLayout from './Components/Layout/MainLayout.tsx'
 import Home from './Components/Home/Home.tsx'
 import Watch from './Components/Watch/Watch.tsx'
+import Channel from './Components/Channel/Channel.tsx'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -16,7 +17,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<Home />} />
-          <Route path='/watch' element={<Watch />} />
+          <Route path='/watch/:id' element={<Watch />} />
+          <Route path='/channel/:id' element={<Channel />} />
           {/* <Route path='/header' element={<Header />} /> */}
           <Route path='/side' element={<MainLayout>밍밍</MainLayout>} />
         </Routes>
