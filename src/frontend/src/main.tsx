@@ -18,7 +18,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/watch/:id' element={<Watch />} />
-          <Route path='/channel/:id' element={<Channel />} />
+          <Route path='/channel/:id/:menu?' element={<Channel />} />
           {/* <Route path='/header' element={<Header />} /> */}
           <Route path='/side' element={<MainLayout>밍밍</MainLayout>} />
         </Routes>
