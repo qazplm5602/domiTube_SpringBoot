@@ -16,14 +16,18 @@ export default function Channel() {
     return <MainLayout>
         <Section className={style.headWrapper}>
             <div className={style.head}>
-                <div>
+                <div className={style.info}>
+                    <img className={style.image} src="https://nng-phinf.pstatic.net/MjAyMjA2MTdfNzcg/MDAxNjU1NDYwOTk4MzIx.2GtboKl1AANbxW8mwf7_-3rl1joA5z70GdLSuhVzWssg.ubvmA6JPVkX2fRl0DLLBKY9eBbL2Gh3cN03_MMAwnuAg.PNG/1.png?type=f120_120_na" />
                     
+                    <div className={style.texts}>
+                        <span className={style.title}>도미임</span>
+                        <span className={style.sub}>구독자 50만명</span>
+                    </div>
                 </div>
 
                 <Section className={style.menus}>
                     <Button>홈</Button>
                     <Button>동영상</Button>
-                    <Button>커뮤니티</Button>
                     <Button>정보</Button>
                 </Section>
             </div>

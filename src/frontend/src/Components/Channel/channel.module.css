@@ -2,18 +2,55 @@
     position: relative;
     
     width: 100%;
-    height: 160px;
+    height: 180px;
+
+    padding: 0 15px;
 
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .headWrapper > .head {
     width: 100%;
-    max-width: 500px;
+    max-width: 1300px;
+    height: 100%;
 
     /* display: block; */
     margin: 0 auto;
 
     display: flex;
     flex-direction: column;
+}
+
+.headWrapper > .head > .info {
+    display: flex;
+    align-items: center;
+
+    flex-grow: 1;
+}
+
+.headWrapper > .head > .info > .image {
+    width: 90px;
+    height: 90px;
+
+    border-radius: 50%;
+
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.headWrapper > .head > .info > .texts {
+    display: flex;
+    flex-direction: column;
+
+    margin-left: 20px;
+}
+
+.headWrapper > .head > .info > .texts > .title {
+    font-size: 25px;
+    line-height: 30px;
+    font-weight: 800;
+}
+
+.headWrapper > .head > .info > .texts > .sub {
+    font-size: 14px;
+    color: rgb(156, 156, 156);
 }
