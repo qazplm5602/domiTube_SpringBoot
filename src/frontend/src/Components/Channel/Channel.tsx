@@ -5,6 +5,8 @@ import Section from "../Recycle/Section";
 import style from './channel.module.css';
 import Button from "../Recycle/Button";
 
+import loveSvg from './love.svg';
+
 const pages: {[key: string]: () => React.ReactNode} = {
     home: Home,
     video: VideoAll
@@ -25,6 +27,8 @@ export default function Channel() {
                         <span className={style.title}>도미임</span>
                         <span className={style.sub}>구독자 50만명</span>
                     </div>
+
+                    <Button className={style.subscribe} icon={loveSvg}>구독</Button>
                 </div>
 
                 <Section className={style.menus}>

@@ -57,6 +57,27 @@
     color: rgb(156, 156, 156);
 }
 
+.headWrapper > .head > .info > .subscribe {
+    padding: 7px 15px;
+    border-radius: 50px;
+    border: none;
+
+    font-size: 15px;
+    font-weight: bold;
+
+    display: flex;
+    align-items: center;
+
+    margin-left: auto;
+
+    color: black;
+    background-color: rgba(0,255,163,.9);
+
+    gap: 0 3px;
+
+    cursor: pointer;
+}
+
 .headWrapper > .head > .menus {
     gap: 0 20px;
     display: flex;
