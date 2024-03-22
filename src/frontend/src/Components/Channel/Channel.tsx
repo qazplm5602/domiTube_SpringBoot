@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import MainLayout from "../Layout/MainLayout";
 import Section from "../Recycle/Section";
 
@@ -14,6 +14,7 @@ const pages: {[key: string]: () => React.ReactNode} = {
 
 export default function Channel() {
     const { id, menu } = useParams();
+    const navigate = useNavigate();
 
     return <MainLayout>
         <Section className={style.headWrapper}>
@@ -33,7 +34,7 @@ export default function Channel() {
                 </div>
 
                 <Section className={style.menus}>
-                    <Button className={style.active}>홈</Button>
+                    <Button className={style.active} onCLick={}>홈</Button>
                     <Button>동영상</Button>
                     <Button>정보</Button>
                 </Section>
