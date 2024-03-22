@@ -29,6 +29,7 @@ export default function Channel() {
                     </div>
 
                     <Button className={style.subscribe} icon={loveSvg}>구독</Button>
+                    {/* <Button className={[style.subscribe, style.active].join(" ")} icon={loveSvg}>구독취소</Button> */}
                 </div>
 
                 <Section className={style.menus}>
