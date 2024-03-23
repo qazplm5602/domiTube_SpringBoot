@@ -6,6 +6,7 @@ import style from './channel.module.css';
 import Button from "../Recycle/Button";
 
 import loveSvg from './love.svg';
+import VideoBox from "../Recycle/VideoBox";
 
 const pages: {[key: string]: () => React.ReactNode} = {
     home: Home,
@@ -15,6 +16,10 @@ const pages: {[key: string]: () => React.ReactNode} = {
 export default function Channel() {
     const { id, menu } = useParams();
     const navigate = useNavigate();
+
+    const redirection = function(path: string) {
+        navigate(`/channel/${id}/${path}`);
+    }
 
     return <MainLayout>
         <Section className={style.headWrapper}>
@@ -34,14 +39,16 @@ export default function Channel() {
                 </div>
 
                 <Section className={style.menus}>
-                    <Button className={style.active} onCLick={}>홈</Button>
-                    <Button>동영상</Button>
-                    <Button>정보</Button>
+                    <Button className={style.active} onClick={() => redirection('')}>홈</Button>
+                    <Button onClick={() => redirection('video')}>동영상</Button>
+                    <Button onClick={() => redirection('info')}>정보</Button>
                 </Section>
             </div>
         </Section>
 
-        {pages[menu || "home"]()}
+        <main className={style.contentWrapper}>
+            {pages[menu || "home"]()}
+        </main>
     </MainLayout>
 }
 
@@ -50,5 +57,21 @@ function Home() {
 }
 
 function VideoAll() {
-    return <div>Hello Domi!</div>;
+    return <Section className={style.content}>
+        <div>
+            <Button>최신순</Button>
+            <Button>인기순</Button>
+            <Button>날짜순</Button>
+        </div>
+
+        <Section className={style.videos}>
+            <VideoBox className={[style.video]} />
+            <VideoBox className={[style.video]} />
+            <VideoBox className={[style.video]} />
+            <VideoBox className={[style.video]} />
+            <VideoBox className={[style.video]} />
+            <VideoBox className={[style.video]} />
+            <VideoBox className={[style.video]} />
+        </Section>
+    </Section>;
 }
