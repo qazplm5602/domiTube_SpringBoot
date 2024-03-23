@@ -39,9 +39,9 @@ export default function Channel() {
                 </div>
 
                 <Section className={style.menus}>
-                    <Button className={style.active} onClick={() => redirection('')}>홈</Button>
-                    <Button onClick={() => redirection('video')}>동영상</Button>
-                    <Button onClick={() => redirection('info')}>정보</Button>
+                    <Button className={menu ? '' : style.active} onClick={() => redirection('')}>홈</Button>
+                    <Button className={menu === "video" ? style.active : ''} onClick={() => redirection('video')}>동영상</Button>
+                    <Button className={menu === "info" ? style.active : ''} onClick={() => redirection('info')}>정보</Button>
                 </Section>
             </div>
         </Section>
