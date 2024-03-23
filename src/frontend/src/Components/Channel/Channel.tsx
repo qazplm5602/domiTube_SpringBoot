@@ -58,8 +58,8 @@ function Home() {
 
 function VideoAll() {
     return <Section className={style.content}>
-        <div>
-            <Button>최신순</Button>
+        <div className={style.category}>
+            <Button className={style.active}>최신순</Button>
             <Button>인기순</Button>
             <Button>날짜순</Button>
         </div>
