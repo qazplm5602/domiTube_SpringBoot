@@ -1,0 +1,22 @@
+.main {
+    display: flex;
+    justify-content: center;
+}
+
+.main > .video_container {
+    flex-grow: 1;
+
+    max-width: 1000px;
+    height: max-content;
+
+
+
+    border: 1px solid red;
+}
+
+.main > .recommand_container {
+    width: 400px;
+    border: 1px solid green;
+
+    flex-shrink: 0;
+}
