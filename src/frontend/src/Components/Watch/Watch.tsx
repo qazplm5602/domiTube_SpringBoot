@@ -17,7 +17,8 @@ export default function Watch() {
             {/* <video> */}
             <VideoPlayer />
 
-            <div className={style.title}>제목인뎅_밍글링</div>
+            {/* 제목 / 채널 */}
+            <TitleChannel />
         </Section>
         
         <Section className={style.recommand_container}>
@@ -62,4 +63,21 @@ function VideoPlayer() {
 
 function PlayerBtn({icon, text}: {icon: string, text?: string}) {
     return <Button icon={icon} className={style.control_btn}>{text && <span>{text}</span>}</Button>
+}
+
+function TitleChannel() {
+    return <Section title="제목인뎅_밍글링" titleClass={style.title} className={style.metadata}>
+        <div className={style.channel}>
+            <img src="https://nng-phinf.pstatic.net/MjAyMjA2MTdfNzcg/MDAxNjU1NDYwOTk4MzIx.2GtboKl1AANbxW8mwf7_-3rl1joA5z70GdLSuhVzWssg.ubvmA6JPVkX2fRl0DLLBKY9eBbL2Gh3cN03_MMAwnuAg.PNG/1.png?type=f120_120_na" />
+            <div className={style.texts}>
+                <span>도미인뎅</span>
+                <span>구독자: 5조5억명</span>
+            </div>
+
+            <Button>구독</Button>
+        </div>
+        <div className={style.interactions}>
+
+        </div>
+    </Section>
 }

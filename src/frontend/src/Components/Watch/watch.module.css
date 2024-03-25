@@ -11,9 +11,48 @@
     max-width: 1000px;
     height: max-content;
 
-
-
     border: 1px solid red;
+}
+
+.main > .video_container > .title {
+    font-size: 20px;
+    margin: 10px 0;
+}
+
+.main > .video_container > .metadata {
+    display: flex;
+    width: 100%;
+}
+
+.main > .video_container > .metadata > .channel {
+    display: flex;
+    align-items: center;
+}
+
+.main > .video_container > .metadata > .channel > img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.main > .video_container > .metadata > .channel > .texts {
+    display: flex;
+    flex-direction: column;
+
+    margin-left: 10px;
+}
+
+.main > .video_container > .metadata > .channel > .texts > span:nth-child(1) {
+    font-size: 16px;
+}
+
+.main > .video_container > .metadata > .channel > .texts > span:nth-child(2) {
+    font-size: 12px;
+    font-weight: 300;
+
+    color: rgb(196, 196, 196);
 }
 
 .main > .recommand_container {
@@ -22,6 +61,8 @@
 
     flex-shrink: 0;
 }
+
+/* 비디오 플레이어 */
 
 .video_player {
     position: relative;
