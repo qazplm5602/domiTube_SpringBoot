@@ -27,7 +27,7 @@ function VideoPlayer() {
         <div className={style.control_main}>
             <div className={style.top}></div>
             <div className={style.bottom}>
-                
+                <div className={style.bar} onClick={e => console.log(e.clientX)}></div>
             </div>
         </div>
     </Section>;
