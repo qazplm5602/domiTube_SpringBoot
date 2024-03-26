@@ -4,10 +4,12 @@ import Section from "../Recycle/Section";
 import style from "./watch.module.css";
 import ReactPlayer from "react-player";
 import Button from "../Recycle/Button";
+import { SubscribeButton } from "../Channel/Channel";
 
 import playSvg from './play.svg';
 import fullOffSvg from './fullscreen_off.svg';
 import settingSvg from './setting.svg';
+import shareSvg from './share.svg';
 
 export default function Watch() {
     const { id } = useParams();
@@ -74,10 +76,11 @@ function TitleChannel() {
                 <span>구독자: 5조5억명</span>
             </div>
 
-            <Button>구독</Button>
+            <SubscribeButton className={[style.subscribe]} active={false} />
         </div>
-        <div className={style.interactions}>
 
+        <div className={style.interactions}>
+            <Button icon={shareSvg}>공유</Button>
         </div>
     </Section>
 }

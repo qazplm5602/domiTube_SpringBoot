@@ -57,7 +57,7 @@
     color: rgb(156, 156, 156);
 }
 
-.headWrapper > .head > .info > .subscribe {
+.subscribe {
     padding: 7px 15px;
     border-radius: 50px;
     border: none;
@@ -78,20 +78,20 @@
     cursor: pointer;
 }
 
-.headWrapper > .head > .info > .subscribe:hover {
+.subscribe:hover {
     background-color: rgba(0,255,163,.75);
 }
 
-.headWrapper > .head > .info > .subscribe.active {
+.subscribe.active {
     color: white;
     background-color: rgba(255, 255, 255, 0.5);
 }
 
-.headWrapper > .head > .info > .subscribe.active:hover {
+.subscribe.active:hover {
     background-color: rgba(255, 51, 51, 0.8);
 }
 
-.headWrapper > .head > .info > .subscribe.active > img {
+.subscribe.active > img {
     filter: invert(100%);
 }
 

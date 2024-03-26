@@ -77,13 +77,13 @@ function VideoAll() {
     </Section>;
 }
 
-export function SubscribeButton({ className, active }: {className?: string[], active: boolean}) {
+export function SubscribeButton({ className, active, onClick }: {className?: string[], active: boolean, onClick?: React.MouseEventHandler}) {
     const classList = className || [];
     classList.push(style.subscribe);
     
     if (active)
         classList.push(style.active);
 
-    return <Button className={classList.join(" ")} icon={loveSvg}>구독{active ? "취소" : ""}</Button>;
+    return <Button className={classList.join(" ")} onClick={onClick} icon={loveSvg}>구독{active ? "취소" : ""}</Button>;
                     {/* <Button className={[style.subscribe, style.active].join(" ")} icon={loveSvg}>구독취소</Button> */}
 }
