@@ -34,7 +34,8 @@ export default function Channel() {
                         <span className={style.sub}>구독자 50만명</span>
                     </div>
 
-                    <Button className={style.subscribe} icon={loveSvg}>구독</Button>
+                    <SubscribeButton active={false} />
+                    {/* <Button className={style.subscribe} icon={loveSvg}>구독</Button> */}
                     {/* <Button className={[style.subscribe, style.active].join(" ")} icon={loveSvg}>구독취소</Button> */}
                 </div>
 
@@ -74,4 +75,15 @@ function VideoAll() {
             <VideoBox className={[style.video]} />
         </Section>
     </Section>;
+}
+
+export function SubscribeButton({ className, active }: {className?: string[], active: boolean}) {
+    const classList = className || [];
+    classList.push(style.subscribe);
+    
+    if (active)
+        classList.push(style.active);
+
+    return <Button className={classList.join(" ")} icon={loveSvg}>구독{active ? "취소" : ""}</Button>;
+                    {/* <Button className={[style.subscribe, style.active].join(" ")} icon={loveSvg}>구독취소</Button> */}
 }
