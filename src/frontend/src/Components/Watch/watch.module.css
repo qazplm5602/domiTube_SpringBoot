@@ -65,7 +65,7 @@
     display: flex;
     align-items: center;
     
-    gap: 0 5px;
+    gap: 0 10px;
 }
 
 .main > .video_container > .metadata > .interactions > button {
@@ -89,6 +89,55 @@
 
 .main > .video_container > .metadata > .interactions > button > img {
     margin-right: 5px;
+}
+
+.main > .video_container > .metadata > .interactions >  .rating {
+    display: flex;
+    
+    height: 34px;
+    border-radius: 20px;
+    overflow: hidden;
+
+    /* padding: 5px 10px; */
+
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.main > .video_container > .metadata > .interactions >  .rating > button {
+    background-color: transparent;
+    border: none;
+
+    display: flex;
+    align-items: center;
+
+    padding: 5px 10px;
+
+    font-size: 13px;
+
+    cursor: pointer;
+}
+
+.main > .video_container > .metadata > .interactions >  .rating > button:nth-child(1) {
+    padding-right: 5px;
+}
+
+.main > .video_container > .metadata > .interactions >  .rating > button:nth-child(2) {
+    padding-left: 5px;
+}
+
+.main > .video_container > .metadata > .interactions >  .rating > button:nth-child(2) > img {
+    transform: rotateZ(180deg);
+}
+
+.main > .video_container > .metadata > .interactions >  .rating > button > img {
+    margin-right: 5px;
+
+    width: 20px;
+    height: 20px;
+}
+
+.main > .video_container > .metadata > .interactions >  .rating > button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 .main > .recommand_container {

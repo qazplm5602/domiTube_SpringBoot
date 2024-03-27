@@ -10,6 +10,7 @@ import playSvg from './play.svg';
 import fullOffSvg from './fullscreen_off.svg';
 import settingSvg from './setting.svg';
 import shareSvg from './share.svg';
+import goodSvg from './good.svg';
 
 export default function Watch() {
     const { id } = useParams();
@@ -81,6 +82,12 @@ function TitleChannel() {
 
         <div className={style.interactions}>
             <Button icon={shareSvg}>공유</Button>
+
+            {/* 좋아용 싫어요 */}
+            <div className={style.rating}>
+                <Button icon={goodSvg}>10</Button>
+                <Button icon={goodSvg}>500</Button>
+            </div>
         </div>
     </Section>
 }
