@@ -22,6 +22,9 @@ export default function Watch() {
 
             {/* 제목 / 채널 */}
             <TitleChannel />
+
+            {/* 설명란 */}
+            <Description />
         </Section>
         
         <Section className={style.recommand_container}>
@@ -90,4 +93,18 @@ function TitleChannel() {
             </div>
         </div>
     </Section>
+}
+
+function Description() {
+    return <div className={style.desc}>
+        {/* 조회수 / 날짜 / 태그 */}
+        <Section className={style.info}>
+            <span>조회수 99,999,999회</span>
+            <span>2024.03.27</span>
+        </Section>
+
+        <div className={style.content}>{`아니 이거 슈웃
+        ㅁ닝
+        ㄴㅇ햐ㅐㅓㄴ`}</div>
+    </div>;
 }

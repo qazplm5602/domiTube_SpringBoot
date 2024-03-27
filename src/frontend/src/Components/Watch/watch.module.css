@@ -140,6 +140,36 @@
     background-color: rgba(255, 255, 255, 0.1);
 }
 
+.main > .video_container > .desc {
+    position: relative;
+    
+    width: 100%;
+    height: max-content;
+    padding: 10px;
+    margin-top: 13px;
+
+    background-color: rgba(255, 255, 255, 0.05);
+
+    border-radius: 15px;
+}
+
+.main > .video_container > .desc > .info {
+    gap: 0 10px;
+    display: flex;
+}
+
+.main > .video_container > .desc > .info > span {
+    font-size: 15px;
+}
+
+.main > .video_container > .desc > .content {
+    white-space: pre;
+    font-size: 13px;
+
+
+    /* margin-top: 5px; */
+}
+
 .main > .recommand_container {
     width: 350px;
     border: 1px solid green;
