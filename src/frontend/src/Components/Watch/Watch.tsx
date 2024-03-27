@@ -25,6 +25,9 @@ export default function Watch() {
 
             {/* 설명란 */}
             <Description />
+
+            {/* 댓글 */}
+            <Chat />
         </Section>
         
         <Section className={style.recommand_container}>
@@ -107,4 +110,25 @@ function Description() {
         ㅁ닝
         ㄴㅇ햐ㅐㅓㄴ`}</div>
     </div>;
+}
+
+function Chat() {
+    return <>
+        <Section className={style.chat_header}>
+            <span>댓글 500개</span>
+            {/* 나중에 정렬 버튼 넣을꺼임 */}
+        </Section>
+
+        <ChatUser>asd</ChatUser>
+    </>;
+}
+
+function ChatUser({children, className}: {className?: string[], children: React.ReactNode}) {
+    const classList = className || [];
+    classList.push(style.userBox);    
+    
+    return <Section className={classList.join(" ")}>
+        <img className={style.userIcon} src="https://nng-phinf.pstatic.net/MjAyMjA2MTdfNzcg/MDAxNjU1NDYwOTk4MzIx.2GtboKl1AANbxW8mwf7_-3rl1joA5z70GdLSuhVzWssg.ubvmA6JPVkX2fRl0DLLBKY9eBbL2Gh3cN03_MMAwnuAg.PNG/1.png?type=f120_120_na" />
+        {children}
+    </Section>;
 }

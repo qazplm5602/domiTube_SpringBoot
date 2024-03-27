@@ -170,6 +170,28 @@
     /* margin-top: 5px; */
 }
 
+.main > .video_container > .chat_header {
+    margin-top: 30px;
+
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.main > .video_container > .userBox {
+    display: flex;
+    align-items: center;
+}
+
+.main > .video_container > .userBox > .userIcon {
+    width: 40px;
+    height: 40px;
+
+    margin-right: 10px;
+    
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
 .main > .recommand_container {
     width: 350px;
     border: 1px solid green;
