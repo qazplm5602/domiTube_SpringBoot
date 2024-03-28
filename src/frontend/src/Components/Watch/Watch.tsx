@@ -118,8 +118,11 @@ function Chat() {
             <span>댓글 500개</span>
             {/* 나중에 정렬 버튼 넣을꺼임 */}
         </Section>
-
-        <ChatUser>asd</ChatUser>
+        
+        {/* 댓글 쓴는곳 */}
+        <ChatUser className={[style.myInput]}>
+            <input type="text" placeholder="댓글 추가..." />
+        </ChatUser>
     </>;
 }
 
