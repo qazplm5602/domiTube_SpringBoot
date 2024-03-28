@@ -241,6 +241,15 @@
     background-color: rgba(255, 255, 255, 0.2);
 }
 
+.main > .video_container > .userChat {
+    align-items: initial;
+}
+
+.main > .video_container > .userChat > section {
+    display: flex;
+    flex-grow: 1;
+}
+
 .main > .recommand_container {
     width: 350px;
     border: 1px solid green;

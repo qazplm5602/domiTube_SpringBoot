@@ -126,15 +126,36 @@ function Chat() {
                 <Button className={style.send}>등록</Button>
             </div>
         </ChatUser>
+        
+        <ChatUserContent />
     </>;
 }
 
-function ChatUser({children, className}: {className?: string[], children: React.ReactNode}) {
+function ChatUser({children, className, section}: {className?: string[], children: React.ReactNode, section?: boolean}) {
     const classList = className || [];
     classList.push(style.userBox);    
     
     return <Section className={classList.join(" ")}>
         <img className={style.userIcon} src="https://nng-phinf.pstatic.net/MjAyMjA2MTdfNzcg/MDAxNjU1NDYwOTk4MzIx.2GtboKl1AANbxW8mwf7_-3rl1joA5z70GdLSuhVzWssg.ubvmA6JPVkX2fRl0DLLBKY9eBbL2Gh3cN03_MMAwnuAg.PNG/1.png?type=f120_120_na" />
-        {children}
+        {section ? <Section>{children}</Section> : children}
     </Section>;
+}
+
+function ChatUserContent() {
+    return <ChatUser className={[style.userChat]} section={true}>
+        <main>
+            <div className={style.detail}><span>도미</span><span>15시간 전</span></div>
+            <div>ㅁ려ㅑㅓㅎ랴후ㅑ루햐루햐러ㅜ햐ㅓ둑훠ㅑ더ㅜㅑㅐㅓ닥롣ㅑㅙ저ㅜㅇ</div>
+            <div className={style.interacte}>
+                <Button icon={goodSvg} />
+                <span>500</span>
+                <Button icon={goodSvg} />
+                <span>500</span>
+                
+                <Button>답글</Button>
+            </div>
+            <Button>답글 5개</Button>
+        </main>
+        <Button>더보기</Button>
+    </ChatUser>;
 }
