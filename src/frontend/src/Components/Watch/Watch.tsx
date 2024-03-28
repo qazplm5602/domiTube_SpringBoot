@@ -121,7 +121,10 @@ function Chat() {
         
         {/* 댓글 쓴는곳 */}
         <ChatUser className={[style.myInput]}>
-            <input type="text" placeholder="댓글 추가..." />
+            <div>
+                <input type="text" placeholder="댓글 추가..." />
+                <Button className={style.send}>등록</Button>
+            </div>
         </ChatUser>
     </>;
 }

@@ -11,7 +11,7 @@
     max-width: 1000px;
     height: max-content;
 
-    border: 1px solid red;
+    /* border: 1px solid red; */
 }
 
 .main > .video_container > .title {
@@ -190,6 +190,55 @@
     
     border-radius: 50%;
     background-color: rgba(255, 255, 255, 0.1);
+}
+
+.main > .video_container > .myInput {
+    align-items: initial;
+    margin: 15px 0;
+}
+
+.main > .video_container > .myInput > div {
+    flex-grow: 1;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.main > .video_container > .myInput > div > input {
+    outline: none;
+
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    background-color: transparent;
+    
+    font-size: 15px;
+    padding: 5px 0;
+    
+    transition: border 250ms;
+}
+
+.main > .video_container > .myInput > div > input:focus {
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.main > .video_container > .myInput > div > .send {
+    width: max-content;
+    height: max-content;
+
+    padding: 7px 18px;
+    border-radius: 30px;
+    border: none;
+
+    background-color: rgba(255, 255, 255, 0.1);
+
+    margin-left: auto;
+    margin-top: 10px;
+
+    cursor: pointer;
+}
+
+.main > .video_container > .myInput > div > .send:hover {
+    background-color: rgba(255, 255, 255, 0.2);
 }
 
 .main > .recommand_container {
