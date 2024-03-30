@@ -11,6 +11,7 @@ import fullOffSvg from './fullscreen_off.svg';
 import settingSvg from './setting.svg';
 import shareSvg from './share.svg';
 import goodSvg from './good.svg';
+import otherSvg from './other.svg';
 
 export default function Watch() {
     const { id } = useParams();
@@ -145,17 +146,17 @@ function ChatUserContent() {
     return <ChatUser className={[style.userChat]} section={true}>
         <main>
             <div className={style.detail}><span>도미</span><span>15시간 전</span></div>
-            <div>ㅁ려ㅑㅓㅎ랴후ㅑ루햐루햐러ㅜ햐ㅓ둑훠ㅑ더ㅜㅑㅐㅓ닥롣ㅑㅙ저ㅜㅇ</div>
+            <div className={style.content}>ㅁ려ㅑㅓㅎ랴후ㅑ루햐루햐러ㅜ햐ㅓ둑훠ㅑ더ㅜㅑㅐㅓ닥롣ㅑㅙ저ㅜㅇ</div>
             <div className={style.interacte}>
                 <Button icon={goodSvg} />
                 <span>500</span>
                 <Button icon={goodSvg} />
                 <span>500</span>
                 
-                <Button>답글</Button>
+                <Button className={style.reply}>답글</Button>
             </div>
-            <Button>답글 5개</Button>
+            <Button className={style.reply}>답글 5개</Button>
         </main>
-        <Button>더보기</Button>
+        <Button className={style.other} icon={otherSvg} />
     </ChatUser>;
 }
