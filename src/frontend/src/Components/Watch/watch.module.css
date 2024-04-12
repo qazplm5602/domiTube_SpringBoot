@@ -355,9 +355,16 @@
 
 .main > .recommand_container {
     width: 400px;
-    border: 1px solid green;
+    /* border: 1px solid green; */
+
+    margin-left: 20px;
 
     flex-shrink: 0;
+    /* gap: 10px 0; */
+}
+
+.main > .recommand_container > div:not(:first-child) {
+    margin-top: 3px;
 }
 
 /* 비디오 플레이어 */
@@ -365,8 +372,9 @@
 .video_player {
     position: relative;
 
-    width: 672px;
-    height: 378px;
+    /* width: 672px;
+    height: 378px; */
+    aspect-ratio: 16 / 9;
 }
 
 .video_player > .player {
