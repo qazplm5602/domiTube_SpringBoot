@@ -12,6 +12,7 @@ import settingSvg from './setting.svg';
 import shareSvg from './share.svg';
 import goodSvg from './good.svg';
 import otherSvg from './other.svg';
+import VideoBox from "../Recycle/VideoBox";
 
 export default function Watch() {
     const { id } = useParams();
@@ -32,7 +33,7 @@ export default function Watch() {
         </Section>
         
         <Section className={style.recommand_container}>
-            밍
+            <RecommandVideo />
         </Section>
     </MainLayout>;
 }
@@ -159,4 +160,14 @@ function ChatUserContent() {
         </main>
         <Button className={style.other} icon={otherSvg} />
     </ChatUser>;
+}
+
+function RecommandVideo() {
+    return <>
+        <VideoBox horizontal={true} />
+        <VideoBox horizontal={true} />
+        <VideoBox horizontal={true} />
+        <VideoBox horizontal={true} />
+        <VideoBox horizontal={true} />
+    </>;
 }

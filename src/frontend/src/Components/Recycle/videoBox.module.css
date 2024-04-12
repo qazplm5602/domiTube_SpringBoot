@@ -95,3 +95,31 @@
 .main:hover > .details > .otherBtn {
     visibility: visible;
 }
+
+.main.horizontal {
+    width: 100%;
+
+    display: flex;
+    height: 100px;
+}
+
+.main.horizontal > .thumnail {
+    width: 168px;
+    height: 94px;
+    /* aspect-ratio: none; */
+}
+
+.main.horizontal > .details {
+    margin: 0;
+    flex-grow: 1;
+    /* margin-left: 5px; */
+}
+
+.main.horizontal > .details > .channel {
+    display: none;
+}
+
+.main.horizontal > .details > .otherBtn {
+    display: block;
+    margin-left: auto;
+}

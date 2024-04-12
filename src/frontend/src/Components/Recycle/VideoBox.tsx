@@ -4,9 +4,12 @@ import style from './videoBox.module.css';
 import otherSVG from '../Header/other.svg';
 import { useNavigate } from 'react-router-dom';
 
-export default function VideoBox({className = []}: {className?: string[]}) {
+export default function VideoBox({className = [], horizontal = false}: {className?: string[], horizontal?: boolean}) {
     const navigate = useNavigate();
     className.push(style.main); // default 값임
+
+    if (horizontal)
+        className.push(style.horizontal);
 
     return <div onClick={() => navigate("/watch")} className={className.join(" ")}>
         <div className={style.thumnail}>

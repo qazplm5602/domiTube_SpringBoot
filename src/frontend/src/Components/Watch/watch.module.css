@@ -354,7 +354,7 @@
 }
 
 .main > .recommand_container {
-    width: 350px;
+    width: 400px;
     border: 1px solid green;
 
     flex-shrink: 0;
