@@ -1,0 +1,92 @@
+.main {
+    display: flex;
+    
+    align-items: center;
+    justify-content: center;
+
+    flex-direction: column;
+}
+
+.main > .title {
+    font-size: 30px;
+    font-weight: 800;
+
+    color: white;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+
+    margin-bottom: 30px;
+}
+
+.main > .input {
+    margin-top: 20px;
+}
+
+.main > .input > h2 {
+    font-size: 15px;
+    margin: 0;
+    
+    margin-bottom: 5px;
+}
+
+.main > .input > input {
+    width: 350px;
+    
+    outline: none;
+    
+    font-size: 15px;
+    background-color: rgba(255, 255, 255, 0.08);
+
+    padding: 5px 8px;
+    border: 2px solid transparent;
+    border-radius: 3px;
+
+    box-sizing: border-box;
+
+    transition: background-color 250ms, border-color 100ms;
+}
+
+.main > .input > input:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.main > .input > input:focus {
+    border: 2px solid rgba(255, 255, 255, 0.6);
+}
+
+.main > .help {
+    width: 350px;
+
+    font-size: 13px;
+    font-weight: 400;
+
+    margin-top: 4px;
+
+    /* width: 350px; */
+}
+
+.main > .help > a {
+    text-decoration-line: none;
+    color: gray;
+}
+
+.login {
+    width: 350px;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    margin-top: 50px;
+    padding: 8px 0;
+
+    cursor: pointer;
+    
+    border: none;
+    border-radius: 5px;
+    background-color: rgb(106, 163, 68);
+
+    transition: background-color 100ms;
+}
+
+.login:hover {
+    background-color: rgb(84, 129, 53);
+}
