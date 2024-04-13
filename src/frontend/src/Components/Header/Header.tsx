@@ -1,10 +1,13 @@
-import { Link } from 'react-router-dom';
 import style from './header.module.css';
 
 import youtubeLogo from './youtube.svg';
 import listSVG from './list.svg';
 import searchSVG from './search.svg';
+import logoutSVG from './logout.svg';
+
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import Button from '../Recycle/Button';
 
 export default function Header({sideState}: {sideState: [boolean, React.Dispatch<React.SetStateAction<boolean>>]}): JSX.Element {
     return <header className={style.main}>
@@ -18,6 +21,7 @@ export default function Header({sideState}: {sideState: [boolean, React.Dispatch
         <Section>
             <Link to="/login" className={style.login}><button>로그인</button></Link>
             <IconButton className={[style.myProfile]} text='프로필' icon='https://nng-phinf.pstatic.net/MjAyMjA2MTdfNzcg/MDAxNjU1NDYwOTk4MzIx.2GtboKl1AANbxW8mwf7_-3rl1joA5z70GdLSuhVzWssg.ubvmA6JPVkX2fRl0DLLBKY9eBbL2Gh3cN03_MMAwnuAg.PNG/1.png?type=f120_120_na' />
+            <AccountMenu />
         </Section>
     </header>;
 }
@@ -45,5 +49,27 @@ function SearchBox() {
     return <Section className={classList.join(" ")}>
         <input placeholder='검색' type="text" onFocus={() => setFocus(true)} onBlur={() => setFocus(false)} />
         <IconButton icon={searchSVG} />
+    </Section>;
+}
+
+function LinkButton({to, icon, text, className}: {to: string, icon?: string, className?: string, text: string}) {
+    return <Link className={className} to={to}><Button icon={icon}>
+        {text}
+    </Button></Link>
+}
+
+function AccountMenu() {
+    return <Section className={style.accountMenu}>
+        <div className={style.account}>
+            <img src="https://nng-phinf.pstatic.net/MjAyMjA2MTdfNzcg/MDAxNjU1NDYwOTk4MzIx.2GtboKl1AANbxW8mwf7_-3rl1joA5z70GdLSuhVzWssg.ubvmA6JPVkX2fRl0DLLBKY9eBbL2Gh3cN03_MMAwnuAg.PNG/1.png?type=f120_120_na" />
+            <div className={style.info}>
+                <span>qazplm5602</span>
+                <span>도미임</span>
+            </div>
+        </div>
+
+        <div className={style.line}></div>
+
+        <LinkButton className={style.linkBtn} to="/logout" icon={logoutSVG} text="로그아웃" />
     </Section>;
 }

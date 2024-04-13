@@ -157,3 +157,105 @@
     border-radius: 50%;
     overflow: hidden;
 }
+
+.accountMenu {
+    position: absolute;
+
+    top: 65px;
+    right: 10px;
+
+    width: 250px;
+    /* height: 500px; */
+    height: max-content;
+    padding: 13px;
+
+    border-radius: 10px;
+    background-color: #1d1f22;
+    backdrop-filter: blur(20px);
+
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+
+    z-index: 1;
+}
+
+.accountMenu > .account {
+    display: flex;
+    border-radius: 5px;
+    /* align-items: center; */
+
+    padding: 8px 10px;
+}
+
+.accountMenu > .account:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.accountMenu > .account > img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.accountMenu > .account > .info {
+    display: flex;
+    flex-direction: column;
+
+    margin-left: 10px;
+}
+
+.accountMenu > .account > .info > span:nth-child(1) {
+    font-size: 13px;
+    color: gray;
+}
+
+.accountMenu > .account > .info > span:nth-child(2) {
+    font-size: 16px;
+    font-weight: 600;
+
+    /* margin-top: 2px; */
+}
+
+.accountMenu > .line {
+    width: 100%;
+    height: 1px;
+    
+    background-color: rgba(255, 255, 255, 0.1);
+
+    margin: 10px 0;
+}
+
+.accountMenu > .linkBtn {
+    text-decoration: none;    
+}
+
+.accountMenu > .linkBtn > button {
+    width: 100%;
+    height: 35px;
+    padding: 0 5px;
+
+    display: flex;
+    align-items: center;
+
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    
+    background-color: transparent;
+    border: none;
+    border-radius: 5px;
+
+    cursor: pointer;
+}
+
+.accountMenu > .linkBtn > button:not(:first-child) {
+    margin-bottom: 5px;
+}
+
+.accountMenu > .linkBtn > button:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.accountMenu > .linkBtn > button > img {
+    margin-right: 5px;
+}
