@@ -1,9 +1,13 @@
 package com.domi.domitube.Service;
 
+import com.domi.domitube.DTO.JWTparseDTO;
 import com.domi.domitube.DTO.JWTtokenDTO;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +18,12 @@ import java.util.Date;
 public class JWTservice {
     @Value("${jwt.secret.key}")
     private String SECRET_KEY;
-    final SecretKey Key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET_KEY));
+    SecretKey Key;
+
+    @PostConstruct
+    public void Init() {
+        Key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET_KEY));
+    }
 
     public JWTtokenDTO CreateToken(String id) {
         Date nowTime = new Date();
@@ -37,6 +46,19 @@ public class JWTservice {
         return JWTtokenDTO.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .build();
+    }
+
+    public JWTparseDTO ParseToken(String token) {
+        Claims claim = Jwts.parser()
+                .verifyWith(Key)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+
+        return JWTparseDTO.builder()
+                .id(claim.getId())
+                .type((Boolean)claim.get("refresh") ? JWTparseDTO.Type.Refresh : JWTparseDTO.Type.Refresh)
                 .build();
     }
 }
