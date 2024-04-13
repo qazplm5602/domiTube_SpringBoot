@@ -56,9 +56,10 @@ public class JWTservice {
                 .parseSignedClaims(token)
                 .getPayload();
 
-        return JWTparseDTO.builder()
-                .id(claim.getId())
-                .type((Boolean)claim.get("refresh") ? JWTparseDTO.Type.Refresh : JWTparseDTO.Type.Refresh)
-                .build();
+        var builder = JWTparseDTO.builder();
+        builder.id(claim.get("id").toString());
+        builder.type(claim.get("refresh") == null ? JWTparseDTO.Type.Access : JWTparseDTO.Type.Refresh);
+
+        return builder.build();
     }
 }
