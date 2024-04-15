@@ -2,6 +2,7 @@ package com.domi.domitube.Service;
 
 import com.domi.domitube.Repository.Entity.User;
 import com.domi.domitube.Repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,5 +18,12 @@ public class UserService {
     public User GetUserForId(String id) {
         Optional<User> option = userRepository.findById(id);
         return option.orElse(null);
+    }
+
+    public User GetUserForRequest(HttpServletRequest request) {
+        Object boxing = request.getAttribute("user.id");
+        if (boxing == null) return null;
+
+        return GetUserForId(boxing.toString());
     }
 }

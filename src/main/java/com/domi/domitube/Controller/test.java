@@ -13,11 +13,11 @@ public class test
 {
     @GetMapping("/ping")
     Map<String, Object> Ping(HttpServletRequest request) {
-        String myID = "";
+            String myID = "";
 
-        Object boxing = request.getAttribute("user.id");
-        if (boxing != null)
-            myID = boxing.toString();
+            Object boxing = request.getAttribute("user.id");
+            if (boxing != null)
+                myID = boxing.toString();
 
         return Map.of(
             "result", true,

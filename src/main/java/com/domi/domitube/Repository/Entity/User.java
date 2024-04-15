@@ -21,6 +21,9 @@ public class User {
     @Column(length = 100, nullable = false)
     String password;
 
+    @Column(nullable = false)
+    Boolean banned;
+
     @OneToMany
     List<Video> videos;
 }
