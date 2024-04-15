@@ -1,6 +1,6 @@
 export interface response {
     code: number,
-    data: object
+    data: any
 }
 
 export async function request(url: string, option: RequestInit = {}): Promise<response> {
