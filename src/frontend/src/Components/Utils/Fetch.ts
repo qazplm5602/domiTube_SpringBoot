@@ -19,7 +19,7 @@ export async function request(url: string, option: RequestInit = {}): Promise<re
     const response = await fetch(url, option);
     if (response.status === 401) {
         const data = await response.json().catch(() => {});
-        if (data !== undefined && data.code === "JWT006") { // refresh 토큰으로 다시 에세스 토큰 받아옴
+        if (data !== undefined && data.code === "JWT003") { // refresh 토큰으로 다시 에세스 토큰 받아옴
             if (processRefresh === undefined) {
                 processRefresh = tokenRefresh();
             }
@@ -39,6 +39,21 @@ export async function request(url: string, option: RequestInit = {}): Promise<re
 }
 
 async function tokenRefresh(): Promise<boolean> {
+    const refreshToken = localStorage.getItem("refreshToken");
+    if (refreshToken == null) // 리프레시 토큰이 없으니까 그냥 에세스 토큰 발급 못함 ㅅㄱ
+        return false;
+
+    const response = await fetch("/api/relogin", {
+        method: "POST",
+        body: refreshToken
+    }).then(value => value.json()).catch(() => {});
+
+    let success = false;
+    if (response !== undefined && response.success === true && response.accessToken !== undefined) {
+        localStorage.setItem("accessToken", response.accessToken);
+        success = true;
+    }
+    
     processRefresh = undefined;
-    return true;
+    return success;
 }

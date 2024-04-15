@@ -31,7 +31,7 @@ public class JWTservice {
         String accessToken = Jwts.builder()
                 .claim("id", id)
                 .issuer("domi")
-                .expiration(new Date(nowTime.getTime() + 3_600_000))
+                .expiration(new Date(nowTime.getTime() + 30000))
                 .signWith(Key)
                 .compact();
 
