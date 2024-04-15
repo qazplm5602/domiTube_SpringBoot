@@ -11,10 +11,12 @@ import Home from './Components/Home/Home.tsx'
 import Watch from './Components/Watch/Watch.tsx'
 import Channel from './Components/Channel/Channel.tsx'
 import Login from './Components/Login/Login.tsx'
+import AccountSys from './Components/System/AccountSys.tsx'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <Provider store={Store}>
+      <AccountSys />
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<Home />} />
