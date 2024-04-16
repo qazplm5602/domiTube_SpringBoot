@@ -25,7 +25,7 @@ public class JWTservice {
         Key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET_KEY));
     }
 
-    public JWTtokenDTO CreateToken(String id) {
+    public JWTtokenDTO CreateToken(String id, Boolean refreshIgnore) {
         Date nowTime = new Date();
 
         String accessToken = Jwts.builder()
@@ -35,13 +35,16 @@ public class JWTservice {
                 .signWith(Key)
                 .compact();
 
-        String refreshToken = Jwts.builder()
+        String refreshToken = "";
+        if (!refreshIgnore) {
+            refreshToken = Jwts.builder()
                 .claim("id", id)
                 .claim("refresh", true)
                 .issuer("domi")
                 .expiration(new Date(nowTime.getTime() + 3_600_000))
                 .signWith(Key)
                 .compact();
+        }
 
         return JWTtokenDTO.builder()
                 .accessToken(accessToken)
@@ -49,7 +52,11 @@ public class JWTservice {
                 .build();
     }
 
-    public JWTparseDTO ParseToken(String token) {
+    public JWTtokenDTO CreateToken(String id) {
+        return CreateToken(id, false);
+    }
+
+        public JWTparseDTO ParseToken(String token) {
         Claims claim = Jwts.parser()
                 .verifyWith(Key)
                 .build()

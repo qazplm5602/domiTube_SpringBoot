@@ -13,6 +13,7 @@ export default function AccountSys() {
         }
         
         const response = await request("/api/user/my");
+        console.log("/api/user/my", response);
         
         // 안됨
         if (response.code !== 200 || response.data === undefined || response.data.result !== true) {
