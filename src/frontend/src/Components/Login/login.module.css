@@ -69,6 +69,14 @@
     color: gray;
 }
 
+.main > .error {
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 10px;
+
+    color: rgb(207, 57, 57);
+}
+
 .login {
     width: 350px;
 

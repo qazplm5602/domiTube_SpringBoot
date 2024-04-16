@@ -6,10 +6,21 @@ import searchSVG from './search.svg';
 import logoutSVG from './logout.svg';
 
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import Button from '../Recycle/Button';
 
+import StoreType from '../Redux/Type';
+import { IloginStore } from '../Redux/LoginStore';
+
 export default function Header({sideState}: {sideState: [boolean, React.Dispatch<React.SetStateAction<boolean>>]}): JSX.Element {
+    const [showAccount, setShowAccount] = useState(false);
+    const login = useSelector<StoreType>(value => value.login) as IloginStore;
+
+    const accountMenuToggle = function() {
+        setShowAccount(!showAccount);
+    }
+
     return <header className={style.main}>
         <Section>
             <IconButton onClick={() => sideState[1](!sideState[0])} icon={listSVG} text="목록" />
@@ -19,9 +30,9 @@ export default function Header({sideState}: {sideState: [boolean, React.Dispatch
         <SearchBox />
 
         <Section>
-            <Link to="/login" className={style.login}><button>로그인</button></Link>
-            <IconButton className={[style.myProfile]} text='프로필' icon='https://nng-phinf.pstatic.net/MjAyMjA2MTdfNzcg/MDAxNjU1NDYwOTk4MzIx.2GtboKl1AANbxW8mwf7_-3rl1joA5z70GdLSuhVzWssg.ubvmA6JPVkX2fRl0DLLBKY9eBbL2Gh3cN03_MMAwnuAg.PNG/1.png?type=f120_120_na' />
-            <AccountMenu />
+            {!login.logined && <Link to="/login" className={style.login}><button>로그인</button></Link>}
+            {login.logined && <IconButton className={[style.myProfile]} onClick={accountMenuToggle} text='프로필' icon='https://nng-phinf.pstatic.net/MjAyMjA2MTdfNzcg/MDAxNjU1NDYwOTk4MzIx.2GtboKl1AANbxW8mwf7_-3rl1joA5z70GdLSuhVzWssg.ubvmA6JPVkX2fRl0DLLBKY9eBbL2Gh3cN03_MMAwnuAg.PNG/1.png?type=f120_120_na' />}
+            {(login.logined && showAccount) && <AccountMenu login={login} />}
         </Section>
     </header>;
 }
@@ -58,13 +69,13 @@ function LinkButton({to, icon, text, className}: {to: string, icon?: string, cla
     </Button></Link>
 }
 
-function AccountMenu() {
+function AccountMenu({ login }: { login: IloginStore }) {
     return <Section className={style.accountMenu}>
         <div className={style.account}>
             <img src="https://nng-phinf.pstatic.net/MjAyMjA2MTdfNzcg/MDAxNjU1NDYwOTk4MzIx.2GtboKl1AANbxW8mwf7_-3rl1joA5z70GdLSuhVzWssg.ubvmA6JPVkX2fRl0DLLBKY9eBbL2Gh3cN03_MMAwnuAg.PNG/1.png?type=f120_120_na" />
             <div className={style.info}>
-                <span>qazplm5602</span>
-                <span>도미임</span>
+                <span>{login.id}</span>
+                <span>{login.name}</span>
             </div>
         </div>
 
