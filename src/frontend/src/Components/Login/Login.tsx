@@ -15,6 +15,49 @@ export default function Login() {
     const [errorT, setErrorT] = useState("");
     const [id, setId] = useState("");
     const [password, setPassword] = useState("");
+    const [disabled, setDisabled] = useState(false);
+    
+
+    const loginClick = async function() {
+        setErrorT("");
+
+        if (id.length == 0 || password.length == 0) {
+            setErrorT("아이디 및 비밀번호를 입력하세요.");
+            return;
+        }
+
+        setDisabled(true);
+        
+        const response = await fetch("/api/login", {
+            method: "POST",
+            body: JSON.stringify({
+                id,
+                password
+            })
+        });
+        const message = await response.json().catch(() => {});
+
+        setDisabled(false);
+
+        if (response.status !== 200) {
+            setErrorT(`서버 오류. (${response.status})`);
+            return;
+        }
+        
+        if (message === undefined) {
+            setErrorT("데이터를 읽을 수 없습니다.");
+            return;
+        }
+
+        if (!message.result) {
+            setErrorT(message.reason);
+            return;
+        }
+
+        localStorage.setItem("accessToken", message.data.accessToken);
+        localStorage.setItem("refreshToken", message.data.refreshToken);
+        location.href = "/";
+    }
 
     useEffect(() => {
         if (logined) // 이미 로그인 중인디???
@@ -30,6 +73,6 @@ export default function Login() {
         <div className={style.help}><Link to="/">비밀번호를 잊으셨나요?</Link></div>
         <div className={style.error}>{errorT}</div>
 
-        <Button className={style.login}>로그인</Button>
+        <Button className={style.login} onClick={loginClick} disabled={disabled}>로그인</Button>
     </MainLayout>;
 }

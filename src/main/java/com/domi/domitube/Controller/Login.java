@@ -20,7 +20,12 @@ public class Login {
 
     @PostMapping("/login")
     Map<String, Object> Login() {
-        return Map.of("hello", passwordEncoder.encode("adadsadasdsadsadasdasda"));
+        return Map.of(
+            "origin", "domi",
+            "encode", passwordEncoder.encode("domi"),
+            "check", passwordEncoder.matches("domi", passwordEncoder.encode("domi")),
+            "check2", passwordEncoder.matches("doming", passwordEncoder.encode("domi"))
+        );
     }
 
     @PostMapping("/relogin")
