@@ -3,6 +3,7 @@ package com.domi.domitube.Controller;
 import com.domi.domitube.DTO.JWTparseDTO;
 import com.domi.domitube.Service.JWTservice;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,12 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class Login {
     final JWTservice jwtService;
+    final PasswordEncoder passwordEncoder;
+
+    @PostMapping("/login")
+    Map<String, Object> Login() {
+        return Map.of("hello", passwordEncoder.encode("adadsadasdsadsadasdasda"));
+    }
 
     @PostMapping("/relogin")
     Map<String, Object> CreateAccessForRefreshToken(@RequestBody String token) {
