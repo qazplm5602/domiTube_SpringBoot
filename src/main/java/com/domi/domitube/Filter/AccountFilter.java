@@ -39,12 +39,6 @@ public class AccountFilter implements Filter {
 
         // JWT 처리
         if (headAuth != null && headAuth.startsWith("Bearer ")) {
-            //TEST
-            JWTtokenDTO asdasd = jwtService.CreateToken("domi");
-            System.out.println("access: "+asdasd.getAccessToken());
-            System.out.println("refresh: "+asdasd.getRefreshToken());
-            //TEST
-
             String token = headAuth.substring(7);
             String errorReason = "";
             String errorCode = "";
