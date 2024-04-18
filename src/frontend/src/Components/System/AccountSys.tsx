@@ -27,7 +27,8 @@ export default function AccountSys() {
             loading: false,
 
             id: response.data.id,
-            name: response.data.name
+            name: response.data.name,
+            image: response.data.image
         });
     }
 

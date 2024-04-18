@@ -22,6 +22,9 @@ public class User {
     String password;
 
     @Column(nullable = false)
+    Boolean image;
+
+    @Column(nullable = false)
     Boolean banned;
 
     @OneToMany

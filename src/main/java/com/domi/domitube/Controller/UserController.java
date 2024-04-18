@@ -27,7 +27,8 @@ public class UserController {
         return Map.of(
             "result", true,
             "id", user.getId(),
-            "name", user.getName()
+            "name", user.getName(),
+            "image", user.getImage()
         );
     }
 }

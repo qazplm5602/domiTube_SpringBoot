@@ -4,7 +4,7 @@ export interface IloginStore {
 
     id: string | null,
     name: string | null,
-    image: string | null,
+    image: boolean | null,
 }
 
 const defaultStore: IloginStore = {

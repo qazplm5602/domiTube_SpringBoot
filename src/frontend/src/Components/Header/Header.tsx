@@ -4,6 +4,7 @@ import youtubeLogo from './youtube.svg';
 import listSVG from './list.svg';
 import searchSVG from './search.svg';
 import logoutSVG from './logout.svg';
+import noProfile from '../../assets/no-profile.png';
 
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -31,7 +32,7 @@ export default function Header({sideState}: {sideState: [boolean, React.Dispatch
 
         <Section>
             {!login.logined && <Link to="/login" className={style.login}><button>로그인</button></Link>}
-            {login.logined && <IconButton className={[style.myProfile]} onClick={accountMenuToggle} text='프로필' icon='https://nng-phinf.pstatic.net/MjAyMjA2MTdfNzcg/MDAxNjU1NDYwOTk4MzIx.2GtboKl1AANbxW8mwf7_-3rl1joA5z70GdLSuhVzWssg.ubvmA6JPVkX2fRl0DLLBKY9eBbL2Gh3cN03_MMAwnuAg.PNG/1.png?type=f120_120_na' />}
+            {login.logined && <IconButton className={[style.myProfile]} onClick={accountMenuToggle} text='프로필' icon={(login.image ? `/api/image/user/${login.id}` : noProfile)} />}
             {(login.logined && showAccount) && <AccountMenu login={login} />}
         </Section>
     </header>;
@@ -72,7 +73,7 @@ function LinkButton({to, icon, text, className}: {to: string, icon?: string, cla
 function AccountMenu({ login }: { login: IloginStore }) {
     return <Section className={style.accountMenu}>
         <div className={style.account}>
-            <img src="https://nng-phinf.pstatic.net/MjAyMjA2MTdfNzcg/MDAxNjU1NDYwOTk4MzIx.2GtboKl1AANbxW8mwf7_-3rl1joA5z70GdLSuhVzWssg.ubvmA6JPVkX2fRl0DLLBKY9eBbL2Gh3cN03_MMAwnuAg.PNG/1.png?type=f120_120_na" />
+            <img src={(login.image ? `/api/image/user/${login.id}` : noProfile)} />
             <div className={style.info}>
                 <span>{login.id}</span>
                 <span>{login.name}</span>
