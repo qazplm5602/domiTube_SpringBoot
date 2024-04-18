@@ -40,26 +40,20 @@ public class UserController {
     }
 
     @GetMapping("/user/my_subscribes")
-    ResponseEntity<Collection<SubscribeQueryDTO>> GetMySubscribes(HttpServletRequest request) {
+    Map<String, Object> GetMySubscribes(HttpServletRequest request) {
         User user = userService.GetUserForRequest(request);
         if (user == null) {
-//            return Map.of("result", false);
-            return null;
+            return Map.of("result", false);
         }
 
         List<String> result = new ArrayList<>();
-        var domi = subscribeService.GetSubscribeUsers(user.getId());
-        System.out.println(domi.size());
-//        System.out.println(domi.get(0).getId());
-        System.out.println(domi.get(0).getTargetId());
-
-//        for (var item : )
-//            result.add(item.GetTargetId());
-
-        return null;
-//        return Map.of(
-//            "result", true,
-//            "data", result
-//        );
+        for(var row : subscribeService.GetSubscribeUsers(user.getId())) {
+            result.add(row.gettargetId());
+        }
+        
+        return Map.of(
+            "result", true,
+            "data", result
+        );
     }
 }

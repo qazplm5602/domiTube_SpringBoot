@@ -11,6 +11,6 @@ import java.util.List;
 
 @Repository
 public interface SubscribeRepository extends JpaRepository<Subscribe, Object> {
-    @Query("SELECT targetId FROM Subscribe WHERE id = :id")
+    @Query("SELECT targetId as targetId FROM Subscribe WHERE id = :id")
     List<SubscribeQueryDTO> FindTargetIdsForId(@Param("id") String id);
 }
