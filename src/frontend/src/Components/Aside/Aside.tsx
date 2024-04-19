@@ -4,11 +4,31 @@ import style from './aside.module.css';
 
 import homeSvg from './home.svg';
 import { useEffect, useState } from 'react';
+import { request } from '../Utils/Fetch';
+import IStore from '../Redux/Type';
+import { useSelector } from 'react-redux';
 
 export default function Aside({sideState, forceHide = false}: {forceHide?: boolean, sideState: [boolean, React.Dispatch<React.SetStateAction<boolean>>]}) {
+    const logined = useSelector<IStore>(value => value.login.logined) as boolean;
+
     const [minimun, setMinimun] = useState(false);
+    const [subscribes, setSubscribes] = useState<any>(false);
+
     const screenChange = function(e: MediaQueryListEvent) {
         setMinimun(e.matches || forceHide);
+    }
+    const requestSubscribes = async function() {
+        const { code, data } = await request("/api/user/my_subscribes");
+        
+        if (code !== 200 || data?.result !== true) return;
+
+        const waitPromises: Promise<{code: number, data: any}>[] = [];
+        data.data.forEach((channelId: string) => {
+            waitPromises.push(request("/api/channel/info"));
+        });
+
+        const channels = (await Promise.all(waitPromises)).map(response => response.data);
+        console.log(channels, "hello!");
     }
 
     useEffect(() => {
@@ -23,6 +43,12 @@ export default function Aside({sideState, forceHide = false}: {forceHide?: boole
         if (minimun && sideState[0])
             sideState[1](false);
     }, [minimun]);
+
+    useEffect(() => {
+        console.log(logined);
+        if (logined === true)
+            requestSubscribes();
+    }, [logined]);
 
     return <>
         {((!sideState[0] || minimun) && !forceHide) && <ShortSide />}
