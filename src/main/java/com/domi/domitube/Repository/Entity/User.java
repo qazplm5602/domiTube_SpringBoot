@@ -27,6 +27,9 @@ public class User {
     @Column(nullable = false)
     Boolean banned;
 
+    @Column(nullable = false)
+    Boolean banner;
+
     @OneToMany
     List<Video> videos;
 }

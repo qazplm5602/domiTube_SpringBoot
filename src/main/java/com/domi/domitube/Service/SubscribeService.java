@@ -17,4 +17,13 @@ public class SubscribeService {
     public List<SubscribeQueryDTO> GetSubscribeUsers(String id) {
         return subscribeRepository.FindTargetIdsForId(id);
     }
+
+    // 유저를 구독한 사람들 불러옴
+    public List<SubscribeQueryDTO> GetSubscribers(String id) {
+        return subscribeRepository.FindIdsForTargetId(id);
+    }
+
+    public Boolean HasSubscribeUser(String id, String target) {
+        return subscribeRepository.IsUserSubscribe(id, target) == 1;
+    }
 }

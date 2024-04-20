@@ -49,7 +49,6 @@ public class AccountFilter implements Filter {
                     errorCode = "JWT006";
                     errorReason = "엑세스 토큰으로 발급 후 호출하세요.";
                 } else {
-                    System.out.println("user.id "+jwt.getId());
                     servletRequest.setAttribute("user.id", jwt.getId());
                 }
             } catch (MalformedJwtException e) {

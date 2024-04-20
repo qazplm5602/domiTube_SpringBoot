@@ -2,10 +2,13 @@ package com.domi.domitube.Repository.Entity;
 
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.Getter;
 
 import java.util.List;
 
 @Entity
+@Data
 @Table(name = "Video")
 public class Video {
     @Id
