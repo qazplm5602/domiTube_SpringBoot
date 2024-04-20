@@ -8,6 +8,8 @@ export interface response {
 
 export async function request(url: string, option: RequestInit = {}): Promise<response> {
     const accessToken = localStorage.getItem("accessToken");
+    const originOption = {...option};
+
     if (accessToken) {
         Object.assign(option, {
             headers: {
@@ -27,7 +29,7 @@ export async function request(url: string, option: RequestInit = {}): Promise<re
             // 대기...
             if (await processRefresh) {
                 // 다시 호출 ㄱㄱ
-                return await request(url, option);
+                return await request(url, originOption);
             }
         }
     }
@@ -51,6 +53,10 @@ async function tokenRefresh(): Promise<boolean> {
     let success = false;
     if (response !== undefined && response.success === true && response.accessToken !== undefined) {
         localStorage.setItem("accessToken", response.accessToken);
+        success = true;
+    } else {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
         success = true;
     }
     
