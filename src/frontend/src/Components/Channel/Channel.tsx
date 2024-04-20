@@ -7,10 +7,11 @@ import Button from "../Recycle/Button";
 
 import loveSvg from './love.svg';
 import VideoBox from "../Recycle/VideoBox";
+import { useState } from "react";
 
-const pages: {[key: string]: () => React.ReactNode} = {
-    home: Home,
-    video: VideoAll
+const pages: {[key: string]: JSX.Element} = {
+    home: <Home />,
+    video: <VideoAll />
 }
 
 export default function Channel() {
@@ -48,7 +49,7 @@ export default function Channel() {
         </Section>
 
         <main className={style.contentWrapper}>
-            {pages[menu || "home"]()}
+            {pages[menu || "home"]}
         </main>
     </MainLayout>
 }
