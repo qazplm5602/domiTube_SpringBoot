@@ -28,7 +28,7 @@ export default function Aside({sideState, forceHide = false}: {forceHide?: boole
 
         const waitPromises: Promise<{code: number, data: any}>[] = [];
         data.data.forEach((channelId: string) => {
-            waitPromises.push(request(`/api/channel/${channelId}/info/?min=1`));
+            waitPromises.push(request(`/api/channel/${channelId}/info?min=1`));
         });
 
         const channels = (await Promise.all(waitPromises)).filter(response => response.code === 200).map(response => response.data) as minChannel[];
@@ -83,7 +83,7 @@ function DetailSide({fixed, open, subscribes}: {fixed: boolean, open: boolean, s
         {subscribes !== false && <div className={style.title} style={{margin: "15px 15px", marginBottom: "5px"}}>구독</div>}
         
         {/* ---- 구독 콘텐츠 ---- */}
-        {(typeof subscribes === "object") && subscribes.map(value => <Link to={`/channel/${value.id}`}>
+        {(typeof subscribes === "object") && subscribes.map(value => <Link key={value.id} to={`/channel/${value.id}`}>
             <Button icon={(value.icon ? `/api/image/user/${value.id}` : noProfile)} className={[style.menu, style.channel].join(" ")}>{value.name}</Button>
         </Link> )}
     </aside>;

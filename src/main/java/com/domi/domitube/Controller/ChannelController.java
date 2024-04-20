@@ -36,6 +36,7 @@ public class ChannelController {
         }
 
         return Map.of(
+                "id", id,
                 "name", user.getName(),
                 "icon", user.getImage(),
                 "banner", user.getBanner(),

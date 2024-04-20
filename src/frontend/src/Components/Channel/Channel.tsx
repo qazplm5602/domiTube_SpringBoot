@@ -9,7 +9,8 @@ import loveSvg from './love.svg';
 import noProfile from '../../assets/no-profile.png';
 
 import VideoBox from "../Recycle/VideoBox";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { request } from "../Utils/Fetch";
 
 
 const pages: {[key: string]: JSX.Element} = {
@@ -21,7 +22,7 @@ interface channelMain {
     name: string,
     icon: boolean,
     banner: boolean,
-    follwer: number,
+    follower: number,
     subscribe: boolean,
 }
 
@@ -36,6 +37,24 @@ export default function Channel() {
         navigate(`/channel/${id}/${path}`);
     }
 
+    const getChannelData = async function() {
+        const { code, data } = await request(`/api/channel/${id}/info`);
+        if (code !== 200) {
+            if (code === 404) {
+                setError("존재하지 않는 채널 입니다.");
+            }
+
+
+            return;
+        }
+
+        setChannelData(data);
+    }
+
+    useEffect(() => {
+        getChannelData();
+    }, [id]);
+
     if (typeof error !== "boolean") {
         return <MainLayout>
             error: {error}
@@ -45,17 +64,17 @@ export default function Channel() {
     return <MainLayout>
         <Section className={style.headWrapper}>
             <div className={style.head}>
-                {channelData?.banner === true && <img className={style.banner} src="https://yt3.googleusercontent.com/hBenzrqZBR7IB6c8JFhD1Vj4l3gPSjFYr05Ijm46-kZQjpbdI6l8HYhm5p15PLQX9IrTzjORIQ=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj" />}
+                {channelData?.banner === true && <img className={style.banner} src={`/api/image/banner/${id}`} />}
 
                 <div className={style.info}>
                     <img className={style.image} src={(channelData?.icon === true) ? `/api/image/user/${id}` : noProfile} />
                     
                     <div className={style.texts}>
                         <span className={style.title}>{channelData?.name}</span>
-                        <span className={style.sub}>구독자 {(channelData !== null) ? channelData.follwer : "--"}명</span>
+                        <span className={style.sub}>구독자 {(channelData !== null) ? channelData.follower : "--"}명</span>
                     </div>
 
-                    <SubscribeButton active={false} />
+                    <SubscribeButton active={channelData?.subscribe === true} />
                     {/* <Button className={style.subscribe} icon={loveSvg}>구독</Button> */}
                     {/* <Button className={[style.subscribe, style.active].join(" ")} icon={loveSvg}>구독취소</Button> */}
                 </div>

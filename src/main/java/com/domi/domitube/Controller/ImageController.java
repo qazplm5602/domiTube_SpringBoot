@@ -34,6 +34,19 @@ public class ImageController {
                 .body(resource);
     }
 
+    @GetMapping("/banner/{id}")
+    ResponseEntity<UrlResource> GetBannerIcon(@PathVariable String id) {
+        UrlResource resource = GetFile(ImageCategory.banner, id+".jpg"); // 파일 불러왕
+
+        if (resource == null) { // 파일 없음
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok()
+                .header("Content-Type", "image/jpg")
+                .body(resource);
+    }
+
     UrlResource GetFile(ImageCategory type, String file) {
         UrlResource resource = null;
         String path = String.format("file:%s/%s/%s", startPath, type.toString(), file);
