@@ -6,33 +6,53 @@ import style from './channel.module.css';
 import Button from "../Recycle/Button";
 
 import loveSvg from './love.svg';
+import noProfile from '../../assets/no-profile.png';
+
 import VideoBox from "../Recycle/VideoBox";
 import { useState } from "react";
+
 
 const pages: {[key: string]: JSX.Element} = {
     home: <Home />,
     video: <VideoAll />
 }
 
+interface channelMain {
+    name: string,
+    icon: boolean,
+    banner: boolean,
+    follwer: number,
+    subscribe: boolean,
+}
+
 export default function Channel() {
     const { id, menu } = useParams();
     const navigate = useNavigate();
+
+    const [error, setError] = useState<string | boolean>(false);
+    const [channelData, setChannelData] = useState<channelMain | null>(null);
 
     const redirection = function(path: string) {
         navigate(`/channel/${id}/${path}`);
     }
 
+    if (typeof error !== "boolean") {
+        return <MainLayout>
+            error: {error}
+        </MainLayout>;
+    }
+
     return <MainLayout>
         <Section className={style.headWrapper}>
             <div className={style.head}>
-                <img className={style.banner} src="https://yt3.googleusercontent.com/hBenzrqZBR7IB6c8JFhD1Vj4l3gPSjFYr05Ijm46-kZQjpbdI6l8HYhm5p15PLQX9IrTzjORIQ=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj" />
+                {channelData?.banner === true && <img className={style.banner} src="https://yt3.googleusercontent.com/hBenzrqZBR7IB6c8JFhD1Vj4l3gPSjFYr05Ijm46-kZQjpbdI6l8HYhm5p15PLQX9IrTzjORIQ=w2560-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj" />}
 
                 <div className={style.info}>
-                    <img className={style.image} src="https://nng-phinf.pstatic.net/MjAyMjA2MTdfNzcg/MDAxNjU1NDYwOTk4MzIx.2GtboKl1AANbxW8mwf7_-3rl1joA5z70GdLSuhVzWssg.ubvmA6JPVkX2fRl0DLLBKY9eBbL2Gh3cN03_MMAwnuAg.PNG/1.png?type=f120_120_na" />
+                    <img className={style.image} src={(channelData?.icon === true) ? `/api/image/user/${id}` : noProfile} />
                     
                     <div className={style.texts}>
-                        <span className={style.title}>도미임</span>
-                        <span className={style.sub}>구독자 50만명</span>
+                        <span className={style.title}>{channelData?.name}</span>
+                        <span className={style.sub}>구독자 {(channelData !== null) ? channelData.follwer : "--"}명</span>
                     </div>
 
                     <SubscribeButton active={false} />
