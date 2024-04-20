@@ -8,11 +8,15 @@ import { request } from '../Utils/Fetch';
 import IStore from '../Redux/Type';
 import { useSelector } from 'react-redux';
 
+import noProfile from '../../assets/no-profile.png';
+
+type minChannel = {id:string, name: string, icon: boolean};
+
 export default function Aside({sideState, forceHide = false}: {forceHide?: boolean, sideState: [boolean, React.Dispatch<React.SetStateAction<boolean>>]}) {
     const logined = useSelector<IStore>(value => value.login.logined) as boolean;
 
     const [minimun, setMinimun] = useState(false);
-    const [subscribes, setSubscribes] = useState<any>(false);
+    const [subscribes, setSubscribes] = useState<minChannel[] | boolean>(false);
 
     const screenChange = function(e: MediaQueryListEvent) {
         setMinimun(e.matches || forceHide);
@@ -24,11 +28,11 @@ export default function Aside({sideState, forceHide = false}: {forceHide?: boole
 
         const waitPromises: Promise<{code: number, data: any}>[] = [];
         data.data.forEach((channelId: string) => {
-            waitPromises.push(request("/api/channel/info"));
+            waitPromises.push(request(`/api/channel/${channelId}/info/?min=1`));
         });
 
-        const channels = (await Promise.all(waitPromises)).map(response => response.data);
-        console.log(channels, "hello!");
+        const channels = (await Promise.all(waitPromises)).filter(response => response.code === 200).map(response => response.data) as minChannel[];
+        setSubscribes(channels);
     }
 
     useEffect(() => {
@@ -45,18 +49,17 @@ export default function Aside({sideState, forceHide = false}: {forceHide?: boole
     }, [minimun]);
 
     useEffect(() => {
-        console.log(logined);
         if (logined === true)
             requestSubscribes();
     }, [logined]);
 
     return <>
         {((!sideState[0] || minimun) && !forceHide) && <ShortSide />}
-        {(sideState[0] || minimun) && <DetailSide fixed={minimun} open={sideState[0]} />}
+        {(sideState[0] || minimun) && <DetailSide fixed={minimun} open={sideState[0]} subscribes={subscribes} />}
     </>;
 }
 
-function DetailSide({fixed, open}: {fixed: boolean, open: boolean}) {
+function DetailSide({fixed, open, subscribes}: {fixed: boolean, open: boolean, subscribes: minChannel[] | boolean}) {
     const classList = [style.side];
     if (fixed) {
         classList.push(style.fixed);
@@ -76,11 +79,13 @@ function DetailSide({fixed, open}: {fixed: boolean, open: boolean}) {
 
         <div className={style.line}></div>
 
-        {/* ---- 구독 ---- */}
-        <div className={style.title} style={{margin: "15px 15px", marginBottom: "5px"}}>구독</div>
-        <Link to="/">
-            <Button icon="https://yt3.ggpht.com/_QGPHrnarLactSDLIisKwBFZ58FiqlaGVJNTznx5KaP75-WLNmmpxCPtgCZNh5us9D-8ZZg5KQ=s88-c-k-c0x00ffffff-no-rj" className={[style.menu, style.channel].join(" ")}>도미임</Button>
-        </Link>    
+        {/* ---- 구독 타이틀  ---- */}
+        {subscribes !== false && <div className={style.title} style={{margin: "15px 15px", marginBottom: "5px"}}>구독</div>}
+        
+        {/* ---- 구독 콘텐츠 ---- */}
+        {(typeof subscribes === "object") && subscribes.map(value => <Link to={`/channel/${value.id}`}>
+            <Button icon={(value.icon ? `/api/image/user/${value.id}` : noProfile)} className={[style.menu, style.channel].join(" ")}>{value.name}</Button>
+        </Link> )}
     </aside>;
 }
 
