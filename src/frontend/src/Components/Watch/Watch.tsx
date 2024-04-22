@@ -14,6 +14,7 @@ import goodSvg from './good.svg';
 import otherSvg from './other.svg';
 import VideoBox from "../Recycle/VideoBox";
 import { useEffect, useRef, useState } from "react";
+import { OnProgressProps } from "react-player/base";
 
 export default function Watch() {
     const { id } = useParams();
@@ -40,10 +41,14 @@ export default function Watch() {
 }
 
 function VideoPlayer() {
+    const controlClass = [style.control_main];
+    
     const playerRef = useRef<any>();
     const [playing, setPlaying] = useState(false);
+    const [duration, setDuration] = useState(0);
+    const [currentTime, setCurrentTime] = useState(0);
+    const [loadTime, setLoadTime] = useState(0);
     const [controlShow, setControlShow] = useState(true);
-    const controlClass = [style.control_main];
     
     if (!controlShow) {
         controlClass.push(style.hide);
@@ -58,12 +63,21 @@ function VideoPlayer() {
         setControlShow(false);
     }
 
+    const onProgress = function(state: OnProgressProps) {
+        console.log(state.loadedSeconds, state.playedSeconds, duration);
+        setCurrentTime(state.playedSeconds);
+        setLoadTime(state.loadedSeconds);
+    }
+    const onDuration = function(value: number) {
+        setDuration(value);
+    }
+
     useEffect(() => {
         console.log(playerRef.current);
     }, [])
 
     return <Section onMouseLeave={mouseLeave} onMouseEnter={mouseEnter} className={style.video_player}>
-        <ReactPlayer ref={playerRef} className={style.player} playing={playing} url="https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4" />
+        <ReactPlayer ref={playerRef} className={style.player} onDuration={onDuration} onProgress={onProgress} playing={playing} url="https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4" />
         <div className={controlClass.join(" ")}>
             <div className={style.top}></div>
 
@@ -73,9 +87,9 @@ function VideoPlayer() {
                 {/* 바밤바. */}
                 <div className={style.bar_container}>
                     <div className={style.bar} onClick={e => console.log(e.clientX)}>
-                        <div className={style.load}></div>
-                        <div className={style.in}></div>
-                        <div className={style.inCircle}></div>
+                        <div className={style.load} style={{width: `${getPercent(loadTime, duration)}%`}}></div>
+                        <div className={style.in} style={{width: `${getPercent(currentTime, duration)}%`}}></div>
+                        <div className={style.inCircle} style={{left: `${getPercent(currentTime, duration)}%`}}></div>
                     </div>
                 </div>
 
@@ -193,4 +207,8 @@ function RecommandVideo() {
         <VideoBox horizontal={true} />
         <VideoBox horizontal={true} />
     </>;
+}
+
+function getPercent(value: number, max: number) {
+    return (value / max) * 100;
 }
