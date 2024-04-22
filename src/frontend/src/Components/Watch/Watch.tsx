@@ -67,16 +67,28 @@ function VideoPlayer() {
 
     ///// bar 이벤트
     const [barMouseDown, setBarMouseDown] = useState(false);
+    const [barXmin, setBarXmin] = useState(0);
+    const [barXmax, setBarXmax] = useState(0);
+
     const onBarMouseDown = function(e: React.MouseEvent<HTMLDivElement>) {
         e.preventDefault();
         setBarMouseDown(true);
-        console.log("onBarMouseDown");    
+        // console.log("onBarMouseDown");
+
+        setBarXmin(bar_containerRef.current.getBoundingClientRect().left);
+        setBarXmax(bar_containerRef.current.getBoundingClientRect().left + bar_containerRef.current.offsetWidth);
     }
     const onBarMouseUp = function(e: MouseEvent) {
         if (!barMouseDown) return;
 
-        console.log(barMouseDown, "onBarMouseUp");
+        // console.log(barMouseDown, "onBarMouseUp");
         setBarMouseDown(false);
+    }
+
+    const onBarMouseMove = function(e: MouseEvent) {
+        if (!barMouseDown) return;
+        
+        console.log(Math.max(Math.min(e.clientX, barXmax), barXmin));
     }
 
     const onProgress = function(state: OnProgressProps) {
@@ -89,16 +101,16 @@ function VideoPlayer() {
     }
 
     useEffect(() => {
-        console.log(playerRef.current);
-
         // window.addEventListener("mousemove", mouseEnter);
         window.addEventListener("mouseup", onBarMouseUp);
+        window.addEventListener("mousemove", onBarMouseMove);
         
         // 랜더링 끝날때 함
         return () => {
             window.removeEventListener("mouseup", onBarMouseUp);
+            window.removeEventListener("mousemove", onBarMouseMove);
         }
-    }, [barMouseDown])
+    }, [barMouseDown, barXmin, barXmax])
 
     return <Section onMouseLeave={mouseLeave} onMouseEnter={mouseEnter} className={style.video_player}>
         <ReactPlayer ref={playerRef} className={style.player} onDuration={onDuration} onProgress={onProgress} playing={playing} url="https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4" />
@@ -110,7 +122,7 @@ function VideoPlayer() {
 
                 {/* 바밤바. */}
                 <div className={style.bar_container} ref={bar_containerRef} onMouseDown={onBarMouseDown}>
-                    <div className={style.bar} onClick={e => console.log(e.clientX)}>
+                    <div className={style.bar}>
                         <div className={style.load} style={{width: `${getPercent(loadTime, duration)}%`}}></div>
                         <div className={style.in} style={{width: `${getPercent(currentTime, duration)}%`}}></div>
                         <div className={style.inCircle} style={{left: `${getPercent(currentTime, duration)}%`}}></div>
