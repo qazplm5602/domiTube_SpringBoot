@@ -44,6 +44,8 @@ function VideoPlayer() {
     const controlClass = [style.control_main];
     
     const playerRef = useRef<any>();
+    const bar_containerRef = useRef<any>();
+
     const [playing, setPlaying] = useState(false);
     const [duration, setDuration] = useState(0);
     const [currentTime, setCurrentTime] = useState(0);
@@ -63,6 +65,20 @@ function VideoPlayer() {
         setControlShow(false);
     }
 
+    ///// bar 이벤트
+    const [barMouseDown, setBarMouseDown] = useState(false);
+    const onBarMouseDown = function(e: React.MouseEvent<HTMLDivElement>) {
+        e.preventDefault();
+        setBarMouseDown(true);
+        console.log("onBarMouseDown");    
+    }
+    const onBarMouseUp = function(e: MouseEvent) {
+        if (!barMouseDown) return;
+
+        console.log(barMouseDown, "onBarMouseUp");
+        setBarMouseDown(false);
+    }
+
     const onProgress = function(state: OnProgressProps) {
         console.log(state.loadedSeconds, state.playedSeconds, duration);
         setCurrentTime(state.playedSeconds);
@@ -74,7 +90,15 @@ function VideoPlayer() {
 
     useEffect(() => {
         console.log(playerRef.current);
-    }, [])
+
+        // window.addEventListener("mousemove", mouseEnter);
+        window.addEventListener("mouseup", onBarMouseUp);
+        
+        // 랜더링 끝날때 함
+        return () => {
+            window.removeEventListener("mouseup", onBarMouseUp);
+        }
+    }, [barMouseDown])
 
     return <Section onMouseLeave={mouseLeave} onMouseEnter={mouseEnter} className={style.video_player}>
         <ReactPlayer ref={playerRef} className={style.player} onDuration={onDuration} onProgress={onProgress} playing={playing} url="https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4" />
@@ -85,7 +109,7 @@ function VideoPlayer() {
             <div className={style.bottom}>
 
                 {/* 바밤바. */}
-                <div className={style.bar_container}>
+                <div className={style.bar_container} ref={bar_containerRef} onMouseDown={onBarMouseDown}>
                     <div className={style.bar} onClick={e => console.log(e.clientX)}>
                         <div className={style.load} style={{width: `${getPercent(loadTime, duration)}%`}}></div>
                         <div className={style.in} style={{width: `${getPercent(currentTime, duration)}%`}}></div>
