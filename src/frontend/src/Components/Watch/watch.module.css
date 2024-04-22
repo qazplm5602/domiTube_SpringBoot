@@ -394,6 +394,12 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+
+    transition: opacity 250ms;
+}
+
+.video_player > .control_main.hide {
+    opacity: 0;
 }
 
 .video_player > .control_main > .bottom {

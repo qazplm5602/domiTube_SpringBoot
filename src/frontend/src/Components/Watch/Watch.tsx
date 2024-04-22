@@ -13,6 +13,7 @@ import shareSvg from './share.svg';
 import goodSvg from './good.svg';
 import otherSvg from './other.svg';
 import VideoBox from "../Recycle/VideoBox";
+import { useEffect, useRef, useState } from "react";
 
 export default function Watch() {
     const { id } = useParams();
@@ -39,9 +40,31 @@ export default function Watch() {
 }
 
 function VideoPlayer() {
-    return <Section className={style.video_player}>
-        <ReactPlayer className={style.player} url="https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4" />
-        <div className={style.control_main}>
+    const playerRef = useRef<any>();
+    const [playing, setPlaying] = useState(false);
+    const [controlShow, setControlShow] = useState(true);
+    const controlClass = [style.control_main];
+    
+    if (!controlShow) {
+        controlClass.push(style.hide);
+    }
+
+    const mouseEnter = function() {
+        console.log("mouseEnter");
+        setControlShow(true);
+    }
+    const mouseLeave = function() {
+        console.log("mouseLeave");
+        setControlShow(false);
+    }
+
+    useEffect(() => {
+        console.log(playerRef.current);
+    }, [])
+
+    return <Section onMouseLeave={mouseLeave} onMouseEnter={mouseEnter} className={style.video_player}>
+        <ReactPlayer ref={playerRef} className={style.player} playing={playing} url="https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4" />
+        <div className={controlClass.join(" ")}>
             <div className={style.top}></div>
 
             {/* 아래쪽 */}
@@ -59,7 +82,7 @@ function VideoPlayer() {
                 {/* 버튼들... */}
                 <Section className={style.control_buttons}>
                     <div className={style.left}>
-                        <PlayerBtn icon={playSvg} text="재생" />
+                        <PlayerBtn icon={playSvg} text="재생" onClick={() => setPlaying(!playing)} />
                     </div>
                     <div className={style.right}>
                         <PlayerBtn icon={settingSvg} text="재생" />
@@ -72,8 +95,8 @@ function VideoPlayer() {
     </Section>;
 }
 
-function PlayerBtn({icon, text}: {icon: string, text?: string}) {
-    return <Button icon={icon} className={style.control_btn}>{text && <span>{text}</span>}</Button>
+function PlayerBtn({icon, text, onClick}: {icon: string, text?: string, onClick?: React.MouseEventHandler<HTMLButtonElement>}) {
+    return <Button icon={icon} onClick={onClick} className={style.control_btn}>{text && <span>{text}</span>}</Button>
 }
 
 function TitleChannel() {
