@@ -7,6 +7,7 @@ import Button from "../Recycle/Button";
 import { SubscribeButton } from "../Channel/Channel";
 
 import playSvg from './play.svg';
+import pauseSvg from './pause.svg';
 import fullOffSvg from './fullscreen_off.svg';
 import settingSvg from './setting.svg';
 import shareSvg from './share.svg';
@@ -15,6 +16,7 @@ import otherSvg from './other.svg';
 import VideoBox from "../Recycle/VideoBox";
 import { useEffect, useRef, useState } from "react";
 import { OnProgressProps } from "react-player/base";
+import React from "react";
 
 export default function Watch() {
     const { id } = useParams();
@@ -43,6 +45,7 @@ export default function Watch() {
 function VideoPlayer() {
     const controlClass = [style.control_main];
     
+    const videoSectionRef = useRef<any>();
     const playerRef = useRef<any>();
     const bar_containerRef = useRef<any>();
 
@@ -66,6 +69,13 @@ function VideoPlayer() {
         if (barMouseDown && !force) return; // 바 움직이는 동안은 안됨. ㄹㅇㅋㅋ
 
         setControlShow(false);
+    }
+    const screenFull = function() {
+        if (document.fullscreenElement) {
+            document.exitFullscreen();
+        } else {
+            videoSectionRef.current.requestFullscreen();
+        }
     }
 
     ///// bar 이벤트
@@ -129,7 +139,7 @@ function VideoPlayer() {
         }
     }, [barMouseDown, playerMouseIn, barXmin, barXmax])
 
-    return <Section onMouseLeave={() => mouseLeave(false)} onMouseEnter={mouseEnter} className={style.video_player}>
+    return <Section refValue={videoSectionRef} onMouseLeave={() => mouseLeave(false)} onMouseEnter={mouseEnter} className={style.video_player}>
         <ReactPlayer ref={playerRef} className={style.player} onDuration={onDuration} onProgress={onProgress} playing={playing} url="https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4" />
         <div className={controlClass.join(" ")}>
             <div className={style.top}></div>
@@ -149,11 +159,11 @@ function VideoPlayer() {
                 {/* 버튼들... */}
                 <Section className={style.control_buttons}>
                     <div className={style.left}>
-                        <PlayerBtn icon={playSvg} text="재생" onClick={() => setPlaying(!playing)} />
+                        <PlayerBtn icon={playing ? pauseSvg : playSvg} text="재생" onClick={() => setPlaying(!playing)} />
                     </div>
                     <div className={style.right}>
-                        <PlayerBtn icon={settingSvg} text="재생" />
-                        <PlayerBtn icon={fullOffSvg} text="재생" />
+                        <PlayerBtn icon={settingSvg} text="설정" />
+                        <PlayerBtn onClick={screenFull} icon={fullOffSvg} text="전체화면" />
                     </div>
                 </Section>
 
