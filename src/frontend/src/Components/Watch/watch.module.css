@@ -428,6 +428,12 @@
     height: 3px;
     
     background-color: rgba(255, 255, 255, 0.35);
+
+    transition: height 250ms;
+}
+
+.video_player > .control_main > .bottom > .bar_container > .bar.zoom {
+    height: 5px;
 }
 
 .video_player > .control_main > .bottom > .bar_container > .bar > .in,

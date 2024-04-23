@@ -56,12 +56,15 @@ function VideoPlayer() {
         controlClass.push(style.hide);
     }
 
+    const [playerMouseIn, setPlayerMouseIn] = useState(false);
     const mouseEnter = function() {
-        console.log("mouseEnter");
+        setPlayerMouseIn(true);
         setControlShow(true);
     }
-    const mouseLeave = function() {
-        console.log("mouseLeave");
+    const mouseLeave = function(force: boolean) {
+        setPlayerMouseIn(false);
+        if (barMouseDown && !force) return; // 바 움직이는 동안은 안됨. ㄹㅇㅋㅋ
+
         setControlShow(false);
     }
 
@@ -75,26 +78,40 @@ function VideoPlayer() {
         setBarMouseDown(true);
         // console.log("onBarMouseDown");
 
-        setBarXmin(bar_containerRef.current.getBoundingClientRect().left);
-        setBarXmax(bar_containerRef.current.getBoundingClientRect().left + bar_containerRef.current.offsetWidth);
+        const screenLeft = bar_containerRef.current.getBoundingClientRect().left;
+        setBarXmin(screenLeft);
+        setBarXmax(screenLeft + bar_containerRef.current.offsetWidth);
+
+        onBarMouseMove(e as unknown as MouseEvent, true);
     }
     const onBarMouseUp = function(e: MouseEvent) {
         if (!barMouseDown) return;
 
         // console.log(barMouseDown, "onBarMouseUp");
         setBarMouseDown(false);
+
+        if (!playerMouseIn)
+            mouseLeave(true);
     }
 
-    const onBarMouseMove = function(e: MouseEvent) {
-        if (!barMouseDown) return;
+    const onBarMouseMove = function(e: MouseEvent, force: boolean = false) {
+        if (!barMouseDown && !force) return;
         
-        console.log(Math.max(Math.min(e.clientX, barXmax), barXmin));
+        const nowBarPos = Math.max(Math.min(e.clientX, barXmax), barXmin);
+        
+        const percent = getPercent2(barXmin, barXmax, nowBarPos);
+        const time = (percent / 100) * duration;
+        console.log(percent, time);
+        setCurrentTime(time);
+        playerRef.current.seekTo(time);
     }
 
     const onProgress = function(state: OnProgressProps) {
         console.log(state.loadedSeconds, state.playedSeconds, duration);
-        setCurrentTime(state.playedSeconds);
         setLoadTime(state.loadedSeconds);
+        
+        if (!barMouseDown)
+            setCurrentTime(state.playedSeconds);
     }
     const onDuration = function(value: number) {
         setDuration(value);
@@ -110,9 +127,9 @@ function VideoPlayer() {
             window.removeEventListener("mouseup", onBarMouseUp);
             window.removeEventListener("mousemove", onBarMouseMove);
         }
-    }, [barMouseDown, barXmin, barXmax])
+    }, [barMouseDown, playerMouseIn, barXmin, barXmax])
 
-    return <Section onMouseLeave={mouseLeave} onMouseEnter={mouseEnter} className={style.video_player}>
+    return <Section onMouseLeave={() => mouseLeave(false)} onMouseEnter={mouseEnter} className={style.video_player}>
         <ReactPlayer ref={playerRef} className={style.player} onDuration={onDuration} onProgress={onProgress} playing={playing} url="https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4" />
         <div className={controlClass.join(" ")}>
             <div className={style.top}></div>
@@ -122,7 +139,7 @@ function VideoPlayer() {
 
                 {/* 바밤바. */}
                 <div className={style.bar_container} ref={bar_containerRef} onMouseDown={onBarMouseDown}>
-                    <div className={style.bar}>
+                    <div className={[style.bar, (barMouseDown ? style.zoom : '')].join(" ")}>
                         <div className={style.load} style={{width: `${getPercent(loadTime, duration)}%`}}></div>
                         <div className={style.in} style={{width: `${getPercent(currentTime, duration)}%`}}></div>
                         <div className={style.inCircle} style={{left: `${getPercent(currentTime, duration)}%`}}></div>
@@ -247,4 +264,8 @@ function RecommandVideo() {
 
 function getPercent(value: number, max: number) {
     return (value / max) * 100;
+}
+
+function getPercent2(min: number, max: number, value: number) {
+    return ((value - min) / (max - min)) * 100;
 }
