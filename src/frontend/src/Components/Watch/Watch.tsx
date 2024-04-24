@@ -1,10 +1,10 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import MainLayout from "../Layout/MainLayout";
 import Section from "../Recycle/Section";
 import style from "./watch.module.css";
 import ReactPlayer from "react-player";
 import Button from "../Recycle/Button";
-import { SubscribeButton } from "../Channel/Channel";
+import { SubscribeButton, channelMain } from "../Channel/Channel";
 
 import playSvg from './play.svg';
 import pauseSvg from './pause.svg';
@@ -13,13 +13,49 @@ import settingSvg from './setting.svg';
 import shareSvg from './share.svg';
 import goodSvg from './good.svg';
 import otherSvg from './other.svg';
+import noProfile from '../../assets/no-profile.png';
+
 import VideoBox from "../Recycle/VideoBox";
 import { useEffect, useRef, useState } from "react";
 import { OnProgressProps } from "react-player/base";
 import React from "react";
+import { request } from "../Utils/Fetch";
+
+interface videoDataType {
+    result: boolean,
+    reason: string,
+    title: string,
+    description: string,  
+    views: number,
+    good: number,
+    bad: number,
+    channel: string
+}
 
 export default function Watch() {
     const { id } = useParams();
+    const [errorReason, setErrorReason] = useState<string | null>(null);
+    const [videoData, setVideoData] = useState<videoDataType | null>(null);
+    
+    const requestData = async function() {
+        const { code, data }: {code: number, data: videoDataType | undefined} = await request(`/api/video/${id}`);
+        if (code !== 200 || data === undefined) {
+            setErrorReason(data?.reason || `not data. (${code})`);
+            return;
+        }
+
+        setVideoData(data);
+    }
+
+    useEffect(() => {
+        requestData();
+    }, [id]);
+
+    if (errorReason !== null) {
+        return <MainLayout className={style.main} sideDisable={true}>
+            error: {errorReason}
+        </MainLayout>;
+    }
 
     return <MainLayout className={style.main} sideDisable={true}>
         <Section className={style.video_container}>
@@ -27,10 +63,10 @@ export default function Watch() {
             <VideoPlayer />
 
             {/* 제목 / 채널 */}
-            <TitleChannel />
+            <TitleChannel title={videoData?.title || "--"} owner={videoData?.channel} good={videoData?.good || 0} bad={videoData?.bad || 0} />
 
             {/* 설명란 */}
-            <Description />
+            <Description view={videoData?.views || 0} desc={videoData?.description} />
 
             {/* 댓글 */}
             <Chat />
@@ -176,16 +212,32 @@ function PlayerBtn({icon, text, onClick}: {icon: string, text?: string, onClick?
     return <Button icon={icon} onClick={onClick} className={style.control_btn}>{text && <span>{text}</span>}</Button>
 }
 
-function TitleChannel() {
-    return <Section title="제목인뎅_밍글링" titleClass={style.title} className={style.metadata}>
+function TitleChannel({owner, title, good, bad}: {owner: string | undefined, title: string, good: number, bad: number}) {
+    const [channelData, setChannelData] = useState<channelMain | null>(null);
+
+    const requestChannel = async function() {
+        const { code, data } = await request(`/api/channel/${owner}/info`);
+        if (code !== 200) return;
+
+        setChannelData(data);
+    }
+
+    useEffect(() => {
+        if (owner)
+            requestChannel();
+    }, [owner]);
+
+    return <Section title={title} titleClass={style.title} className={style.metadata}>
         <div className={style.channel}>
-            <img src="https://nng-phinf.pstatic.net/MjAyMjA2MTdfNzcg/MDAxNjU1NDYwOTk4MzIx.2GtboKl1AANbxW8mwf7_-3rl1joA5z70GdLSuhVzWssg.ubvmA6JPVkX2fRl0DLLBKY9eBbL2Gh3cN03_MMAwnuAg.PNG/1.png?type=f120_120_na" />
+            <Link to={`/channel/${owner}`}>
+                <img src={(channelData?.icon === true) ? `/api/image/user/${owner}` : noProfile} />
+            </Link>
             <div className={style.texts}>
-                <span>도미인뎅</span>
-                <span>구독자: 5조5억명</span>
+                <span>{channelData?.name || "--"}</span>
+                <span>구독자: {channelData === null ? "--" : channelData.follower}명</span>
             </div>
 
-            <SubscribeButton className={[style.subscribe]} active={false} />
+            <SubscribeButton className={[style.subscribe]} active={channelData?.subscribe === true} />
         </div>
 
         <div className={style.interactions}>
@@ -193,24 +245,22 @@ function TitleChannel() {
 
             {/* 좋아용 싫어요 */}
             <div className={style.rating}>
-                <Button icon={goodSvg}>10</Button>
-                <Button icon={goodSvg}>500</Button>
+                <Button icon={goodSvg}>{good}</Button>
+                <Button icon={goodSvg}>{bad}</Button>
             </div>
         </div>
     </Section>
 }
 
-function Description() {
+function Description({ view, desc }: { view: number, desc: string | undefined }) {
     return <div className={style.desc}>
         {/* 조회수 / 날짜 / 태그 */}
         <Section className={style.info}>
-            <span>조회수 99,999,999회</span>
+            <span>조회수 {view}회</span>
             <span>2024.03.27</span>
         </Section>
 
-        <div className={style.content}>{`아니 이거 슈웃
-        ㅁ닝
-        ㄴㅇ햐ㅐㅓㄴ`}</div>
+        <div className={style.content}>{desc || ''}</div>
     </div>;
 }
 

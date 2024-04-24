@@ -24,7 +24,7 @@ public class VideoController {
 
         if (video == null) {
             response.setStatus(404);
-            return Map.of("result", false);
+            return Map.of("result", false, "reason", "영상을 찾을 수 없습니다.");
         }
 
         return Map.of(

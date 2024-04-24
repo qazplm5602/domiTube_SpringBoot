@@ -18,7 +18,7 @@ const pages: {[key: string]: JSX.Element} = {
     video: <VideoAll />
 }
 
-interface channelMain {
+export interface channelMain {
     name: string,
     icon: boolean,
     banner: boolean,
