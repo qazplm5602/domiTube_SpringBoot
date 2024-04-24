@@ -3,12 +3,13 @@ package com.domi.domitube.Repository.Entity;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Entity
 @Data
+@NoArgsConstructor
 @Table(name = "Video")
 public class Video {
     @Id
@@ -38,10 +39,11 @@ public class Video {
 
     @OneToMany
     List<Comment> comments;
+
+    public enum VideoSecretType {
+        Public,
+        HalfPublic,
+        Private
+    }
 }
 
-enum VideoSecretType {
-    Public,
-    HalfPublic,
-    Private
-}
