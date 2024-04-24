@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
 import java.util.Map;
 
 @RestController
@@ -34,6 +35,7 @@ public class VideoController {
                 "views", video.getViews(),
                 "good", video.getGood(),
                 "bad", video.getDislike(),
+                "create", video.getCreated().getTime(),
                 "channel", video.getOwner().getId()
         );
     }
@@ -46,6 +48,7 @@ public class VideoController {
         video.setId("DOMI1");
         video.setOwner(user);
         video.setSecret(Video.VideoSecretType.Public);
+        video.setCreated(new Date(new java.util.Date().getTime()));
         video.setTitle("아무 영상 임니다.");
         video.setDescription("ㄹㅇㄹㅇㄹㅇ 아무 영상 임니다.");
 //        video.setSecret(VideoSecretType.Public);

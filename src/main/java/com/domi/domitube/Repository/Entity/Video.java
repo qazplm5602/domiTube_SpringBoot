@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Date;
 import java.util.List;
 
 @Entity
@@ -36,6 +37,9 @@ public class Video {
     long good;
     @Column(nullable = false)
     long dislike;
+
+    @Column(nullable = false)
+    Date created;
 
     @OneToMany
     List<Comment> comments;

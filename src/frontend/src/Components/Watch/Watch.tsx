@@ -25,7 +25,8 @@ interface videoDataType {
     result: boolean,
     reason: string,
     title: string,
-    description: string,  
+    description: string,
+    create: number,
     views: number,
     good: number,
     bad: number,
@@ -66,7 +67,7 @@ export default function Watch() {
             <TitleChannel title={videoData?.title || "--"} owner={videoData?.channel} good={videoData?.good || 0} bad={videoData?.bad || 0} />
 
             {/* 설명란 */}
-            <Description view={videoData?.views || 0} desc={videoData?.description} />
+            <Description view={videoData?.views || 0} created={new Date(videoData?.create || 0)} desc={videoData?.description} />
 
             {/* 댓글 */}
             <Chat />
