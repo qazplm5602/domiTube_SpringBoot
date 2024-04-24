@@ -20,6 +20,7 @@ import { useEffect, useRef, useState } from "react";
 import { OnProgressProps } from "react-player/base";
 import React from "react";
 import { request } from "../Utils/Fetch";
+import { numberWithKorean } from "../Utils/Misc";
 
 interface videoDataType {
     result: boolean,
@@ -67,7 +68,7 @@ export default function Watch() {
             <TitleChannel title={videoData?.title || "--"} owner={videoData?.channel} good={videoData?.good || 0} bad={videoData?.bad || 0} />
 
             {/* 설명란 */}
-            <Description view={videoData?.views || 0} created={new Date(videoData?.create || 0)} desc={videoData?.description} />
+            <Description view={videoData?.views || 0} created={videoData ? new Date(videoData.create) : undefined} desc={videoData?.description} />
 
             {/* 댓글 */}
             <Chat />
@@ -235,7 +236,7 @@ function TitleChannel({owner, title, good, bad}: {owner: string | undefined, tit
             </Link>
             <div className={style.texts}>
                 <span>{channelData?.name || "--"}</span>
-                <span>구독자: {channelData === null ? "--" : channelData.follower}명</span>
+                <span>구독자: {channelData === null ? "--" : numberWithKorean(channelData.follower)}명</span>
             </div>
 
             <SubscribeButton className={[style.subscribe]} active={channelData?.subscribe === true} />
@@ -246,19 +247,19 @@ function TitleChannel({owner, title, good, bad}: {owner: string | undefined, tit
 
             {/* 좋아용 싫어요 */}
             <div className={style.rating}>
-                <Button icon={goodSvg}>{good}</Button>
-                <Button icon={goodSvg}>{bad}</Button>
+                <Button icon={goodSvg}>{numberWithKorean(good)}</Button>
+                <Button icon={goodSvg}>{numberWithKorean(bad)}</Button>
             </div>
         </div>
     </Section>
 }
 
-function Description({ view, desc }: { view: number, desc: string | undefined }) {
+function Description({ view, desc, created }: { view: number, desc: string | undefined, created: Date | undefined }) {
     return <div className={style.desc}>
         {/* 조회수 / 날짜 / 태그 */}
         <Section className={style.info}>
-            <span>조회수 {view}회</span>
-            <span>2024.03.27</span>
+            <span>조회수 {numberWithKorean(view)}회</span>
+            <span>{created ? `${created.getFullYear()}.${(created.getMonth() + 1).toString().padStart(2,'0')}.${created.getDay().toString().padStart(2,'0')}` : "--"}</span>
         </Section>
 
         <div className={style.content}>{desc || ''}</div>
