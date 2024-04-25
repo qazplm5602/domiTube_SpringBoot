@@ -40,13 +40,13 @@ export default function Watch() {
     const [videoData, setVideoData] = useState<videoDataType | null>(null);
     
     const requestData = async function() {
-        const { code, data }: {code: number, data: videoDataType | undefined} = await request(`/api/video/${id}`);
+        const { code, data }: {code: number, data: {reason: string, data: videoDataType} | undefined} = await request(`/api/video/${id}`);
         if (code !== 200 || data === undefined) {
             setErrorReason(data?.reason || `not data. (${code})`);
             return;
         }
 
-        setVideoData(data);
+        setVideoData(data.data);
     }
 
     useEffect(() => {

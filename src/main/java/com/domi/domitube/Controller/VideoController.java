@@ -1,5 +1,6 @@
 package com.domi.domitube.Controller;
 
+import com.domi.domitube.DTO.VideoDataDTO;
 import com.domi.domitube.Repository.Entity.User;
 import com.domi.domitube.Repository.Entity.Video;
 import com.domi.domitube.Service.UserService;
@@ -10,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -30,14 +33,25 @@ public class VideoController {
 
         return Map.of(
                 "result", true,
-                "title", video.getTitle(),
-                "description", video.getDescription(),
-                "views", video.getViews(),
-                "good", video.getGood(),
-                "bad", video.getDislike(),
-                "create", video.getCreated().getTime(),
-                "channel", video.getOwner().getId()
+                "data", VideoDataDTO.ConvertVideo(video)
         );
+    }
+
+    @GetMapping("/user/{id}")
+    List<VideoDataDTO> GetVideosByUserId(@PathVariable("id") String id, HttpServletResponse response) {
+        List<VideoDataDTO> result = new ArrayList<VideoDataDTO>();
+        User user = userService.GetUserForId(id);
+
+        if (user == null) {
+            response.setStatus(404);
+            return result;
+        }
+
+        for (var video : videoService.GetVideosByUser(user)) {
+            result.add(VideoDataDTO.ConvertVideo(video));
+        }
+
+        return result;
     }
 
     @PostMapping("/test/create")
