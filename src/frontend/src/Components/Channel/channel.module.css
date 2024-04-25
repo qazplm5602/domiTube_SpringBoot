@@ -213,3 +213,11 @@
     color: black;
     background-color: white;
 }
+
+.content > .loading {
+    margin: 30px auto;
+
+    background: 
+    radial-gradient(farthest-side,#909090 94%,#0000) top/8px 8px no-repeat,
+    conic-gradient(#0000 30%,#909090);
+}

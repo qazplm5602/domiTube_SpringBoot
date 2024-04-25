@@ -12,6 +12,7 @@ import VideoBox from "../Recycle/VideoBox";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { request } from "../Utils/Fetch";
 import { videoDataType } from "../Watch/Watch";
+import Spinner from "../Recycle/Spinner";
 
 export interface channelMain {
     name: string,
@@ -141,7 +142,7 @@ function VideoAll({ channel, mainRef }: { channel: string | undefined, mainRef: 
 
 
         // 스크롤은 없지만 화면이 다 꽉 채워져 있지 않음 (로딩 X, 페이지 끝 X)
-        if (!isScroll && !loading && page !== -1 && mainRef.current.scrollHeight < (mainRef.current.scrollTop + window.innerHeight)) {
+        if (!isScroll && !loading && page !== -1 && mainRef.current.scrollHeight < window.innerHeight) {
             loadVideos();
         }
 
@@ -180,6 +181,8 @@ function VideoAll({ channel, mainRef }: { channel: string | undefined, mainRef: 
             <VideoBox className={[style.video]} />
             <VideoBox className={[style.video]} /> */}
         </Section>
+
+        {loading && <Spinner className={style.loading} />}
     </Section>;
 }
 
