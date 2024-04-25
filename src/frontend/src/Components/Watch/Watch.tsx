@@ -22,9 +22,8 @@ import React from "react";
 import { request } from "../Utils/Fetch";
 import { numberWithKorean } from "../Utils/Misc";
 
-interface videoDataType {
-    result: boolean,
-    reason: string,
+export interface videoDataType {
+    id: string,
     title: string,
     description: string,
     create: number,

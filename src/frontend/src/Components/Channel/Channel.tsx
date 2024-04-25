@@ -9,14 +9,9 @@ import loveSvg from './love.svg';
 import noProfile from '../../assets/no-profile.png';
 
 import VideoBox from "../Recycle/VideoBox";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { request } from "../Utils/Fetch";
-
-
-const pages: {[key: string]: JSX.Element} = {
-    home: <Home />,
-    video: <VideoAll />
-}
+import { videoDataType } from "../Watch/Watch";
 
 export interface channelMain {
     name: string,
@@ -30,8 +25,15 @@ export default function Channel() {
     const { id, menu } = useParams();
     const navigate = useNavigate();
 
+    const mainRef = useRef<any>();
+
     const [error, setError] = useState<string | boolean>(false);
     const [channelData, setChannelData] = useState<channelMain | null>(null);
+
+    const pages: {[key: string]: JSX.Element} = {
+        home: <Home />,
+        video: <VideoAll channel={id} mainRef={mainRef} />
+    }
 
     const redirection = function(path: string) {
         navigate(`/channel/${id}/${path}`);
@@ -61,7 +63,7 @@ export default function Channel() {
         </MainLayout>;
     }
 
-    return <MainLayout>
+    return <MainLayout mainRef={mainRef}>
         <Section className={style.headWrapper}>
             <div className={style.head}>
                 {channelData?.banner === true && <img className={style.banner} src={`/api/image/banner/${id}`} />}
@@ -97,7 +99,55 @@ function Home() {
     return <div>Hello Home!</div>;
 }
 
-function VideoAll() {
+function VideoAll({ channel, mainRef }: { channel: string | undefined, mainRef: any }) {
+    const [videos, setVideos] = useState<videoDataType[]>([]);
+    const [isScroll, setIsScroll] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    const onResize = function() {
+        setIsScroll(mainRef.current.scrollHeight > window.innerHeight);
+    }
+
+    const onScroll = function(e: Event) {
+        console.log("onScroll", mainRef.current.scrollTop + window.innerHeight, mainRef.current.scrollHeight);
+    }
+
+    const loadVideos = async function() {
+        setLoading(true);
+        const { code, data } = await request(`/api/video/user/${channel}`);
+        
+        if (code !== 200) return;
+        
+        setVideos([...videos, ...(data as videoDataType[])]);
+        setLoading(false);
+    }
+
+    useEffect(() => {
+        window.addEventListener("resize", onResize);
+        mainRef.current.addEventListener("scroll", onScroll);
+
+        // init
+        onResize();
+
+        return () => {
+            window.removeEventListener("resize", onResize);
+            mainRef.current.removeEventListener("scroll", onScroll);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (channel !== undefined) {
+            setVideos([]);
+            console.log("setVideos");
+            // 로드
+            loadVideos();
+        }
+    }, [channel]);
+
+    useEffect(() => {
+        console.log("isScroll", isScroll);
+    }, [isScroll]);
+    
     return <Section className={style.content}>
         <div className={style.category}>
             <Button className={style.active}>최신순</Button>
@@ -106,13 +156,14 @@ function VideoAll() {
         </div>
 
         <Section className={style.videos}>
+            {videos.map(v => <VideoBox className={[style.video]} key={v.id} />)}
+            {/* <VideoBox className={[style.video]} />
             <VideoBox className={[style.video]} />
             <VideoBox className={[style.video]} />
             <VideoBox className={[style.video]} />
             <VideoBox className={[style.video]} />
             <VideoBox className={[style.video]} />
-            <VideoBox className={[style.video]} />
-            <VideoBox className={[style.video]} />
+            <VideoBox className={[style.video]} /> */}
         </Section>
     </Section>;
 }
