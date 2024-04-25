@@ -99,26 +99,36 @@ function Home() {
     return <div>Hello Home!</div>;
 }
 
+const VIDEO_AMOUNT_MAX = 20;
 function VideoAll({ channel, mainRef }: { channel: string | undefined, mainRef: any }) {
     const [videos, setVideos] = useState<videoDataType[]>([]);
     const [isScroll, setIsScroll] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [page, setPage] = useState(1);
 
     const onResize = function() {
         setIsScroll(mainRef.current.scrollHeight > window.innerHeight);
     }
 
     const onScroll = function(e: Event) {
-        console.log("onScroll", mainRef.current.scrollTop + window.innerHeight, mainRef.current.scrollHeight);
+        if (!isScroll || loading || page === -1) return; // 스크롤이 없거나, 로딩중이거나, 이미 다 불러온 상태
+
+        const scrollBottom = mainRef.current.scrollTop + window.innerHeight >= mainRef.current.scrollHeight;
+        if (scrollBottom) // 스크롤 맨 마지막
+            loadVideos();
     }
 
     const loadVideos = async function() {
+        console.log("call loadVideos");
         setLoading(true);
-        const { code, data } = await request(`/api/video/user/${channel}`);
+        const { code, data } = await request(`/api/video/user/${channel}?page=${page}`);
         
         if (code !== 200) return;
+
+        const list = data as videoDataType[];
         
-        setVideos([...videos, ...(data as videoDataType[])]);
+        setPage(list.length >= VIDEO_AMOUNT_MAX ? page + 1 : -1);
+        setVideos([...videos, ...list]);
         setLoading(false);
     }
 
@@ -129,24 +139,29 @@ function VideoAll({ channel, mainRef }: { channel: string | undefined, mainRef: 
         // init
         onResize();
 
+
+        // 스크롤은 없지만 화면이 다 꽉 채워져 있지 않음 (로딩 X, 페이지 끝 X)
+        if (!isScroll && !loading && page !== -1 && mainRef.current.scrollHeight < (mainRef.current.scrollTop + window.innerHeight)) {
+            loadVideos();
+        }
+
         return () => {
             window.removeEventListener("resize", onResize);
             mainRef.current.removeEventListener("scroll", onScroll);
         }
-    }, []);
+    }, [isScroll, loading, videos, page]);
 
     useEffect(() => {
-        if (channel !== undefined) {
-            setVideos([]);
-            console.log("setVideos");
+        if (channel !== undefined && !loading && videos.length === 0) {
+            console.log("setVideos init");
             // 로드
             loadVideos();
         }
-    }, [channel]);
+    }, [channel, loading, videos]);
 
-    useEffect(() => {
-        console.log("isScroll", isScroll);
-    }, [isScroll]);
+    // useEffect(() => {
+    //     setInterval(() => console.log(), 1000);
+    // }, []);
     
     return <Section className={style.content}>
         <div className={style.category}>
