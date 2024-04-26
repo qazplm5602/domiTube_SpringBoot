@@ -106,6 +106,7 @@ function VideoAll({ channel, mainRef }: { channel: string | undefined, mainRef: 
     const [isScroll, setIsScroll] = useState(false);
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
+    const [sort, setSort] = useState(0);
 
     const onResize = function() {
         setIsScroll(mainRef.current.scrollHeight > window.innerHeight);
@@ -122,7 +123,7 @@ function VideoAll({ channel, mainRef }: { channel: string | undefined, mainRef: 
     const loadVideos = async function() {
         console.log("call loadVideos");
         setLoading(true);
-        const { code, data } = await request(`/api/video/user/${channel}?page=${page}`);
+        const { code, data } = await request(`/api/video/user/${channel}?page=${page}&sort=${sort}`);
         
         if (code !== 200) return;
 
@@ -131,6 +132,13 @@ function VideoAll({ channel, mainRef }: { channel: string | undefined, mainRef: 
         setPage(list.length >= VIDEO_AMOUNT_MAX ? page + 1 : -1);
         setVideos([...videos, ...list]);
         setLoading(false);
+    }
+
+    const changeSort = function(mode: number) {
+        setVideos([]);
+        setLoading(false);
+        setPage(0);
+        setSort(mode);
     }
 
     useEffect(() => {
@@ -166,9 +174,9 @@ function VideoAll({ channel, mainRef }: { channel: string | undefined, mainRef: 
     
     return <Section className={style.content}>
         <div className={style.category}>
-            <Button className={style.active}>최신순</Button>
-            <Button>인기순</Button>
-            <Button>날짜순</Button>
+            <Button className={sort === 0 && style.active} onClick={() => changeSort(0)}>최신순</Button>
+            <Button className={sort === 1 && style.active} onClick={() => changeSort(1)}>인기순</Button>
+            <Button className={sort === 2 && style.active} onClick={() => changeSort(2)}>날짜순</Button>
         </div>
 
         <Section className={style.videos}>
