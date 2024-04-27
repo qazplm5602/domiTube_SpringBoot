@@ -3,6 +3,8 @@ package com.domi.domitube.DTO;
 import com.domi.domitube.Repository.Entity.Video;
 import lombok.Builder;
 
+import java.time.ZoneOffset;
+
 @Builder
 public class VideoDataDTO {
     public String id;
@@ -23,7 +25,7 @@ public class VideoDataDTO {
                 .views(video.getViews())
                 .good(video.getGood())
                 .bad(video.getDislike())
-                .create(video.getCreated().getTime())
+                .create(video.getCreated().toInstant(ZoneOffset.of("+09:00")).toEpochMilli())
         .build();
     }
 }

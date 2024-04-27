@@ -62,7 +62,6 @@ public class VideoController {
         video.setId("DOMI1");
         video.setOwner(user);
         video.setSecret(Video.VideoSecretType.Public);
-        video.setCreated(new Date(new java.util.Date().getTime()));
         video.setTitle("아무 영상 임니다.");
         video.setDescription("ㄹㅇㄹㅇㄹㅇ 아무 영상 임니다.");
 //        video.setSecret(VideoSecretType.Public);

@@ -4,7 +4,7 @@ import style from './videoBox.module.css';
 import otherSVG from '../Header/other.svg';
 import { useNavigate } from 'react-router-dom';
 import { videoDataType } from '../Watch/Watch';
-import { numberWithKorean } from '../Utils/Misc';
+import { dateWithKorean, numberWithKorean } from '../Utils/Misc';
 
 export default function VideoBox({video, channelHide = false, className = [], horizontal = false}: {video: videoDataType, channelHide?: boolean, className?: string[], horizontal?: boolean}) {
     const navigate = useNavigate();
@@ -15,7 +15,7 @@ export default function VideoBox({video, channelHide = false, className = [], ho
 
     return <div onClick={() => navigate(`/watch/${video.id}`)} className={className.join(" ")}>
         <div className={style.thumnail}>
-            <img src="https://i.ytimg.com/vi/O5pHIoO-W-8/hqdefault.jpg?sqp=-oaymwEXCOADEI4CSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLAgVDD6Uumd_A8mchTOYUtOrbAz-A" />
+            <img src={`/api/image/thumbnail/${video.id}`} />
             <span className={style.time}>10:10</span>
         </div>
 
@@ -24,7 +24,7 @@ export default function VideoBox({video, channelHide = false, className = [], ho
             <div className={style.texts}>
                 <div className={style.title}>{video.title}</div>
                 {!channelHide && <span className={style.channelT}>도미임</span>}
-                <span className={style.sub}>조회수 {numberWithKorean(video.views)}회 • 3시간 전</span>
+                <span className={style.sub}>조회수 {numberWithKorean(video.views)}회 • {dateWithKorean(new Date(video.create))} 전</span>
             </div>
             <Button icon={otherSVG} className={style.otherBtn} />
         </div>

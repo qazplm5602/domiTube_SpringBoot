@@ -258,7 +258,7 @@ function Description({ view, desc, created }: { view: number, desc: string | und
         {/* 조회수 / 날짜 / 태그 */}
         <Section className={style.info}>
             <span>조회수 {numberWithKorean(view)}회</span>
-            <span>{created ? `${created.getFullYear()}.${(created.getMonth() + 1).toString().padStart(2,'0')}.${created.getDay().toString().padStart(2,'0')}` : "--"}</span>
+            <span>{created ? `${created.getFullYear()}.${(created.getMonth() + 1).toString().padStart(2,'0')}.${created.getDate().toString().padStart(2,'0')}` : "--"}</span>
         </Section>
 
         <div className={style.content}>{desc || ''}</div>

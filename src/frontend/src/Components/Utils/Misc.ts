@@ -17,4 +17,28 @@ export function numberWithKorean(value: number) {
   return `${num}${prefix}`;
 }
 
-console.log(numberWithKorean(1500));
+export function dateWithKorean(value: Date) {
+  const diff = new Date(new Date().getTime() - value.getTime());
+
+  let num: number;
+  let prefix: string;
+
+  if (diff.getFullYear() - 1970 > 0) {
+    num = diff.getFullYear() - 1970;
+    prefix = "년";
+  } else if (diff.getDate() - 1 > 0) {
+    num = diff.getDate() - 1;
+    prefix = "일";
+  } else if (diff.getHours() - 9 > 0) {
+    num = diff.getHours() - 9;
+    prefix = "시간";
+  } else if (diff.getMinutes() > 0) {
+    num = diff.getMinutes();
+    prefix = "분";
+  } else {
+    num = diff.getSeconds();
+    prefix = "초";
+  }
+
+  return `${num}${prefix}`;
+}
