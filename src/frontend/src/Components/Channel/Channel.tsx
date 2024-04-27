@@ -105,7 +105,7 @@ function VideoAll({ channel, mainRef }: { channel: string | undefined, mainRef: 
     const [videos, setVideos] = useState<videoDataType[]>([]);
     const [isScroll, setIsScroll] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [page, setPage] = useState(1);
+    const [page, setPage] = useState(0);
     const [sort, setSort] = useState(0);
 
     const onResize = function() {

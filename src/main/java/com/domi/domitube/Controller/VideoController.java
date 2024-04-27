@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +39,7 @@ public class VideoController {
     }
 
     @GetMapping("/user/{id}")
-    List<VideoDataDTO> GetVideosByUserId(@PathVariable("id") String id, HttpServletResponse response) {
+    List<VideoDataDTO> GetVideosByUserId(@PathVariable("id") String id, @RequestParam("sort") int sort, @RequestParam("page") int page, HttpServletResponse response) {
         List<VideoDataDTO> result = new ArrayList<VideoDataDTO>();
         User user = userService.GetUserForId(id);
 
@@ -47,7 +48,13 @@ public class VideoController {
             return result;
         }
 
-        for (var video : videoService.GetVideosByUser(user)) {
+        VideoService.SortType sorting = VideoService.SortType.Lastest;
+        switch (sort) {
+            case 1 -> sorting = VideoService.SortType.Popular;
+            case 2 -> sorting = VideoService.SortType.Date;
+        }
+
+        for (var video : videoService.GetVideosByUser(user, sorting, page)) {
             result.add(VideoDataDTO.ConvertVideo(video));
         }
 
@@ -59,13 +66,17 @@ public class VideoController {
         User user = userService.GetUserForId("domi");
         Video video = new Video();
 
-        video.setId("DOMI1");
-        video.setOwner(user);
-        video.setSecret(Video.VideoSecretType.Public);
-        video.setTitle("아무 영상 임니다.");
-        video.setDescription("ㄹㅇㄹㅇㄹㅇ 아무 영상 임니다.");
-//        video.setSecret(VideoSecretType.Public);
+        for (int i = 0; i < 50; i++) {
+            video.setId("DOMI"+i);
+            video.setOwner(user);
+            video.setSecret(Video.VideoSecretType.Public);
+            video.setTitle("아무 영상 Auto Generate - "+i);
+            video.setDescription("ㄹㅇㄹㅇㄹㅇ 아무 영상 임니다. x"+i);
+            video.setCreated(LocalDateTime.of(2024, 1 + (i / 29), (i % 29) + 1, 3, 20, 1));
+    //        video.setSecret(VideoSecretType.Public);
 
-        videoService.CreateVideo(video);
+            videoService.CreateVideo(video);
+        }
+
     }
 }
