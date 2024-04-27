@@ -20,7 +20,7 @@ import { useEffect, useRef, useState } from "react";
 import { OnProgressProps } from "react-player/base";
 import React from "react";
 import { request } from "../Utils/Fetch";
-import { numberWithKorean } from "../Utils/Misc";
+import { numberWithKorean, secondsToHMS } from "../Utils/Misc";
 
 export interface videoDataType {
     id: string,
@@ -198,7 +198,8 @@ function VideoPlayer({id}: {id: string}) {
                 {/* 버튼들... */}
                 <Section className={style.control_buttons}>
                     <div className={style.left}>
-                        <PlayerBtn icon={playing ? pauseSvg : playSvg} text="재생" onClick={() => setPlaying(!playing)} />
+                        <PlayerBtn icon={playing ? pauseSvg : playSvg} text={playing ? "일시정지" : "재생"} onClick={() => setPlaying(!playing)} />
+                        <span className={style.timer}>{secondsToHMS(currentTime)} / {secondsToHMS(duration)}</span>
                     </div>
                     <div className={style.right}>
                         <PlayerBtn icon={settingSvg} text="설정" />

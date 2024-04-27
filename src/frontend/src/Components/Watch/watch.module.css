@@ -410,7 +410,7 @@
     padding: 0 10px;
 
     /* background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%); */
-    background: linear-gradient(to top, rgba(0, 251, 255, 0.3) 0%, rgba(62, 255, 3, 0.3) 50%, rgba(0,0,0,0) 100%);
+    background: linear-gradient(to top, rgba(26, 110, 0, 0.5) 0%, rgba(0,0,0,0) 100%);
 }
 
 .video_player > .control_main > .bottom > .bar_container {
@@ -483,6 +483,8 @@
 }
 
 .video_player > .control_main > .bottom > .control_buttons > div > .control_btn {
+    position: relative;
+
     width: 40px;
     height: 40px;
 
@@ -501,4 +503,31 @@
 .video_player > .control_main > .bottom > .control_buttons > div > .control_btn > span {
     position: absolute;
     display: none;
+
+    width: max-content;
+
+    top: -20px;
+    left: 50%;
+    transform: translate(-50%, 0);
+    font-size: 13px;
+
+    border-radius: 5px;
+    padding: 3px 8px;
+    background-color: rgba(43, 43, 43, 0.5);
+    
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+
+    backdrop-filter: blur(5px);
+}
+
+.video_player > .control_main > .bottom > .control_buttons > div > .control_btn:hover > span {
+    display: block;
+}
+
+.video_player > .control_main > .bottom > .control_buttons > div > .timer {
+    font-size: 13px;
+    line-height: 40px;
+
+    margin-left: 5px;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
