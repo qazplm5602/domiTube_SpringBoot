@@ -52,6 +52,8 @@ export default function Watch() {
         requestData();
     }, [id]);
 
+    if (id === undefined) return null;
+
     if (errorReason !== null) {
         return <MainLayout className={style.main} sideDisable={true}>
             error: {errorReason}
@@ -61,7 +63,7 @@ export default function Watch() {
     return <MainLayout className={style.main} sideDisable={true}>
         <Section className={style.video_container}>
             {/* <video> */}
-            <VideoPlayer />
+            <VideoPlayer id={id} />
 
             {/* 제목 / 채널 */}
             <TitleChannel title={videoData?.title || "--"} owner={videoData?.channel} good={videoData?.good || 0} bad={videoData?.bad || 0} />
@@ -79,7 +81,7 @@ export default function Watch() {
     </MainLayout>;
 }
 
-function VideoPlayer() {
+function VideoPlayer({id}: {id: string}) {
     const controlClass = [style.control_main];
     
     const videoSectionRef = useRef<any>();
@@ -150,7 +152,7 @@ function VideoPlayer() {
         const time = (percent / 100) * duration;
         console.log(percent, time);
         setCurrentTime(time);
-        playerRef.current.seekTo(time);
+        playerRef.current.seekTo(Math.floor(time));
     }
 
     const onProgress = function(state: OnProgressProps) {
@@ -177,7 +179,7 @@ function VideoPlayer() {
     }, [barMouseDown, playerMouseIn, barXmin, barXmax])
 
     return <Section refValue={videoSectionRef} onMouseLeave={() => mouseLeave(false)} onMouseEnter={mouseEnter} className={style.video_player}>
-        <ReactPlayer ref={playerRef} className={style.player} onDuration={onDuration} onProgress={onProgress} playing={playing} url="https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4" />
+        <ReactPlayer ref={playerRef} className={style.player} onDuration={onDuration} onProgress={onProgress} playing={playing} url={`/api/video/stream/${id}`} />
         <div className={controlClass.join(" ")}>
             <div className={style.top}></div>
 

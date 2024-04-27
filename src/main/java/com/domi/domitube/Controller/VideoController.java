@@ -8,13 +8,20 @@ import com.domi.domitube.Service.VideoService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.ResourceRegion;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/api/video")
@@ -22,6 +29,7 @@ import java.util.Map;
 public class VideoController {
     final VideoService videoService;
     final UserService userService;
+    final String startPath = System.getenv("DOMI_ASSETS");
 
     @GetMapping("/{id}")
     Map<String, Object> GetVideoData(@PathVariable("id") String id, HttpServletRequest request, HttpServletResponse response) {
@@ -59,6 +67,36 @@ public class VideoController {
         }
 
         return result;
+    }
+
+    @GetMapping("/stream/{id}")
+    ResponseEntity<ResourceRegion> StreamVideo(@RequestHeader HttpHeaders headers, @PathVariable String id) throws IOException {
+        Resource resource = new FileSystemResource(String.format("%s/video/%s.mp4", startPath, id));
+        if (!resource.exists()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        long chunkSize = 1024 * 1024;
+        long contentLength = resource.contentLength();
+
+        ResourceRegion region;
+
+        Optional<HttpRange> optional = headers.getRange().stream().findFirst();
+        if (optional.isEmpty())
+             return ResponseEntity.badRequest().build();
+
+        HttpRange httpRange = optional.get();
+        long start = httpRange.getRangeStart(contentLength);
+        long end = httpRange.getRangeEnd(contentLength);
+        long rangeLength = Long.min(chunkSize, end - start + 1);
+
+        region = new ResourceRegion(resource, start, rangeLength);
+
+        return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
+                .cacheControl(CacheControl.maxAge(10, TimeUnit.MINUTES))
+                .contentType(MediaTypeFactory.getMediaType(resource).orElse(MediaType.APPLICATION_OCTET_STREAM))
+                .header("Accept-Ranges", "bytes")
+                .body(region);
     }
 
     @PostMapping("/test/create")
