@@ -315,11 +315,11 @@ function ChatUserContent() {
 
 function RecommandVideo() {
     return <>
+        {/* <VideoBox horizontal={true} />
         <VideoBox horizontal={true} />
         <VideoBox horizontal={true} />
         <VideoBox horizontal={true} />
-        <VideoBox horizontal={true} />
-        <VideoBox horizontal={true} />
+        <VideoBox horizontal={true} /> */}
     </>;
 }
 

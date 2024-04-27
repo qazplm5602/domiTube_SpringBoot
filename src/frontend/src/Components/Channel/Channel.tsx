@@ -59,7 +59,7 @@ export default function Channel() {
     }, [id]);
 
     if (typeof error !== "boolean") {
-        return <MainLayout>
+        return <MainLayout mainRef={mainRef}>
             error: {error}
         </MainLayout>;
     }
@@ -156,38 +156,21 @@ function VideoAll({ channel, mainRef }: { channel: string | undefined, mainRef: 
 
         return () => {
             window.removeEventListener("resize", onResize);
-            mainRef.current.removeEventListener("scroll", onScroll);
+            
+            if (mainRef.current)
+                mainRef.current.removeEventListener("scroll", onScroll);
         }
     }, [isScroll, loading, videos, page]);
 
-    useEffect(() => {
-        if (channel !== undefined && !loading && videos.length === 0) {
-            console.log("setVideos init");
-            // 로드
-            loadVideos();
-        }
-    }, [channel, loading, videos]);
-
-    // useEffect(() => {
-    //     setInterval(() => console.log(), 1000);
-    // }, []);
-    
     return <Section className={style.content}>
         <div className={style.category}>
-            <Button className={sort === 0 && style.active} onClick={() => changeSort(0)}>최신순</Button>
-            <Button className={sort === 1 && style.active} onClick={() => changeSort(1)}>인기순</Button>
-            <Button className={sort === 2 && style.active} onClick={() => changeSort(2)}>날짜순</Button>
+            <Button className={sort === 0 ? style.active : ''} onClick={() => changeSort(0)}>최신순</Button>
+            <Button className={sort === 1 ? style.active : ''} onClick={() => changeSort(1)}>인기순</Button>
+            <Button className={sort === 2 ? style.active : ''} onClick={() => changeSort(2)}>날짜순</Button>
         </div>
 
         <Section className={style.videos}>
-            {videos.map(v => <VideoBox className={[style.video]} key={v.id} />)}
-            {/* <VideoBox className={[style.video]} />
-            <VideoBox className={[style.video]} />
-            <VideoBox className={[style.video]} />
-            <VideoBox className={[style.video]} />
-            <VideoBox className={[style.video]} />
-            <VideoBox className={[style.video]} />
-            <VideoBox className={[style.video]} /> */}
+            {videos.map(v => <VideoBox video={v} channelHide={true} className={[style.video]} key={v.id} />)}
         </Section>
 
         {loading && <Spinner className={style.loading} />}
