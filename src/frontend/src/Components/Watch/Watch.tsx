@@ -21,6 +21,8 @@ import { OnProgressProps } from "react-player/base";
 import React from "react";
 import { request } from "../Utils/Fetch";
 import { numberWithKorean, secondsToHMS } from "../Utils/Misc";
+import { useSelector } from "react-redux";
+import IStore from "../Redux/Type";
 
 export interface videoDataType {
     id: string,
@@ -66,7 +68,7 @@ export default function Watch() {
             <VideoPlayer id={id} />
 
             {/* 제목 / 채널 */}
-            <TitleChannel title={videoData?.title || "--"} owner={videoData?.channel} good={videoData?.good || 0} bad={videoData?.bad || 0} />
+            <TitleChannel title={videoData?.title || "--"} id={id} owner={videoData?.channel} good={videoData?.good || 0} bad={videoData?.bad || 0} />
 
             {/* 설명란 */}
             <Description view={videoData?.views || 0} created={videoData ? new Date(videoData.create) : undefined} desc={videoData?.description} />
@@ -216,8 +218,10 @@ function PlayerBtn({icon, text, onClick}: {icon: string, text?: string, onClick?
     return <Button icon={icon} onClick={onClick} className={style.control_btn}>{text && <span>{text}</span>}</Button>
 }
 
-function TitleChannel({owner, title, good, bad}: {owner: string | undefined, title: string, good: number, bad: number}) {
+function TitleChannel({id, owner, title, good, bad}: {id: string, owner: string | undefined, title: string, good: number, bad: number}) {
     const [channelData, setChannelData] = useState<channelMain | null>(null);
+    const [assess, setAssess] = useState<boolean | undefined>(); // null: 아무것도 안누름 / true: 조아용 / false: 싫음 ㄹㅇ
+    const logined = useSelector<IStore>(value => value.login.logined) as boolean;
 
     const requestChannel = async function() {
         const { code, data } = await request(`/api/channel/${owner}/info`);
@@ -225,11 +229,31 @@ function TitleChannel({owner, title, good, bad}: {owner: string | undefined, tit
 
         setChannelData(data);
     }
+    const requestMyAssess = async function() {
+        const { code, data } = await request(`/api/video/${id}/Assessment`);
+        if (code !== 200) {
+            return;
+        }
+
+        setAssess(data as boolean | undefined);
+    }
+    const assessClick = function(good: boolean) {
+        if (assess !== undefined && good === assess) { // 이건 해제하는거임
+            console.log(`평가 해제`);   
+        } else { // 걍 설정
+            console.log(`${good ? "좋아" : "싫어"}요 설정!`);   
+        }
+    }
 
     useEffect(() => {
         if (owner)
             requestChannel();
     }, [owner]);
+
+    useEffect(() => {
+        if (logined)
+            requestMyAssess();
+    }, [logined]);
 
     return <Section title={title} titleClass={style.title} className={style.metadata}>
         <div className={style.channel}>
@@ -249,8 +273,8 @@ function TitleChannel({owner, title, good, bad}: {owner: string | undefined, tit
 
             {/* 좋아용 싫어요 */}
             <div className={style.rating}>
-                <Button icon={goodSvg}>{numberWithKorean(good)}</Button>
-                <Button icon={goodSvg}>{numberWithKorean(bad)}</Button>
+                <Button icon={goodSvg} onClick={() => assessClick(true)}>{numberWithKorean(good)}</Button>
+                <Button icon={goodSvg} onClick={() => assessClick(false)}>{numberWithKorean(bad)}</Button>
             </div>
         </div>
     </Section>
