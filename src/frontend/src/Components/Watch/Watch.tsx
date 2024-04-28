@@ -245,7 +245,7 @@ function TitleChannel({owner, title, good, bad}: {owner: string | undefined, tit
         </div>
 
         <div className={style.interactions}>
-            <Button icon={shareSvg}>공유</Button>
+            <Button icon={shareSvg} onClick={() => window.navigator.share({ url: `/watch/${owner || ""}`, title: `domiTube - ${title}` })}>공유</Button>
 
             {/* 좋아용 싫어요 */}
             <div className={style.rating}>

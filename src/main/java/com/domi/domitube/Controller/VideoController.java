@@ -1,8 +1,10 @@
 package com.domi.domitube.Controller;
 
 import com.domi.domitube.DTO.VideoDataDTO;
+import com.domi.domitube.Repository.Entity.Assessment;
 import com.domi.domitube.Repository.Entity.User;
 import com.domi.domitube.Repository.Entity.Video;
+import com.domi.domitube.Service.AssessmentService;
 import com.domi.domitube.Service.UserService;
 import com.domi.domitube.Service.VideoService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,6 +31,8 @@ import java.util.concurrent.TimeUnit;
 public class VideoController {
     final VideoService videoService;
     final UserService userService;
+    final AssessmentService assessmentService;
+
     final String startPath = System.getenv("DOMI_ASSETS");
 
     @GetMapping("/{id}")
@@ -44,6 +48,31 @@ public class VideoController {
                 "result", true,
                 "data", VideoDataDTO.ConvertVideo(video)
         );
+    }
+
+    @GetMapping("/{id}/Assessment")
+    ResponseEntity<Boolean> GetVideoAssessment(@PathVariable("id") String id, HttpServletRequest request) {
+        String userId = (String)request.getAttribute("user.id");
+        if (userId == null) {
+            return ResponseEntity.status(401).build();
+        }
+
+        User user = userService.GetUserForId(userId);
+        if (user == null) { // 왜 유저가 없지???
+            return ResponseEntity.internalServerError().build();
+        }
+
+        Video video = videoService.GetVideoById(id);
+        if (video == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Boolean result = null;
+        Assessment.Type type = assessmentService.GetVideoAssessForId(video, user);
+        if (type != null)
+            result = type == Assessment.Type.Good;
+
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/user/{id}")

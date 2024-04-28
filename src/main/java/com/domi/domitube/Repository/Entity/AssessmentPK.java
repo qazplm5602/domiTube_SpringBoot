@@ -5,8 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class SubscribePK implements Serializable {
-    private String id;
-    private String targetId;
+public class AssessmentPK implements Serializable {
+    private User user;
+    private Video video;
 }
-
