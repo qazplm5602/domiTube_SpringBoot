@@ -11,10 +11,11 @@ export async function request(url: string, option: RequestInit = {}): Promise<re
     const originOption = {...option};
 
     if (accessToken) {
-        Object.assign(option, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
+        if (option.headers === undefined)
+            option.headers = {};
+
+        Object.assign(option.headers, {
+            Authorization: `Bearer ${accessToken}`
         });
     }
     

@@ -222,6 +222,9 @@ function TitleChannel({id, owner, title, good, bad}: {id: string, owner: string 
     const [channelData, setChannelData] = useState<channelMain | null>(null);
     const [assess, setAssess] = useState<boolean | undefined>(); // null: 아무것도 안누름 / true: 조아용 / false: 싫음 ㄹㅇ
     const logined = useSelector<IStore>(value => value.login.logined) as boolean;
+    
+    const [goodCount, setGoodCount] = useState(good);
+    const [badCount, setBadCount] = useState(bad);
 
     const requestChannel = async function() {
         const { code, data } = await request(`/api/channel/${owner}/info`);
@@ -237,13 +240,35 @@ function TitleChannel({id, owner, title, good, bad}: {id: string, owner: string 
 
         setAssess(data as boolean | undefined);
     }
-    const assessClick = function(good: boolean) {
-        if (assess !== undefined && good === assess) { // 이건 해제하는거임
-            console.log(`평가 해제`);   
-        } else { // 걍 설정
-            console.log(`${good ? "좋아" : "싫어"}요 설정!`);   
+    const assessClick = function(goodVal: boolean) {
+        let assessBody;
+        if (assess === true) {
+            setGoodCount(goodCount - 1);
+        } else if (assess === false) {
+            setBadCount(badCount - 1);
         }
+
+        if (assess !== undefined && goodVal === assess) { // 이건 해제하는거임
+            assessBody = 0;
+            setAssess(undefined);
+        } else { // 걍 설정
+            assessBody = goodVal ? 1 : 2;
+            setAssess(goodVal);
+
+            if (goodVal === true) {
+                setGoodCount(goodCount + 1);
+            } else if (goodVal === false) {
+                setBadCount(badCount + 1);
+            }
+        }
+
+        request(`/api/video/${id}/Assess`, { method: "POST", body: assessBody.toString(), headers: { "Content-Type": "application/json" } });
     }
+
+    useEffect(() => {
+        setGoodCount(good);
+        setBadCount(bad);
+    }, [id, good, bad]);
 
     useEffect(() => {
         if (owner)
@@ -273,8 +298,8 @@ function TitleChannel({id, owner, title, good, bad}: {id: string, owner: string 
 
             {/* 좋아용 싫어요 */}
             <div className={style.rating}>
-                <Button icon={goodSvg} onClick={() => assessClick(true)}>{numberWithKorean(good)}</Button>
-                <Button icon={goodSvg} onClick={() => assessClick(false)}>{numberWithKorean(bad)}</Button>
+                <Button icon={goodSvg} className={assess === true ? style.active : undefined} onClick={() => assessClick(true)}>{numberWithKorean(goodCount)}</Button>
+                <Button icon={goodSvg} className={assess === false ? style.active : undefined} onClick={() => assessClick(false)}>{numberWithKorean(badCount)}</Button>
             </div>
         </div>
     </Section>
