@@ -75,6 +75,61 @@ public class VideoController {
         return ResponseEntity.ok(result);
     }
 
+    @PostMapping("/{id}/Assess")
+    void SetVideoAssess(@PathVariable("id") String videoId, @RequestBody byte value, HttpServletRequest request, HttpServletResponse response) {
+        String userId = (String)request.getAttribute("user.id");
+        if (userId == null) {
+            response.setStatus(401);
+            return;
+        }
+
+        if (value > 2 || value < 0) {
+            response.setStatus(400);
+            return;
+        }
+
+        User user = userService.GetUserForId(userId);
+        if (user == null) {
+            response.setStatus(500);
+            return;
+        }
+
+        Video video =  videoService.GetVideoById(videoId);
+        if (video == null) {
+            response.setStatus(404);
+            return;
+        }
+
+        Assessment.Type assess = assessmentService.GetVideoAssessForId(video, user);
+        if ((assess == null && value == 0) || (assess == Assessment.Type.Good && value == 1) || (assess == Assessment.Type.Bad && value == 2)) {
+            response.setStatus(400);
+            return;
+        }
+
+        if (assess == Assessment.Type.Good) {
+            video.setGood(video.getGood() - 1);
+        } else if (assess == Assessment.Type.Bad) {
+            video.setDislike(video.getDislike() - 1);
+        }
+        assess = null;
+
+        if (value == 1) {
+            video.setGood(video.getGood() + 1);
+            assess = Assessment.Type.Good;
+        } else if (value == 2) {
+            video.setDislike(video.getDislike() + 1);
+            assess = Assessment.Type.Bad;
+        }
+
+        if (assess == null) {
+            assessmentService.DeleteVideoAssess(user, video);
+        } else {
+            assessmentService.SetVideoAssess(user, video, assess);
+        }
+        videoService.CreateVideo(video);
+
+    }
+
     @GetMapping("/user/{id}")
     List<VideoDataDTO> GetVideosByUserId(@PathVariable("id") String id, @RequestParam("sort") int sort, @RequestParam("page") int page, HttpServletResponse response) {
         List<VideoDataDTO> result = new ArrayList<VideoDataDTO>();
