@@ -54,6 +54,13 @@ export default function Channel() {
         setChannelData(data);
     }
 
+    const subscribeChanged = function(active: boolean) {
+        if (channelData !== null) {
+            channelData.subscribe = active;
+            setChannelData({...channelData});
+        }
+    }
+
     useEffect(() => {
         getChannelData();
     }, [id]);
@@ -77,7 +84,7 @@ export default function Channel() {
                         <span className={style.sub}>구독자 {(channelData !== null) ? channelData.follower : "--"}명</span>
                     </div>
 
-                    <SubscribeButton active={channelData?.subscribe === true} />
+                    <SubscribeButton channel={id || ""} onChanged={subscribeChanged} active={channelData?.subscribe === true} />
                     {/* <Button className={style.subscribe} icon={loveSvg}>구독</Button> */}
                     {/* <Button className={[style.subscribe, style.active].join(" ")} icon={loveSvg}>구독취소</Button> */}
                 </div>
@@ -177,13 +184,18 @@ function VideoAll({ channel, mainRef }: { channel: string | undefined, mainRef: 
     </Section>;
 }
 
-export function SubscribeButton({ className, active, onClick }: {className?: string[], active: boolean, onClick?: React.MouseEventHandler}) {
+export function SubscribeButton({ className, active, channel, onChanged }: {className?: string[], active: boolean, channel: string, onChanged: (active: boolean) => void}) {
     const classList = className || [];
     classList.push(style.subscribe);
     
     if (active)
         classList.push(style.active);
 
-    return <Button className={classList.join(" ")} onClick={onClick} icon={loveSvg}>구독{active ? "취소" : ""}</Button>;
+    const clickBtn = function() {
+        request("/api/user/subscribe", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ targetId: channel, active: !active }) });
+        onChanged(!active);
+    }
+
+    return <Button className={classList.join(" ")} onClick={clickBtn} icon={loveSvg}>구독{active ? "취소" : ""}</Button>;
                     {/* <Button className={[style.subscribe, style.active].join(" ")} icon={loveSvg}>구독취소</Button> */}
 }

@@ -264,6 +264,12 @@ function TitleChannel({id, owner, title, good, bad}: {id: string, owner: string 
 
         request(`/api/video/${id}/Assess`, { method: "POST", body: assessBody.toString(), headers: { "Content-Type": "application/json" } });
     }
+    const subscribeChanged = function(active: boolean) {
+        if (channelData !== null) {
+            channelData.subscribe = active;
+            setChannelData({...channelData});
+        }
+    }
 
     useEffect(() => {
         setGoodCount(good);
@@ -290,7 +296,7 @@ function TitleChannel({id, owner, title, good, bad}: {id: string, owner: string 
                 <span>구독자: {channelData === null ? "--" : numberWithKorean(channelData.follower)}명</span>
             </div>
 
-            <SubscribeButton className={[style.subscribe]} active={channelData?.subscribe === true} />
+            <SubscribeButton className={[style.subscribe]} channel={owner || ""} onChanged={subscribeChanged} active={channelData?.subscribe === true} />
         </div>
 
         <div className={style.interactions}>
