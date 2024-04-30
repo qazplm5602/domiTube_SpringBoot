@@ -13,6 +13,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { request } from "../Utils/Fetch";
 import { videoDataType } from "../Watch/Watch";
 import Spinner from "../Recycle/Spinner";
+import { useSelector } from "react-redux";
+import IStore from "../Redux/Type";
 
 export interface channelMain {
     name: string,
@@ -185,6 +187,7 @@ function VideoAll({ channel, mainRef }: { channel: string | undefined, mainRef: 
 }
 
 export function SubscribeButton({ className, active, channel, onChanged }: {className?: string[], active: boolean, channel: string, onChanged: (active: boolean) => void}) {
+    const logined = useSelector<IStore>(value => value.login.logined) as boolean;
     const classList = className || [];
     classList.push(style.subscribe);
     
@@ -192,6 +195,8 @@ export function SubscribeButton({ className, active, channel, onChanged }: {clas
         classList.push(style.active);
 
     const clickBtn = function() {
+        if (!logined) return;
+
         request("/api/user/subscribe", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ targetId: channel, active: !active }) });
         onChanged(!active);
     }
