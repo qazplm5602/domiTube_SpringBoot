@@ -26,4 +26,13 @@ public class SubscribeService {
     public Boolean HasSubscribeUser(String id, String target) {
         return subscribeRepository.IsUserSubscribe(id, target) == 1;
     }
+
+    public void SetSubscribe(String id, String target, Boolean active) {
+        Subscribe entity = Subscribe.builder().id(id).targetId(target).build();
+        if (active) {
+            subscribeRepository.save(entity);
+        } else {
+            subscribeRepository.delete(entity);
+        }
+    }
 }
