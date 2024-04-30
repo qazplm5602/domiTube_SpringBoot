@@ -130,6 +130,18 @@ public class VideoController {
 
     }
 
+    @PostMapping("/{id}/ping")
+    void CountViewUp(@PathVariable("id") String id, HttpServletResponse response) {
+        Video video = videoService.GetVideoById(id);
+        if (video == null) {
+            response.setStatus(404);
+            return;
+        }
+
+        video.setViews(video.getViews() + 1);
+        videoService.CreateVideo(video);
+    }
+
     @GetMapping("/user/{id}")
     List<VideoDataDTO> GetVideosByUserId(@PathVariable("id") String id, @RequestParam("sort") int sort, @RequestParam("page") int page, HttpServletResponse response) {
         List<VideoDataDTO> result = new ArrayList<VideoDataDTO>();

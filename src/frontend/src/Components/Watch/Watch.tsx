@@ -54,6 +54,15 @@ export default function Watch() {
         requestData();
     }, [id]);
 
+    // 카운팅 starrrr
+    useEffect(() => {
+        const waitHandler = setTimeout(() => {
+            request(`/api/video/${id}/ping`, { method: "POST" });
+        }, 1000 * 10);
+
+        return () => clearTimeout(waitHandler);
+    }, [id]);
+
     if (id === undefined) return null;
 
     if (errorReason !== null) {
