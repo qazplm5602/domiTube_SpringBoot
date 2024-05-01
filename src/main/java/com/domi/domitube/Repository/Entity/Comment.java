@@ -5,6 +5,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -25,6 +28,9 @@ public class Comment {
 
     @ManyToOne
     Comment reply;
+
+    @CreatedDate
+    LocalDateTime created;
 
     @Column(nullable = false)
     String content;

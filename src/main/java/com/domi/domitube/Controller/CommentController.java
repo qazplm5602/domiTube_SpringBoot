@@ -41,6 +41,33 @@ public class CommentController {
         commentService.Save(comment);
     }
 
+    @PutMapping("/reply")
+    void WriteReplyComment(@RequestBody String content, @RequestParam("id") long commentId, HttpServletRequest request, HttpServletResponse response) {
+        User user = userService.GetUserForRequest(request);
+        if (user == null) {
+            response.setStatus(401);
+            return;
+        }
+
+        Comment targetComment = commentService.GetCommentForId(commentId);
+        if (targetComment == null) {
+            response.setStatus(404);
+            return;
+        }
+
+        if (targetComment.getReply() != null) { // 이 댓글은 답장임
+            response.setStatus(403);
+        }
+
+        Comment comment = new Comment();
+        comment.setReply(targetComment);
+        comment.setVideo(targetComment.getVideo());
+        comment.setWriter(user);
+        comment.setContent(content);
+
+        commentService.Save(comment);
+    }
+
     @PostMapping("/edit")
     void EditComment(@RequestBody String content, @RequestParam("id") long id, HttpServletRequest request, HttpServletResponse response) {
         Comment comment = GetMyCommentTryPermission(id, request, response);
