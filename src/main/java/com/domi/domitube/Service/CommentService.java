@@ -13,4 +13,13 @@ public class CommentService {
     public void Save(Comment comment) {
         commentRepository.save(comment);
     }
+
+    public void Delete(Comment comment) {
+        commentRepository.DeleteChildrenComment(comment.getId()); // 답장한거 다 지움
+        commentRepository.delete(comment);
+    }
+
+    public Comment GetCommentForId(long id) {
+        return commentRepository.findById(id).orElse(null);
+    }
 }

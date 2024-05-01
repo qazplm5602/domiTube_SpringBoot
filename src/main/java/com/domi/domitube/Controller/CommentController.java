@@ -40,4 +40,42 @@ public class CommentController {
         comment.setContent(content);
         commentService.Save(comment);
     }
+
+    @PostMapping("/edit")
+    void EditComment(@RequestBody String content, @RequestParam("id") long id, HttpServletRequest request, HttpServletResponse response) {
+        Comment comment = GetMyCommentTryPermission(id, request, response);
+        if (comment == null) return;
+
+        comment.setContent(content);
+        commentService.Save(comment);
+    }
+
+    @DeleteMapping("/delete")
+    void DeleteComment(@RequestParam("id") long id, HttpServletRequest request, HttpServletResponse response) {
+        Comment comment = GetMyCommentTryPermission(id, request, response);
+        if (comment == null) return;
+
+        commentService.Delete(comment);
+    }
+
+    Comment GetMyCommentTryPermission(long id, HttpServletRequest request, HttpServletResponse response) {
+        User user = userService.GetUserForRequest(request);
+        if (user == null) {
+            response.setStatus(401);
+            return null;
+        }
+
+        Comment comment = commentService.GetCommentForId(id);
+        if (comment == null) {
+            response.setStatus(404);
+            return null;
+        }
+
+        if (comment.getWriter() != user) {
+            response.setStatus(403);
+            return null;
+        }
+
+        return comment;
+    }
 }
