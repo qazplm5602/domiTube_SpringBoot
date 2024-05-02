@@ -9,7 +9,10 @@ import com.domi.domitube.Service.VideoService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -104,5 +107,15 @@ public class CommentController {
         }
 
         return comment;
+    }
+
+    @GetMapping("/")
+    ResponseEntity<List<Comment>> GetVideoComments(@RequestParam("video") String videoId, @RequestParam("page") int page) {
+        Video video = videoService.GetVideoById(videoId);
+        if (video == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        
     }
 }
