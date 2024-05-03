@@ -35,8 +35,16 @@ export interface videoDataType {
     channel: string
 }
 
+interface CommentDataType {
+    id: number,
+    owner: string,
+    content: string,
+    created: number
+}
+
 export default function Watch() {
     const { id } = useParams();
+    const mainRef = useRef<any>();
     const [errorReason, setErrorReason] = useState<string | null>(null);
     const [videoData, setVideoData] = useState<videoDataType | null>(null);
     
@@ -71,7 +79,7 @@ export default function Watch() {
         </MainLayout>;
     }
 
-    return <MainLayout className={style.main} sideDisable={true}>
+    return <MainLayout mainRef={mainRef} className={style.main} sideDisable={true}>
         <Section className={style.video_container}>
             {/* <video> */}
             <VideoPlayer id={id} />
@@ -83,7 +91,7 @@ export default function Watch() {
             <Description view={videoData?.views || 0} created={videoData ? new Date(videoData.create) : undefined} desc={videoData?.description} />
 
             {/* 댓글 */}
-            <Chat />
+            <Chat videoId={id} mainRef={mainRef} />
         </Section>
         
         <Section className={style.recommand_container}>
@@ -332,7 +340,43 @@ function Description({ view, desc, created }: { view: number, desc: string | und
     </div>;
 }
 
-function Chat() {
+function Chat({videoId, mainRef}: {videoId: string, mainRef: any}) {
+    const [loading, setLoading] = useState(false);
+    const [page, setPage] = useState(0);
+    const [bottom, setBottom] = useState(false);
+    const [list, setList] = useState<CommentDataType[]>([]);
+
+    const requestChat = async function() {
+        console.log("requestChat");
+        setLoading(true);
+
+        const { code, data } = await request(`/api/video/comment/list?video=${videoId}&page=${page}`);
+        if (code !== 200) return;
+        
+        setList([...list, ...data]);
+        setLoading(false);
+        setPage((data as CommentDataType[]).length >= 20 ? page + 1 : -1);
+        onScroll();
+    }
+    
+    useEffect(() => {
+        if (loading || page === -1) return; // 로딩중일때, 모든 댓글 이미 다 불러옴
+
+        if (mainRef.current.scrollHeight <= mainRef.current.clientHeight || bottom) { // 화면이 꽉 안차있거나, 스크롤 맨 아래일경우
+            requestChat();
+        }
+    }, [videoId, list, bottom]);
+
+    const onScroll = function() {
+        setBottom(mainRef.current.scrollTop >= mainRef.current.scrollHeight - mainRef.current.clientHeight);
+    }
+
+    useEffect(() => {
+        mainRef.current.addEventListener("scroll", onScroll);
+        
+        return () => mainRef.current.removeEventListener("scroll", onScroll);
+    }, []);
+
     return <>
         <Section className={style.chat_header}>
             <span>댓글 500개</span>
