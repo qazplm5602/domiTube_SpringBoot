@@ -340,6 +340,7 @@ function Description({ view, desc, created }: { view: number, desc: string | und
     </div>;
 }
 
+type cacheUserType = {[key: string]: {icon: boolean, name: string} | null};
 function Chat({videoId, mainRef}: {videoId: string, mainRef: any}) {
     const loginIcon = useSelector<IStore>(value => ({
         icon: value.login.logined && value.login.image === true,
@@ -350,6 +351,7 @@ function Chat({videoId, mainRef}: {videoId: string, mainRef: any}) {
     const [page, setPage] = useState(0);
     const [bottom, setBottom] = useState(false); // 스크롤 바뀌었다는 트리거
     const [list, setList] = useState<CommentDataType[]>([]);
+    const [cacheUser, setCacheUser] = useState<cacheUserType>({}); // channelMain 형태면 불러와짐 , null이면 불러오는중...
 
     const requestChat = async function() {
         setLoading(true);
@@ -358,8 +360,33 @@ function Chat({videoId, mainRef}: {videoId: string, mainRef: any}) {
         if (code !== 200) return;
         
         setList([...list, ...data]);
+
+        // 유저 정보가 없는건 불러오기
+        data.forEach((value: CommentDataType) => {
+            if (cacheUser[value.owner] === undefined) {
+                setCacheUser({...cacheUser, [value.owner]: null});
+                cacheUser[value.owner] = null;
+                
+                requestUser(value.owner);
+            }
+        });
+
         setLoading(false);
         setPage((data as CommentDataType[]).length >= 10 ? page + 1 : -1);
+    }
+    const requestUser = async function(user: string) {
+        const { code, data } = await request(`/api/channel/${user}/info?mini=1`);
+        if (code !== 200) return;
+
+        setCacheUser((prevState: cacheUserType) => {
+            const newUsers = {...prevState};
+            newUsers[user] = {
+                icon: data.icon,
+                name: data.name
+            }
+
+            return newUsers;
+        });
     }
     
     useEffect(() => {
@@ -368,7 +395,7 @@ function Chat({videoId, mainRef}: {videoId: string, mainRef: any}) {
         if (mainRef.current.scrollHeight <= mainRef.current.clientHeight || mainRef.current.scrollTop + window.innerHeight >= mainRef.current.scrollHeight) { // 화면이 꽉 안차있거나, 스크롤 맨 아래일경우
             requestChat();
         }
-    }, [videoId, list, bottom, loading]);
+    }, [videoId, list, bottom, loading, cacheUser]);
 
     const onScroll = function() {
         setBottom(!bottom);
@@ -399,7 +426,8 @@ function Chat({videoId, mainRef}: {videoId: string, mainRef: any}) {
             </div>
         </ChatUser>
         
-        {list.map(v => <ChatUserContent key={v.id} icon={noProfile} name={"--"} date={new Date(v.created)} content={v.content} />)}
+        {/* 댓글들 */}
+        {list.map(v => <ChatUserContent key={v.id} icon={cacheUser[v.owner]?.icon ? `/api/image/user/${v.owner}` : noProfile} name={cacheUser[v.owner]?.name || "--"} date={new Date(v.created)} content={v.content} />)}
     </>;
 }
 

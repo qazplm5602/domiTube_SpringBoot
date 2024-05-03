@@ -6,10 +6,7 @@ import com.domi.domitube.Service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -21,12 +18,19 @@ public class ChannelController {
     final SubscribeService subscribeService;
 
     @GetMapping("/{id}/info")
-    Map<String, Object> GetChannelInfo(@PathVariable("id") String id, HttpServletRequest request, HttpServletResponse response) {
+    Map<String, Object> GetChannelInfo(@PathVariable("id") String id, @RequestParam(value = "mini", required = false) boolean lite, HttpServletRequest request, HttpServletResponse response) {
         User user = userService.GetUserForId(id);
 
         if (user == null) {
             response.setStatus(404);
             return Map.of("result", false);
+        }
+        
+        if (lite) { // 최소한
+            return Map.of(
+                "name", user.getName(),
+                "icon", user.getImage()
+            );
         }
 
         boolean myFollow = false;
