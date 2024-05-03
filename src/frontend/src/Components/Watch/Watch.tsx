@@ -20,7 +20,7 @@ import { useEffect, useRef, useState } from "react";
 import { OnProgressProps } from "react-player/base";
 import React from "react";
 import { request } from "../Utils/Fetch";
-import { numberWithKorean, secondsToHMS } from "../Utils/Misc";
+import { dateWithKorean, numberWithCommas, numberWithKorean, secondsToHMS } from "../Utils/Misc";
 import { useSelector } from "react-redux";
 import IStore from "../Redux/Type";
 
@@ -341,6 +341,11 @@ function Description({ view, desc, created }: { view: number, desc: string | und
 }
 
 function Chat({videoId, mainRef}: {videoId: string, mainRef: any}) {
+    const loginIcon = useSelector<IStore>(value => ({
+        icon: value.login.logined && value.login.image === true,
+        id: value.login.logined ? value.login.id : ""
+    })) as {id: string, icon: boolean};
+    
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(0);
     const [bottom, setBottom] = useState(false); // 스크롤 바뀌었다는 트리거
@@ -382,37 +387,37 @@ function Chat({videoId, mainRef}: {videoId: string, mainRef: any}) {
 
     return <>
         <Section className={style.chat_header}>
-            <span>댓글 500개</span>
+            <span>댓글 {numberWithCommas(list.length)}개</span>
             {/* 나중에 정렬 버튼 넣을꺼임 */}
         </Section>
         
         {/* 댓글 쓴는곳 */}
-        <ChatUser className={[style.myInput]}>
+        <ChatUser className={[style.myInput]} icon={loginIcon.icon ? `/api/image/user/${loginIcon.id}` : noProfile}>
             <div>
                 <input type="text" placeholder="댓글 추가..." />
                 <Button className={style.send}>등록</Button>
             </div>
         </ChatUser>
         
-        {list.map(v => <ChatUserContent key={v.id} />)}
+        {list.map(v => <ChatUserContent key={v.id} icon={noProfile} name={"--"} date={new Date(v.created)} content={v.content} />)}
     </>;
 }
 
-function ChatUser({children, className, section}: {className?: string[], children: React.ReactNode, section?: boolean}) {
+function ChatUser({children, className, section, icon}: {className?: string[], children: React.ReactNode, section?: boolean, icon: string}) {
     const classList = className || [];
     classList.push(style.userBox);    
     
     return <Section className={classList.join(" ")}>
-        <img className={style.userIcon} src="https://nng-phinf.pstatic.net/MjAyMjA2MTdfNzcg/MDAxNjU1NDYwOTk4MzIx.2GtboKl1AANbxW8mwf7_-3rl1joA5z70GdLSuhVzWssg.ubvmA6JPVkX2fRl0DLLBKY9eBbL2Gh3cN03_MMAwnuAg.PNG/1.png?type=f120_120_na" />
+        <img className={style.userIcon} src={icon} />
         {section ? <Section>{children}</Section> : children}
     </Section>;
 }
 
-function ChatUserContent() {
-    return <ChatUser className={[style.userChat]} section={true}>
+function ChatUserContent({icon, name, date, content}: {icon: string, name: string, date: Date, content: string}) {
+    return <ChatUser className={[style.userChat]} section={true} icon={icon}>
         <main>
-            <div className={style.detail}><span>도미</span><span>15시간 전</span></div>
-            <div className={style.content}>ㅁ려ㅑㅓㅎ랴후ㅑ루햐루햐러ㅜ햐ㅓ둑훠ㅑ더ㅜㅑㅐㅓ닥롣ㅑㅙ저ㅜㅇ</div>
+            <div className={style.detail}><span>{name}</span><span>{dateWithKorean(date)} 전</span></div>
+            <div className={style.content}>{content}</div>
             <div className={style.interacte}>
                 <Button icon={goodSvg} />
                 <span>500</span>
