@@ -12,7 +12,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.List;
+
+class CommentDataDTO {
+    public long id;
+    public String owner;
+    public String content;
+    public long created;
+}
 
 @RestController
 @RequiredArgsConstructor
@@ -41,6 +51,7 @@ public class CommentController {
         comment.setVideo(video);
         comment.setWriter(user);
         comment.setContent(content);
+        comment.setCreated(LocalDateTime.now());
         commentService.Save(comment);
     }
 
@@ -67,6 +78,7 @@ public class CommentController {
         comment.setVideo(targetComment.getVideo());
         comment.setWriter(user);
         comment.setContent(content);
+        comment.setCreated(LocalDateTime.now());
 
         commentService.Save(comment);
     }
@@ -109,13 +121,26 @@ public class CommentController {
         return comment;
     }
 
-    @GetMapping("/")
-    ResponseEntity<List<Comment>> GetVideoComments(@RequestParam("video") String videoId, @RequestParam("page") int page) {
+    @GetMapping("/list")
+    ResponseEntity<List<CommentDataDTO>> GetVideoComments(@RequestParam("video") String videoId, @RequestParam("page") int page) {
         Video video = videoService.GetVideoById(videoId);
         if (video == null) {
             return ResponseEntity.notFound().build();
         }
 
-        
+        List<CommentDataDTO> result = new ArrayList<CommentDataDTO>();
+        List<Comment> comments = commentService.GetVideoComments(video, page);
+
+        for (Comment comment : comments) {
+            CommentDataDTO data = new CommentDataDTO();
+            data.id = comment.getId();
+            data.content = comment.getContent();
+            data.owner = comment.getWriter().getId();
+            data.created = comment.getCreated().toInstant(ZoneOffset.of("+09:00")).toEpochMilli();
+
+            result.add(data);
+        }
+
+        return ResponseEntity.ok(result);
     }
 }

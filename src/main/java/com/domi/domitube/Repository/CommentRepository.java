@@ -19,7 +19,7 @@ public interface CommentRepository extends JpaRepository<Comment, Object> {
     @Query("DELETE FROM Comment c WHERE c.reply.id = :id")
     void DeleteChildrenComment(@Param("id") long parent);
 
-    @Query("SELECT c FROM Comment c WHERE c.reply = NULL AND c.video = :video ORDER BY c.created DESC")
+    @Query("SELECT c FROM Comment c WHERE c.reply is NULL AND c.video = :video ORDER BY c.created DESC")
     List<Comment> GetVideoCommentsNoReply(@Param("video") Video video, Pageable page);
 
 }
