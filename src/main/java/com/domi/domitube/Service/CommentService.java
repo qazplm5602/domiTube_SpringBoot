@@ -29,7 +29,7 @@ public class CommentService {
     }
 
     public List<Comment> GetVideoComments(Video video, int page) {
-        Pageable pageable = PageRequest.of(page, 20);
+        Pageable pageable = PageRequest.of(page, 10);
         return commentRepository.GetVideoCommentsNoReply(video, pageable);
     }
 }

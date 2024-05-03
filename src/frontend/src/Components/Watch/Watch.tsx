@@ -343,11 +343,10 @@ function Description({ view, desc, created }: { view: number, desc: string | und
 function Chat({videoId, mainRef}: {videoId: string, mainRef: any}) {
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(0);
-    const [bottom, setBottom] = useState(false);
+    const [bottom, setBottom] = useState(false); // 스크롤 바뀌었다는 트리거
     const [list, setList] = useState<CommentDataType[]>([]);
 
     const requestChat = async function() {
-        console.log("requestChat");
         setLoading(true);
 
         const { code, data } = await request(`/api/video/comment/list?video=${videoId}&page=${page}`);
@@ -355,27 +354,31 @@ function Chat({videoId, mainRef}: {videoId: string, mainRef: any}) {
         
         setList([...list, ...data]);
         setLoading(false);
-        setPage((data as CommentDataType[]).length >= 20 ? page + 1 : -1);
-        onScroll();
+        setPage((data as CommentDataType[]).length >= 10 ? page + 1 : -1);
     }
     
     useEffect(() => {
         if (loading || page === -1) return; // 로딩중일때, 모든 댓글 이미 다 불러옴
 
-        if (mainRef.current.scrollHeight <= mainRef.current.clientHeight || bottom) { // 화면이 꽉 안차있거나, 스크롤 맨 아래일경우
+        if (mainRef.current.scrollHeight <= mainRef.current.clientHeight || mainRef.current.scrollTop + window.innerHeight >= mainRef.current.scrollHeight) { // 화면이 꽉 안차있거나, 스크롤 맨 아래일경우
             requestChat();
         }
-    }, [videoId, list, bottom]);
+    }, [videoId, list, bottom, loading]);
 
     const onScroll = function() {
-        setBottom(mainRef.current.scrollTop >= mainRef.current.scrollHeight - mainRef.current.clientHeight);
+        setBottom(!bottom);
     }
 
     useEffect(() => {
         mainRef.current.addEventListener("scroll", onScroll);
+        window.addEventListener("resize", onScroll);
         
-        return () => mainRef.current.removeEventListener("scroll", onScroll);
-    }, []);
+        return () => {
+            if (mainRef.current)
+                mainRef.current.removeEventListener("scroll", onScroll);
+            window.removeEventListener("resize", onScroll);
+        }
+    }, [bottom]);
 
     return <>
         <Section className={style.chat_header}>
@@ -391,7 +394,7 @@ function Chat({videoId, mainRef}: {videoId: string, mainRef: any}) {
             </div>
         </ChatUser>
         
-        <ChatUserContent />
+        {list.map(v => <ChatUserContent key={v.id} />)}
     </>;
 }
 
