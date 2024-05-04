@@ -16,12 +16,14 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 class CommentDataDTO {
     public long id;
     public String owner;
     public String content;
     public long created;
+    public long reply;
 }
 
 @RestController
@@ -130,6 +132,7 @@ public class CommentController {
 
         List<CommentDataDTO> result = new ArrayList<CommentDataDTO>();
         List<Comment> comments = commentService.GetVideoComments(video, page);
+        Map<Long, Long> replyAmounts = commentService.GetReplyAmounts(comments);
 
         for (Comment comment : comments) {
             CommentDataDTO data = new CommentDataDTO();
@@ -137,6 +140,10 @@ public class CommentController {
             data.content = comment.getContent();
             data.owner = comment.getWriter().getId();
             data.created = comment.getCreated().toInstant(ZoneOffset.of("+09:00")).toEpochMilli();
+
+            Long replies = replyAmounts.get((Long)data.id);
+            data.reply = replies == null ? 0 : replies;
+
 
             result.add(data);
         }

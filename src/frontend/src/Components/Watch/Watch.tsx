@@ -39,7 +39,8 @@ interface CommentDataType {
     id: number,
     owner: string,
     content: string,
-    created: number
+    created: number,
+    reply: number
 }
 
 export default function Watch() {
@@ -341,6 +342,7 @@ function Description({ view, desc, created }: { view: number, desc: string | und
 }
 
 type cacheUserType = {[key: string]: {icon: boolean, name: string} | null};
+
 function Chat({videoId, mainRef}: {videoId: string, mainRef: any}) {
     const loginIcon = useSelector<IStore>(value => ({
         icon: value.login.logined && value.login.image === true,
@@ -444,7 +446,8 @@ function Chat({videoId, mainRef}: {videoId: string, mainRef: any}) {
                     content: inputVal,
                     created: Number(new Date()),
                     id,
-                    owner: loginIcon.id
+                    owner: loginIcon.id,
+                    reply: 0
                 }
 
                 return [myChat, ...prevState];
@@ -470,7 +473,7 @@ function Chat({videoId, mainRef}: {videoId: string, mainRef: any}) {
         </ChatUser>
         
         {/* 댓글들 */}
-        {list.map(v => <ChatUserContent key={v.id} icon={cacheUser[v.owner]?.icon ? `/api/image/user/${v.owner}` : noProfile} name={cacheUser[v.owner]?.name || "--"} date={new Date(v.created)} content={v.content} />)}
+        {list.map(v => <ChatUserContent key={v.id} icon={cacheUser[v.owner]?.icon ? `/api/image/user/${v.owner}` : noProfile} name={cacheUser[v.owner]?.name || "--"} date={new Date(v.created)} content={v.content} reply={v.reply} />)}
     </>;
 }
 
@@ -484,7 +487,7 @@ function ChatUser({children, className, section, icon}: {className?: string[], c
     </Section>;
 }
 
-function ChatUserContent({icon, name, date, content}: {icon: string, name: string, date: Date, content: string}) {
+function ChatUserContent({icon, name, date, content, reply}: {icon: string, name: string, date: Date, content: string, reply: number}) {
     return <ChatUser className={[style.userChat]} section={true} icon={icon}>
         <main>
             <div className={style.detail}><span>{name}</span><span>{dateWithKorean(date)} 전</span></div>
@@ -497,7 +500,7 @@ function ChatUserContent({icon, name, date, content}: {icon: string, name: strin
                 
                 <Button className={style.reply}>답글</Button>
             </div>
-            <Button className={style.reply}>답글 5개</Button>
+            {reply > 0 && <Button className={style.reply}>답글 {numberWithCommas(reply)}개</Button>}
         </main>
         <Button className={style.other} icon={otherSvg} />
     </ChatUser>;

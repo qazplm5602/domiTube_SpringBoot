@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Object> {
@@ -22,4 +23,6 @@ public interface CommentRepository extends JpaRepository<Comment, Object> {
     @Query("SELECT c FROM Comment c WHERE c.reply is NULL AND c.video = :video ORDER BY c.created DESC")
     List<Comment> GetVideoCommentsNoReply(@Param("video") Video video, Pageable page);
 
+    @Query("SELECT new map(c.reply.id AS id, count(c) AS amount) FROM Comment c WHERE c.reply is not NULL AND c.reply.id IN :ids GROUP BY c.reply")
+    List<Map<String, Object>> GetCommentReplyAmounts(@Param("ids") List<Long> comments);
 }
