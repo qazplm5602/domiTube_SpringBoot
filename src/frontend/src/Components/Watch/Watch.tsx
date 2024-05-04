@@ -456,6 +456,9 @@ function Chat({videoId, mainRef}: {videoId: string, mainRef: any}) {
         });
     }
 
+    const [replyInputId, setReplyInputId] = useState(68);
+    const replyReset = () => setReplyInputId(-1);
+
     return <>
         <Section className={style.chat_header}>
             <span>댓글 {numberWithCommas(list.length)}개</span>
@@ -463,18 +466,16 @@ function Chat({videoId, mainRef}: {videoId: string, mainRef: any}) {
         </Section>
         
         {/* 댓글 쓴는곳 */}
-        <ChatUser className={[style.myInput]} icon={loginIcon.icon ? `/api/image/user/${loginIcon.id}` : noProfile}>
-            <div>
-                <input type="text" disabled={inputDisable} value={inputVal} onChange={onInputChanged} onFocus={onFocus} placeholder="댓글 추가..." />
-                {inputBtn && <Section>
-                    <Button className={style.send} disabled={inputDisable} onClick={inputPost}>등록</Button>
-                    <Button className={style.close} disabled={inputDisable} onClick={inputCancel}>취소</Button>
-                </Section>}
-            </div>
-        </ChatUser>
+        <ChatReplyInput value={inputVal} onFocus={onFocus} onChange={onInputChanged} onPost={inputPost} onCancel={inputCancel} btnActive={inputBtn} disable={inputDisable} icon={loginIcon.icon ? `/api/image/user/${loginIcon.id}` : noProfile} />
         
         {/* 댓글들 */}
-        {list.map(v => <ChatUserContent key={v.id} icon={cacheUser[v.owner]?.icon ? `/api/image/user/${v.owner}` : noProfile} name={cacheUser[v.owner]?.name || "--"} date={new Date(v.created)} content={v.content} reply={v.reply} />)}
+        {list.map(v => {
+            return <>
+                <ChatUserContent key={v.id} onReply={() => setReplyInputId(v.id)} icon={cacheUser[v.owner]?.icon ? `/api/image/user/${v.owner}` : noProfile} name={cacheUser[v.owner]?.name || "--"} date={new Date(v.created)} content={v.content} reply={v.reply} noReply={v.reply === 0} />
+                {/* {(v.reply === 0 && v.id === replyInputId) && <ChatReplyInput value={replyVal} onChange={replyChangeValue} onPost={replyPost} onCancel={replyCancel} btnActive={true} disable={replyDisable} icon={loginIcon.icon ? `/api/image/user/${loginIcon.id}` : noProfile} reply={true} />} */}
+                {(v.reply === 0 && v.id === replyInputId) && <ChatSubReplyInput targetId={v.id} onReset={replyReset} />}
+            </>;
+        })}
         
         {loading && <Spinner className={style.loading} />}
     </>;
@@ -490,7 +491,7 @@ function ChatUser({children, className, section, icon}: {className?: string[], c
     </Section>;
 }
 
-function ChatUserContent({icon, name, date, content, reply}: {icon: string, name: string, date: Date, content: string, reply: number}) {
+function ChatUserContent({icon, name, date, content, noReply, reply, onReply}: {icon: string, name: string, date: Date, content: string, noReply: boolean, reply: number, onReply?: () => void}) {
     return <ChatUser className={[style.userChat]} section={true} icon={icon}>
         <main>
             <div className={style.detail}><span>{name}</span><span>{dateWithKorean(date)} 전</span></div>
@@ -501,12 +502,49 @@ function ChatUserContent({icon, name, date, content, reply}: {icon: string, name
                 <Button icon={goodSvg} />
                 <span>500</span>
                 
-                <Button className={style.reply}>답글</Button>
+                {noReply && <Button className={style.reply} onClick={onReply}>답글</Button>}
             </div>
             {reply > 0 && <Button className={style.reply}>답글 {numberWithCommas(reply)}개</Button>}
         </main>
         <Button className={style.other} icon={otherSvg} />
     </ChatUser>;
+}
+
+function ChatReplyInput({disable, icon, btnActive, value, onChange, onPost, onCancel, onFocus, reply}: {disable: boolean, btnActive: boolean, icon: string, value: string, reply?: boolean, onChange?: React.ChangeEventHandler<HTMLInputElement>, onPost: () => void, onCancel: () => void, onFocus?: React.FocusEventHandler<HTMLInputElement>}) {
+    const classList = [style.myInput];
+    if (reply) {
+        classList.push(style.replyInput);
+    }
+
+    return <ChatUser className={classList} icon={icon}>
+        <div>
+            <input type="text" disabled={disable} value={value} onChange={onChange} onFocus={onFocus} placeholder="댓글 추가..." />
+            {btnActive && <Section>
+                <Button className={style.send} disabled={disable} onClick={onPost}>등록</Button>
+                <Button className={style.close} disabled={disable} onClick={onCancel}>취소</Button>
+            </Section>}
+        </div>
+    </ChatUser>
+}
+
+function ChatSubReplyInput({targetId, onReset}: {targetId: number, onReset: () => void}) {
+    const [replyVal, setReplyVal] = useState("");
+    const [replyDisable, setReplyDisable] = useState(false);
+    const replyChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => setReplyVal(e.target.value);
+    const replyCancel = function() {
+        onReset();
+    }
+    const replyPost = function() {
+        setReplyDisable(true);
+
+        request(`/api/video/comment/reply?id=${targetId}`, { method: "PUT", body: replyVal }).then((data) => {
+            if (data.code != 200) return;
+
+            
+        });
+    }
+
+    return <ChatReplyInput value={replyVal} onChange={replyChangeValue} onPost={replyPost} onCancel={replyCancel} btnActive={true} disable={replyDisable} icon={noProfile} reply={true} />;
 }
 
 function RecommandVideo() {

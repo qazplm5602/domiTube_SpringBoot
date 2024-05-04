@@ -211,6 +211,15 @@
     margin-bottom: 30px;
 }
 
+.main > .video_container > .myInput.replyInput {
+    padding-left: 50px;
+    margin-top: 0;
+}
+
+.main > .video_container > .myInput.replyInput > img {
+    display: none;
+}
+
 .main > .video_container > .myInput > div {
     flex-grow: 1;
 
