@@ -15,8 +15,8 @@ import java.util.List;
 public class CommentService {
     final CommentRepository commentRepository;
 
-    public void Save(Comment comment) {
-        commentRepository.save(comment);
+    public long Save(Comment comment) {
+        return commentRepository.save(comment).getId();
     }
 
     public void Delete(Comment comment) {

@@ -14,7 +14,7 @@ import Login from './Components/Login/Login.tsx'
 import AccountSys from './Components/System/AccountSys.tsx'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <Provider store={Store}>
       <AccountSys />
       <BrowserRouter>
@@ -28,5 +28,5 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         </Routes>
       </BrowserRouter>
     </Provider>
-  </React.StrictMode>,
+  // </React.StrictMode>,
 )

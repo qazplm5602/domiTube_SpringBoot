@@ -359,7 +359,10 @@ function Chat({videoId, mainRef}: {videoId: string, mainRef: any}) {
         const { code, data } = await request(`/api/video/comment/list?video=${videoId}&page=${page}`);
         if (code !== 200) return;
         
-        setList([...list, ...data]);
+        // setList([...list, ...data]);
+        setList((prevState: CommentDataType[]) => {
+            return [...prevState, ...data]
+        });
 
         // 유저 정보가 없는건 불러오기
         data.forEach((value: CommentDataType) => {
@@ -395,6 +398,7 @@ function Chat({videoId, mainRef}: {videoId: string, mainRef: any}) {
         if (mainRef.current.scrollHeight <= mainRef.current.clientHeight || mainRef.current.scrollTop + window.innerHeight >= mainRef.current.scrollHeight) { // 화면이 꽉 안차있거나, 스크롤 맨 아래일경우
             requestChat();
         }
+
     }, [videoId, list, bottom, loading, cacheUser]);
 
     const onScroll = function() {
@@ -412,6 +416,42 @@ function Chat({videoId, mainRef}: {videoId: string, mainRef: any}) {
         }
     }, [bottom]);
 
+    const [inputDisable, setInputDisable] = useState(false);
+    const [inputVal, setInputVal] = useState("");
+    const [inputBtn, setInputBtn] = useState(false);
+    const onFocus = () => setInputBtn(true);
+    const onInputChanged = (e: React.ChangeEvent<HTMLInputElement>) => setInputVal(e.target.value);
+    const inputCancel = function() {
+        setInputBtn(false);
+        setInputVal("");
+    }
+    const inputPost = function() {
+        if (inputVal.length <= 0) return;
+        
+        setInputDisable(true);
+
+        if (cacheUser[loginIcon.id] === undefined) // 내 정보 캐싱 없음
+            requestUser(loginIcon.id);
+        
+        request(`/api/video/comment/write?video=${videoId}`, { method: "PUT", body: inputVal }).then(({code, data: id}) => {
+            setInputDisable(false);
+            inputCancel();
+
+            if (code !== 200) return;
+
+            setList((prevState: CommentDataType[]) => {
+                const myChat: CommentDataType = {
+                    content: inputVal,
+                    created: Number(new Date()),
+                    id,
+                    owner: loginIcon.id
+                }
+
+                return [myChat, ...prevState];
+            });
+        });
+    }
+
     return <>
         <Section className={style.chat_header}>
             <span>댓글 {numberWithCommas(list.length)}개</span>
@@ -421,8 +461,11 @@ function Chat({videoId, mainRef}: {videoId: string, mainRef: any}) {
         {/* 댓글 쓴는곳 */}
         <ChatUser className={[style.myInput]} icon={loginIcon.icon ? `/api/image/user/${loginIcon.id}` : noProfile}>
             <div>
-                <input type="text" placeholder="댓글 추가..." />
-                <Button className={style.send}>등록</Button>
+                <input type="text" disabled={inputDisable} value={inputVal} onChange={onInputChanged} onFocus={onFocus} placeholder="댓글 추가..." />
+                {inputBtn && <Section>
+                    <Button className={style.send} disabled={inputDisable} onClick={inputPost}>등록</Button>
+                    <Button className={style.close} disabled={inputDisable} onClick={inputCancel}>취소</Button>
+                </Section>}
             </div>
         </ChatUser>
         

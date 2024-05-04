@@ -33,17 +33,17 @@ public class CommentController {
     final UserService userService;
 
     @PutMapping("/write")
-    void WriteComment(@RequestBody String content, @RequestParam("video") String videoId, HttpServletRequest request, HttpServletResponse response) {
+    long WriteComment(@RequestBody String content, @RequestParam("video") String videoId, HttpServletRequest request, HttpServletResponse response) {
         User user = userService.GetUserForRequest(request);
         if (user == null) {
             response.setStatus(401);
-            return;
+            return 0;
         }
 
         Video video = videoService.GetVideoById(videoId);
         if (video == null) {
             response.setStatus(404);
-            return;
+            return 0;
         }
 
         Comment comment = new Comment();
@@ -52,7 +52,7 @@ public class CommentController {
         comment.setWriter(user);
         comment.setContent(content);
         comment.setCreated(LocalDateTime.now());
-        commentService.Save(comment);
+        return commentService.Save(comment);
     }
 
     @PutMapping("/reply")

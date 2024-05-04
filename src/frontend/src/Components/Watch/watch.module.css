@@ -234,7 +234,16 @@
     border-color: rgba(255, 255, 255, 0.5);
 }
 
-.main > .video_container > .myInput > div > .send {
+.main > .video_container > .myInput > div > section {
+    margin-top: 10px;
+    margin-left: auto;
+    
+    display: flex;
+    
+    gap: 0 5px;
+}
+
+.main > .video_container > .myInput > div > section > .send {
     width: max-content;
     height: max-content;
 
@@ -244,14 +253,29 @@
 
     background-color: rgba(255, 255, 255, 0.1);
 
-    margin-left: auto;
-    margin-top: 10px;
+    cursor: pointer;
+}
+
+.main > .video_container > .myInput > div > section > .send:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.main > .video_container > .myInput > div > section > .close {
+    width: max-content;
+    height: max-content;
+
+    padding: 7px 18px;
+    border-radius: 30px;
+    border: none;
+
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.15);
 
     cursor: pointer;
 }
 
-.main > .video_container > .myInput > div > .send:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+.main > .video_container > .myInput > div > section > .close:hover {
+    background: rgba(255,255,255,0.05);
 }
 
 .main > .video_container > .userChat {
