@@ -207,7 +207,8 @@
 
 .main > .video_container > .myInput {
     align-items: initial;
-    margin: 15px 0;
+    margin-top: 15px;
+    margin-bottom: 30px;
 }
 
 .main > .video_container > .myInput > div {
@@ -280,6 +281,7 @@
 
 .main > .video_container > .userChat {
     align-items: initial;
+    margin: 10px 0;
 }
 
 .main > .video_container > .userChat > section {
@@ -388,6 +390,13 @@
 
 .main > .video_container > .userChat:hover > section > .other {
     visibility: initial;
+}
+
+.main > .video_container > .loading {
+    margin: 10px auto;
+
+    opacity: 0.5;
+    scale: 0.5;
 }
 
 .main > .recommand_container {

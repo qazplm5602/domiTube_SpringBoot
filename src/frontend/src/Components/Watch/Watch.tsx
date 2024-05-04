@@ -23,6 +23,7 @@ import { request } from "../Utils/Fetch";
 import { dateWithKorean, numberWithCommas, numberWithKorean, secondsToHMS } from "../Utils/Misc";
 import { useSelector } from "react-redux";
 import IStore from "../Redux/Type";
+import Spinner from "../Recycle/Spinner";
 
 export interface videoDataType {
     id: string,
@@ -474,6 +475,8 @@ function Chat({videoId, mainRef}: {videoId: string, mainRef: any}) {
         
         {/* 댓글들 */}
         {list.map(v => <ChatUserContent key={v.id} icon={cacheUser[v.owner]?.icon ? `/api/image/user/${v.owner}` : noProfile} name={cacheUser[v.owner]?.name || "--"} date={new Date(v.created)} content={v.content} reply={v.reply} />)}
+        
+        {loading && <Spinner className={style.loading} />}
     </>;
 }
 
