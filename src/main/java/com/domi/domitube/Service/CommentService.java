@@ -36,6 +36,10 @@ public class CommentService {
         return commentRepository.GetVideoCommentsNoReply(video, pageable);
     }
 
+    public List<Comment> GetReplysForCommet(Comment comment) {
+        return commentRepository.GetReplysComment(comment);
+    }
+
     public Map<Long, Long> GetReplyAmounts(List<Comment> comments) {
         List<Long> ids = new ArrayList<>();
         for (Comment comment : comments) {

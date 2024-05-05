@@ -25,4 +25,7 @@ public interface CommentRepository extends JpaRepository<Comment, Object> {
 
     @Query("SELECT new map(c.reply.id AS id, count(c) AS amount) FROM Comment c WHERE c.reply is not NULL AND c.reply.id IN :ids GROUP BY c.reply")
     List<Map<String, Object>> GetCommentReplyAmounts(@Param("ids") List<Long> comments);
+
+    @Query("SELECT c FROM Comment c WHERE c.reply = :comment")
+    List<Comment> GetReplysComment(@Param("comment") Comment comment);
 }
