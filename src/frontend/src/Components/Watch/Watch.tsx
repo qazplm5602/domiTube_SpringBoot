@@ -508,6 +508,40 @@ function Chat({videoId, mainRef}: {videoId: string, mainRef: any}) {
             return new Set([...prevState]);
         });
     }
+    const replyAdd = function(commentId: number, replyId: number, content: string) {
+        setList((prevState: CommentDataType[]) => {
+            let idx = -1;
+            prevState.forEach((v, k) => {
+                if (v.id === commentId) {
+                    idx = k;
+                    return false;
+                }
+            });
+
+            // 더이상 아래에 댓글이 없거나 밑에 답글이 아니믄
+            if (prevState.length <= (idx + 1) || !prevState[idx + 1].isReply) {
+                prevState[idx].reply ++;
+            } else {
+                if (cacheUser[loginIcon.id] === undefined) {
+                    setCacheUser((prevState: cacheUserType) => ({...prevState, [loginIcon.id]: null}));
+                    cacheUser[loginIcon.id] = null;
+                    requestUser(loginIcon.id);
+                }
+
+                prevState.splice(idx + 1, 0, {
+                    id: replyId,
+                    content: content,
+                    owner: loginIcon.id,
+                    created: Number(new Date()),
+                    reply: 0,
+                    isReply: true,
+                });
+            }
+            
+
+            return [...prevState];
+        });
+    }
 
     return <>
         <Section className={style.chat_header}>
@@ -523,7 +557,7 @@ function Chat({videoId, mainRef}: {videoId: string, mainRef: any}) {
             return <React.Fragment key={v.id}>
                 <ChatUserContent onShowReply={() => onShowReply(v.id)} onReply={() => setReplyInputId(v.id)} icon={cacheUser[v.owner]?.icon ? `/api/image/user/${v.owner}` : noProfile} name={cacheUser[v.owner]?.name || "--"} date={new Date(v.created)} content={v.content} reply={v.reply} noReply={!v.isReply} />
                 {/* {(v.reply === 0 && v.id === replyInputId) && <ChatReplyInput value={replyVal} onChange={replyChangeValue} onPost={replyPost} onCancel={replyCancel} btnActive={true} disable={replyDisable} icon={loginIcon.icon ? `/api/image/user/${loginIcon.id}` : noProfile} reply={true} />} */}
-                {(!v.isReply && v.id === replyInputId) && <ChatSubReplyInput targetId={v.id} onReset={replyReset} />}
+                {(!v.isReply && v.id === replyInputId) && <ChatSubReplyInput onAdd={(id, content) => replyAdd(v.id, id, content)} targetId={v.id} onReset={replyReset} />}
                 {replyLoad.has(v.id) && <Spinner className={style.loading} />}
             </React.Fragment>;
         })}
@@ -582,7 +616,7 @@ function ChatReplyInput({disable, icon, btnActive, value, onChange, onPost, onCa
     </ChatUser>
 }
 
-function ChatSubReplyInput({targetId, onReset}: {targetId: number, onReset: () => void}) {
+function ChatSubReplyInput({targetId, onAdd, onReset}: {targetId: number, onReset: () => void, onAdd: (id: number, content: string) => void}) {
     const [replyVal, setReplyVal] = useState("");
     const [replyDisable, setReplyDisable] = useState(false);
     const replyChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => setReplyVal(e.target.value);
@@ -594,8 +628,9 @@ function ChatSubReplyInput({targetId, onReset}: {targetId: number, onReset: () =
 
         request(`/api/video/comment/reply?id=${targetId}`, { method: "PUT", body: replyVal }).then((data) => {
             if (data.code != 200) return;
-
-            
+            onAdd(data.data, replyVal);
+            setReplyDisable(false);
+            replyCancel();
         });
     }
 
