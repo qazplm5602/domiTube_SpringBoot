@@ -293,6 +293,15 @@
     margin: 10px 0;
 }
 
+.main > .video_container > .userChat.reply {
+    padding-left: 50px;
+}
+
+.main > .video_container > .userChat.reply > img {
+    width: 30px;
+    height: 30px;
+}
+
 .main > .video_container > .userChat > section {
     display: flex;
     justify-content: space-between;

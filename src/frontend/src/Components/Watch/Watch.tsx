@@ -41,7 +41,8 @@ interface CommentDataType {
     owner: string,
     content: string,
     created: number,
-    reply: number
+    reply: number,
+    isReply: boolean
 }
 
 export default function Watch() {
@@ -448,7 +449,8 @@ function Chat({videoId, mainRef}: {videoId: string, mainRef: any}) {
                     created: Number(new Date()),
                     id,
                     owner: loginIcon.id,
-                    reply: 0
+                    reply: 0,
+                    isReply: false
                 }
 
                 return [myChat, ...prevState];
@@ -456,8 +458,56 @@ function Chat({videoId, mainRef}: {videoId: string, mainRef: any}) {
         });
     }
 
-    const [replyInputId, setReplyInputId] = useState(68);
+    const [replyInputId, setReplyInputId] = useState(-1);
+    const [replyLoad, setReplyLoad] = useState(new Set<number>());
     const replyReset = () => setReplyInputId(-1);
+    const onShowReply = async function(commentId: number) {
+        list.forEach(v => {
+            if (v.id === commentId) {
+                v.reply = 0;
+                return false; // break
+            }
+        });
+        setList([...list]);
+
+        const newValue = new Set([...replyLoad]);
+        newValue.add(commentId);
+
+        setReplyLoad(newValue);
+
+        //////////// 여기서부터 API 호출
+        const {code, data}: {code: number, data: CommentDataType[]} = await request(`/api/video/comment/reply?id=${commentId}`);
+        if (code !== 200) return;
+
+        data.forEach(v => {
+            v.isReply = true;
+            
+            if (cacheUser[v.owner] === undefined) {
+                setCacheUser((prevState: cacheUserType) => ({...prevState, [v.owner]: null}));
+                cacheUser[v.owner] = null;
+
+                requestUser(v.owner);
+            }
+        });
+
+        setList((prevState: CommentDataType[]) => {
+            let idx = -1;
+            prevState.forEach((v, k) => {
+                if (v.id === commentId) {
+                    idx = k;
+                    return false;
+                }
+            });
+            
+            prevState.splice(idx + 1, 0, ...data);
+
+            return [...prevState];
+        });
+        setReplyLoad((prevState: Set<number>) => {
+            prevState.delete(commentId);
+            return new Set([...prevState]);
+        });
+    }
 
     return <>
         <Section className={style.chat_header}>
@@ -470,11 +520,12 @@ function Chat({videoId, mainRef}: {videoId: string, mainRef: any}) {
         
         {/* 댓글들 */}
         {list.map(v => {
-            return <>
-                <ChatUserContent key={v.id} onReply={() => setReplyInputId(v.id)} icon={cacheUser[v.owner]?.icon ? `/api/image/user/${v.owner}` : noProfile} name={cacheUser[v.owner]?.name || "--"} date={new Date(v.created)} content={v.content} reply={v.reply} noReply={v.reply === 0} />
+            return <React.Fragment key={v.id}>
+                <ChatUserContent onShowReply={() => onShowReply(v.id)} onReply={() => setReplyInputId(v.id)} icon={cacheUser[v.owner]?.icon ? `/api/image/user/${v.owner}` : noProfile} name={cacheUser[v.owner]?.name || "--"} date={new Date(v.created)} content={v.content} reply={v.reply} noReply={!v.isReply} />
                 {/* {(v.reply === 0 && v.id === replyInputId) && <ChatReplyInput value={replyVal} onChange={replyChangeValue} onPost={replyPost} onCancel={replyCancel} btnActive={true} disable={replyDisable} icon={loginIcon.icon ? `/api/image/user/${loginIcon.id}` : noProfile} reply={true} />} */}
-                {(v.reply === 0 && v.id === replyInputId) && <ChatSubReplyInput targetId={v.id} onReset={replyReset} />}
-            </>;
+                {(!v.isReply && v.id === replyInputId) && <ChatSubReplyInput targetId={v.id} onReset={replyReset} />}
+                {replyLoad.has(v.id) && <Spinner className={style.loading} />}
+            </React.Fragment>;
         })}
         
         {loading && <Spinner className={style.loading} />}
@@ -491,8 +542,12 @@ function ChatUser({children, className, section, icon}: {className?: string[], c
     </Section>;
 }
 
-function ChatUserContent({icon, name, date, content, noReply, reply, onReply}: {icon: string, name: string, date: Date, content: string, noReply: boolean, reply: number, onReply?: () => void}) {
-    return <ChatUser className={[style.userChat]} section={true} icon={icon}>
+function ChatUserContent({icon, name, date, content, noReply, reply, onReply, onShowReply}: {icon: string, name: string, date: Date, content: string, noReply: boolean, reply: number, onReply?: () => void, onShowReply?: () => void}) {
+    const classList = [style.userChat];
+    if (!noReply)
+        classList.push(style.reply);
+    
+    return <ChatUser className={classList} section={true} icon={icon}>
         <main>
             <div className={style.detail}><span>{name}</span><span>{dateWithKorean(date)} 전</span></div>
             <div className={style.content}>{content}</div>
@@ -504,7 +559,7 @@ function ChatUserContent({icon, name, date, content, noReply, reply, onReply}: {
                 
                 {noReply && <Button className={style.reply} onClick={onReply}>답글</Button>}
             </div>
-            {reply > 0 && <Button className={style.reply}>답글 {numberWithCommas(reply)}개</Button>}
+            {reply > 0 && <Button className={style.reply} onClick={onShowReply}>답글 {numberWithCommas(reply)}개</Button>}
         </main>
         <Button className={style.other} icon={otherSvg} />
     </ChatUser>;
