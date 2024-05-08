@@ -17,6 +17,8 @@
     padding: 0 10px;
 
     z-index: 1;
+
+    flex-shrink: 0;
 }
 
 .header > section {

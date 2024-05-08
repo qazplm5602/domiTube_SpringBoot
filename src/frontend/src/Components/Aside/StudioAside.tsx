@@ -1,10 +1,13 @@
 import { Link } from 'react-router-dom';
 import Section from '../Recycle/Section';
 import style from './studioAside.module.css';
+import Button from '../Recycle/Button';
 
 import noProfile from '../../assets/no-profile.png';
 import newtabSvg from './newtab.svg';
-import Button from '../Recycle/Button';
+import dashboardSvg from './dashboard.svg';
+import contentSvg from './contents.svg';
+import settingSvg from './setting.svg';
 
 export default function StudioAside() {
     return <aside className={style.main}>
@@ -21,7 +24,9 @@ export default function StudioAside() {
         </Section>
 
         <Section title="MENU" titleClass={style.menu_title} className={style.menu}>
-            <Button icon={noProfile}>밍</Button>
+            <Button icon={dashboardSvg} className={style.active}>대시보드</Button>
+            <Button icon={contentSvg}>콘텐츠</Button>
+            <Button icon={settingSvg}>설정</Button>
         </Section>
     </aside>;
 }

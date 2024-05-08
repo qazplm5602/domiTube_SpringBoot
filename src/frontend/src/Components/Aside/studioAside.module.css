@@ -94,10 +94,12 @@
 
 .main > .menu {
     width: 100%;
+    height: 0;
     
     flex-grow: 1;
 
     margin-top: 5px;
+    overflow: auto;
 }
 
 .main > .menu > button {
@@ -110,11 +112,10 @@
     color: white;
     font-size: 16px;
 
-    
     background-color: transparent;
     /* background-color: rgba(255, 255, 255, 0.05); */
     border: none;
-    border-left: 3px solid rgba(51, 255, 0, 0.3);
+    border-left: 3px solid transparent;
 
     cursor: pointer;
 
@@ -131,4 +132,10 @@
 
 .main > .menu > button:hover {
     background-color: rgba(255, 255, 255, 0.05);
+}
+
+.main > .menu > button.active {
+    border-color: rgba(51, 255, 0, 0.3);
+    background: linear-gradient(to right, rgb(56, 71, 54) 0%, rgb(60, 60, 60) 30%);
+
 }
