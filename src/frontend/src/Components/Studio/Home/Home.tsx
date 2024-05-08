@@ -8,9 +8,7 @@ export default function StudioHome() {
 
         <ChannelStatus />
 
-        <Section className={style.box_container}>
-    
-        </Section>
+        <RecommandVideo />
     </main>;
 }
 
@@ -34,4 +32,28 @@ function ChannelStatus() {
             </div>
         </Section>
     </Section>;
+}
+
+function RecommandVideo() {
+    return <Section className={[style.box_container, style.recommand].join(" ")}>
+        <h2>영상 분석</h2>
+        
+        <LineElement text="최근 업로드" />
+        <LineElement text="인기 영상" />
+        <LineElement text="좋아요가 많은 영상" />
+        <div className={style.category}></div>
+    </Section>;
+}
+
+function LineElement({text}: {text: string}) {
+    return <div className={style.line}>
+        <span>{text}</span>
+        <div></div>
+    </div>
+}
+
+function VideoBox() {
+    return <div>
+
+    </div>;
 }
