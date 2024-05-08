@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import Button from '../../Recycle/Button';
 import Section from '../../Recycle/Section';
 import style from './home.module.css';
@@ -35,25 +36,40 @@ function ChannelStatus() {
 }
 
 function RecommandVideo() {
-    return <Section className={[style.box_container, style.recommand].join(" ")}>
+    return <Section className={[style.box_container, style.recommand_video].join(" ")}>
         <h2>영상 분석</h2>
         
-        <LineElement text="최근 업로드" />
+        <LineElement text="최근 업로드" style={{ marginTop: 0 }} />
+        <VideoBox />
+
         <LineElement text="인기 영상" />
+        <VideoBox />
+
         <LineElement text="좋아요가 많은 영상" />
-        <div className={style.category}></div>
+        <VideoBox />
+
+        <Link to="/studio/contents">
+            <Button className={style.redirect}>콘텐츠로 이동</Button>
+        </Link>
     </Section>;
 }
 
-function LineElement({text}: {text: string}) {
-    return <div className={style.line}>
+function LineElement({text, style: _style}: {text: string, style?: React.CSSProperties}) {
+    return <div style={_style} className={style.line}>
         <span>{text}</span>
         <div></div>
     </div>
 }
 
 function VideoBox() {
-    return <div>
+    return <div className={style.video_box}>
+        <div className={style.thumbnail_container}>
+            <img src="https://i.ytimg.com/vi/ptKDIAXYoE8/hqdefault.jpg?sqp=-oaymwEXCOADEI4CSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLCW4NGQ4w8xCuAujh_yEYnvn9TLxw" />
+        </div>
 
+        <div className={style.info}>
+            <div className={style.title}>치비치비 자바자바 JS JS</div>
+            <div className={style.sub}>조회수 1.5만회 • 2024.05.09</div>
+        </div>
     </div>;
 }
