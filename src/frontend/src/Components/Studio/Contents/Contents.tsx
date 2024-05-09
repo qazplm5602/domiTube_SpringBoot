@@ -9,6 +9,13 @@ export default function StudioContents() {
         <h2 className={style.title}>동영상 목록</h2>
 
         <Filter />
+
+        <TableHeader />
+
+        {/* Table Content */}
+        <Section className={style.table_content}>
+            <TableBox />
+        </Section>
     </main>;
 }
 
@@ -20,4 +27,24 @@ function Filter() {
             <div className={style.box}>조회수가 1억명 이상<img src={cancelSvg} /></div>
         </Section>
     </div>
+}
+
+function TableHeader() {
+    return <Section className={style.table_header}>
+        <div>
+            <input type="checkbox" />
+        </div>
+        <div>동영상</div>
+        <div>공개 상태</div>
+        <div>날짜</div>
+        <div>조회수</div>
+        <div>댓글</div>
+        <div>좋아요</div>
+    </Section>;
+}
+
+function TableBox() {
+    return <Section className={style.box}>
+        dd
+    </Section>;
 }
