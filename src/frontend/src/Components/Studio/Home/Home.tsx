@@ -3,13 +3,15 @@ import Button from '../../Recycle/Button';
 import Section from '../../Recycle/Section';
 import style from './home.module.css';
 
+import noProfile from '../../../assets/no-profile.png';
+
 export default function StudioHome() {
     return <main>
         <h2 className={style.title}>안녕하세요, <span>도미</span>님</h2>
 
-        <ChannelStatus />
-
         <RecommandVideo />
+        <CommentStatus />
+        <ChannelStatus />
     </main>;
 }
 
@@ -40,7 +42,8 @@ function RecommandVideo() {
         <h2>영상 분석</h2>
         
         <LineElement text="최근 업로드" style={{ marginTop: 0 }} />
-        <VideoBox />
+        {/* <VideoBox /> */}
+        <div className={style.emptyT}>조회된 영상이 없습니다.</div>
 
         <LineElement text="인기 영상" />
         <VideoBox />
@@ -53,6 +56,16 @@ function RecommandVideo() {
         </Link>
     </Section>;
 }
+
+function CommentStatus() {
+    return <Section className={[style.box_container, style.comment_status].join(" ")}>
+        <h2>인기 댓글</h2>
+
+        <CommentBox />
+    </Section>
+}
+
+//////// 재활용 element
 
 function LineElement({text, style: _style}: {text: string, style?: React.CSSProperties}) {
     return <div style={_style} className={style.line}>
@@ -72,4 +85,21 @@ function VideoBox() {
             <div className={style.sub}>조회수 1.5만회 • 2024.05.09</div>
         </div>
     </div>;
+}
+
+function CommentBox() {
+    return <Section className={style.comment}>
+        <img className={style.icon} src={noProfile} />
+        <Section className={style.detail}>
+            <div className={style.name}>도미인뎅<span className={style.date}>1일 전</span></div>
+            <div className={style.content}>이것은 댓글 임니다.</div>
+
+            <div className={style.reply}>답글 100개</div>
+        </Section>
+        
+        <div className={style.thumbnail_container}>
+            <img src="https://i.ytimg.com/vi/ptKDIAXYoE8/hqdefault.jpg?sqp=-oaymwEXCOADEI4CSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLCW4NGQ4w8xCuAujh_yEYnvn9TLxw" />
+            <span>블루아카이븡</span>
+        </div>
+    </Section>
 }

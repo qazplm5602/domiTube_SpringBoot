@@ -115,6 +115,13 @@ main > .title > span {
     margin-bottom: 10px;
 }
 
+.recommand_video > .emptyT {
+    font-size: 14px;
+    font-weight: 400;
+
+    color: gray;
+}
+
 .recommand_video > .line:not(:first-child) {
     /* margin: 10px 0; */
     margin-top: 30px;
@@ -183,4 +190,100 @@ main > .title > span {
 .recommand_video > a > .redirect:hover {
     color: rgb(79, 120, 255);
     background-color: rgba(255, 255, 255, 0.1);
+}
+
+.comment_status {
+    width: 500px;
+}
+
+.comment_status > .comment {
+    display: flex;
+    align-items: center;
+
+    height: max-content;
+
+    margin-top: 10px;
+}
+
+.comment_status > .comment > .icon {
+    width: 45px;
+    height: 45px;
+}
+
+.comment_status > .comment > .thumbnail_container {
+    position: relative;
+
+    aspect-ratio: 16/9;
+
+    width: 100px;
+
+    margin-left: auto;
+
+    flex-shrink: 0;
+
+    cursor: pointer;
+}
+
+.comment_status > .comment > .thumbnail_container > img {
+    width: 100%;
+    height: 100%;
+
+    border-radius: 3px;
+}
+
+.comment_status > .comment > .thumbnail_container > span {
+    position: absolute;
+
+    width: max-content;
+
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    font-size: 13px;
+    background-color: rgb(69, 69, 69);
+    
+    padding: 4px 10px;
+    border-radius: 3px;
+
+    display: none;
+}
+
+.comment_status > .comment > .thumbnail_container:hover > span {
+    display: block;
+}
+
+.comment_status > .comment > .detail {
+    margin-left: 10px;
+}
+
+.comment_status > .comment > .detail > .name {
+    font-weight: 500;
+    font-size: 16px;
+
+    color: rgb(188, 188, 188);
+
+    display: flex;
+    align-items: center;
+}
+
+.comment_status > .comment > .detail > .name > .date {
+    color: gray;
+    font-weight: 400;
+    font-size: 13px;
+
+    margin-left: 5px;
+}
+
+.comment_status > .comment > .detail > .content {
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.comment_status > .comment > .detail > .reply {
+    font-size: 13px;
+    font-weight: 00;
+    color: gray;
+
+    margin-top: 3px;
 }
