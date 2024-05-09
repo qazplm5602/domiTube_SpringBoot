@@ -1,0 +1,89 @@
+main > .title {
+    margin: 0;
+    margin-bottom: 5px;
+}
+
+.filter {
+    position: sticky;
+
+    width: 100%;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    
+    padding: 6px 15px;
+
+    background-color: rgba(255, 255, 255, 0.2);
+
+    border-radius: 50px;
+}
+
+.filter > .title {
+    display: flex;
+    align-items: center;
+
+    flex-shrink: 0;
+
+    color: rgb(210, 210, 210);
+    font-size: 16px;
+}
+
+.filter > .title > img {
+    width: 20px;
+    margin-right: 5px;
+}
+
+.filter > .list {
+    display: flex;
+    align-items: center;
+
+    overflow-x: auto;
+    flex-wrap: nowrap;
+
+    margin-left: 10px;
+    font-size: 15px;
+
+    height: 100%;
+
+    flex-grow: 1;
+}
+
+.filter > .list > .box {
+    display: flex;
+    align-items: center;
+
+    flex-shrink: 0;
+
+    height: 100%;
+    padding: 0 10px;
+
+    border-radius: 30px;
+
+    color: white;
+    font-size: 13px;
+    font-weight: 400;
+
+    background-color: rgb(100, 100, 100);
+}
+
+.filter > .list > .box:not(:first-child) {
+    margin-left: 5px;
+}
+
+.filter > .list > .box:hover {
+    background-color: rgb(134, 134, 134);
+}
+
+.filter > .list > .box > img {
+    width: 20px;
+    margin-left: 2px;
+
+    cursor: pointer;
+
+    opacity: 0.6;
+}
+
+.filter > .list > .box:hover > img {
+    opacity: 1;
+}

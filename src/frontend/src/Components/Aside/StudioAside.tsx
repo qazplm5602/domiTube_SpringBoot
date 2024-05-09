@@ -24,8 +24,6 @@ export default function StudioAside() {
         navigate(`/studio/${page}`);
     }
 
-    console.log(location.pathname);
-
     return <aside className={style.main}>
         <Section className={style.channel}>
             <Link to="/channel/domi" className={style.icon}>
