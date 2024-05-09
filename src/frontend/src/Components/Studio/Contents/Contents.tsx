@@ -15,6 +15,7 @@ export default function StudioContents() {
         {/* Table Content */}
         <Section className={style.table_content}>
             <TableBox />
+            <TableBox />
         </Section>
     </main>;
 }
@@ -45,6 +46,23 @@ function TableHeader() {
 
 function TableBox() {
     return <Section className={style.box}>
-        dd
+        <div className={style.check}>
+            <input type="checkbox" />
+        </div>
+        <div className={style.video}>
+            <div className={style.thumbnail}>
+                <img src="https://i.ytimg.com/vi/T9dJ_cE5Asw/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLB4VYvk8T391uvCZgEfFg62tuAVDQ" />
+                <span>59:12</span>
+            </div>
+            
+            <div className={style.detail}>
+                <div className={style.title}>밍</div>
+            </div>
+        </div>
+        <div className={style.secret}></div>
+        <div className={style.date}></div>
+        <div className={style.view}></div>
+        <div className={style.comment}></div>
+        <div className={style.good}></div>
     </Section>;
 }
