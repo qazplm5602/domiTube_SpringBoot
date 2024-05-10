@@ -1,9 +1,13 @@
-import Section from '../../Recycle/Section';
 import style from './contents.module.css';
+
+import Section from '../../Recycle/Section';
+import Button from '../../Recycle/Button';
 
 import filterSvg from './filter.svg';
 import cancelSvg from './cancel.svg';
 import clipSvg from './clip.svg';
+import arrowSvg from './arrow.svg';
+import arrowMaxSvg from './arrowMax.svg';
 
 export default function StudioContents() {
     return <main>
@@ -18,6 +22,8 @@ export default function StudioContents() {
             <TableBox />
             <TableBox />
         </Section>
+
+        <PageControl />
     </main>;
 }
 
@@ -76,4 +82,16 @@ function TableBox() {
             </div>
         </div>
     </Section>;
+}
+
+function PageControl() {
+    return <Section className={style.page}>
+        <Button icon={arrowMaxSvg} />
+        <Button icon={arrowSvg} />
+
+        <div className={style.text}><span>1</span>/30</div>
+
+        <Button className={style.flip} icon={arrowSvg} />
+        <Button className={style.flip} icon={arrowMaxSvg} />
+    </Section>
 }

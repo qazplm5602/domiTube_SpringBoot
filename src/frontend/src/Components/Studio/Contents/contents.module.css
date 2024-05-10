@@ -271,3 +271,60 @@ main > .title {
 .table_content > .box > div:nth-child(7) {
     width: 10%;
 }
+
+.page {
+    display: flex;
+    align-items: center;
+    width: max-content;
+    
+    margin: 0 auto;
+}
+
+.page > Button {
+    padding: 0;
+    
+    width: 40px;
+    height: 40px;
+    padding: 6px;
+    
+    border: none;
+    border-radius: 50%;
+    
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.page > Button:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.page > Button > img {
+    width: 100%;
+    height: 100%;
+    
+    opacity: 0.5;
+}
+
+.page > Button.flip > img {
+    transform: rotateY(180deg);
+}
+
+.page > Button:hover > img {
+    opacity: 1;
+}
+
+.page > .text {
+    font-size: 15px;
+    font-weight: 300;
+    color: rgb(200, 200, 200);
+
+    margin: 0 10px;
+}
+
+.page > .text > span {
+    color: white;
+    font-size: 25px;
+    font-weight: 600;
+
+    margin-right: 3px;
+}
