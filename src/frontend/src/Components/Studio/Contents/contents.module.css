@@ -115,34 +115,6 @@ main > .title {
     padding-left: 15px;
 }
 
-.table_header > div:nth-child(1) {
-    width: 5%;
-}
-
-.table_header > div:nth-child(2) {
-    width: 30%;
-}
-
-.table_header > div:nth-child(3) {
-    width: 10%;
-}
-
-.table_header > div:nth-child(4) {
-    width: 10%;
-}
-
-.table_header > div:nth-child(5) {
-    width: 10%;
-}
-
-.table_header > div:nth-child(6) {
-    width: 10%;
-}
-
-.table_header > div:nth-child(7) {
-    width: 25%;
-}
-
 .table_content {
     width: 100%;
     height: max-content;
@@ -150,7 +122,7 @@ main > .title {
 
 .table_content > .box {
     width: 100%;
-    height: 90px;
+    height: 80px;
 
     margin-top: 10px;
     padding: 7px 0;
@@ -160,6 +132,10 @@ main > .title {
 
 .table_content > .box:not(:last-child) {
     border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+.table_content > .box > .video {
+    display: flex;
 }
 
 .table_content > .box > .video > .thumbnail {
@@ -189,4 +165,109 @@ main > .title {
     font-size: 11px;
     color: white;
     background-color: rgba(0, 0, 0, 0.8);
+}
+
+.table_content > .box > .video > .detail {
+    margin-left: 10px;
+}
+
+.table_content > .box > .video > .detail > .title {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.table_content > .box > .video > .detail > .desc {
+    font-size: 13px;
+    font-weight: 400;
+    
+    color: rgb(185, 185, 185);
+}
+
+.table_content > .box > .secret {
+    font-size: 14px;
+    height: max-content;
+
+    display: flex;
+    /* align-items: center; */
+}
+
+.table_content > .box > .secret > img {
+    margin-right: 5px;
+    opacity: 0.5;
+    
+    margin-top: -5px;
+    height: 28px;
+}
+
+.table_content > .box > .good {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.table_content > .box > .good > .text {
+    font-size: 15px;
+    font-weight: 500;
+    color: white;
+}
+
+.table_content > .box > .good > .sub {
+    font-size: 13px;
+    color: gray;
+}
+
+.table_content > .box > .good > .bar {
+    width: 100%;
+    height: 5px;
+    margin-top: 3px;
+    
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+
+    overflow: hidden;
+}
+
+.table_content > .box > .good > .bar > .barIn {
+    width: 50%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.table_content > .box > div:not(:first-child) {
+    padding-left: 15px;
+}
+
+.table_header > div:nth-child(1),
+    .table_content > .box > div:nth-child(1) {
+    width: 5%;
+}
+
+.table_header > div:nth-child(2),
+.table_content > .box > div:nth-child(2) {
+    width: 35%;
+}
+
+.table_header > div:nth-child(3),
+.table_content > .box > div:nth-child(3) {
+    width: 10%;
+}
+
+.table_header > div:nth-child(4),
+.table_content > .box > div:nth-child(4) {
+    width: 10%;
+}
+
+.table_header > div:nth-child(5),
+.table_content > .box > div:nth-child(5) {
+    width: 20%;
+}
+
+.table_header > div:nth-child(6),
+.table_content > .box > div:nth-child(6) {
+    width: 10%;
+}
+
+.table_header > div:nth-child(7),
+.table_content > .box > div:nth-child(7) {
+    width: 10%;
 }

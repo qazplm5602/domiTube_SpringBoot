@@ -3,6 +3,7 @@ import style from './contents.module.css';
 
 import filterSvg from './filter.svg';
 import cancelSvg from './cancel.svg';
+import clipSvg from './clip.svg';
 
 export default function StudioContents() {
     return <main>
@@ -56,13 +57,23 @@ function TableBox() {
             </div>
             
             <div className={style.detail}>
-                <div className={style.title}>밍</div>
+                <div className={style.title}>아무 제목임니다.</div>
+                <div className={style.desc}>으악 밍밍밍밍</div>
             </div>
         </div>
-        <div className={style.secret}></div>
-        <div className={style.date}></div>
-        <div className={style.view}></div>
-        <div className={style.comment}></div>
-        <div className={style.good}></div>
+        <div className={style.secret}>
+            <img src={clipSvg} />
+            비공개
+        </div>
+        <div className={style.date}>2024.05.11</div>
+        <div className={style.view}>999,999,999</div>
+        <div className={style.comment}>5</div>
+        <div className={style.good}>
+            <div className={style.text}>100%</div>
+            <div className={style.sub}>좋아요 5개</div>
+            <div className={style.bar}>
+                <div className={style.barIn}></div>
+            </div>
+        </div>
     </Section>;
 }
