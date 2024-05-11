@@ -1,0 +1,134 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.header > .title {
+    margin: 0;
+    font-size: 30px;
+}
+
+.header > .right {
+    display: flex;
+    align-items: center;
+    height: max-content;
+}
+
+.header > .right > div {
+    font-size: 13px;
+    color: rgb(180, 180, 180);
+
+    margin-right: 10px;
+}
+
+.header > .right > button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+
+    font-size: 13px;
+    font-weight: 500;
+    
+    background-color: rgb(90, 168, 101);
+
+    cursor: pointer;
+}
+
+.header > .right > button:hover {
+    background-color: rgb(76, 143, 85);
+}
+
+.header > .right > button:disabled {
+    background-color: gray;
+    color: rgb(201, 201, 201);
+}
+
+.input_title {
+    font-size: 18px;
+    margin-top: 20px;
+    margin-bottom: 0;
+}
+
+.inputBox > input {
+    width: 300px;
+
+    padding: 8px 10px;
+    margin-top: 5px;
+
+    color: rgb(190, 190, 190);
+    font-size: 15px;
+
+    outline: none;
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+
+    transition: color 250ms, border-color 250ms;
+}
+
+.inputBox > input:focus {
+    color: white;
+    border: 1px solid rgba(167, 248, 135, 0.568);
+}
+
+.inputBox > input.error {
+    border-color: rgb(255, 111, 111);
+}
+
+.inputBox > .errorT {
+    font-size: 13px;
+    margin-top: 5px;
+    color: rgb(255, 111, 111);
+}
+
+.inputBox > .sub {
+    font-size: 14px;
+    color: rgb(180, 180, 180);
+}
+
+.iconBox > .icon_container {
+    position: relative;
+
+    width: 100px;
+    height: 100px;
+    margin-top: 10px;
+
+    border-radius: 50%;
+    overflow: hidden;
+
+    cursor: pointer;
+}
+
+.iconBox > .icon_container > .icon {
+    width: 100%;
+    height: 100%;
+}
+
+.iconBox > .icon_container > .hover {
+    position: absolute;
+
+    width: 100%;
+    height: 100%;
+
+    top: 0;
+    left: 0;
+    
+    background-color: rgba(0, 0, 0, 0.5);
+
+    display: none;
+}
+
+.iconBox > .icon_container:hover > .hover {
+    display: block;
+}
+
+.iconBox > .interaction {
+    margin-top: 10px;
+    display: flex;
+    gap: 0 8px;
+}
+
+.iconBox > .interaction > button {
+    padding: 3px 10px;
+    cursor: pointer;
+}
