@@ -1,6 +1,51 @@
-main > .title {
-    margin: 0;
+main > .header {
     margin-bottom: 5px;
+    display: flex;
+    justify-content: space-between;
+}
+
+main > .header > .title {
+    margin: 0;
+    /* margin-bottom: 5px; */
+}
+
+main > .header > .createBtn {
+    display: flex;
+    align-items: center;
+    
+    color: white;
+    font-size: 14px;
+
+    padding: 4px 12px;
+
+    background-color: rgba(255, 255, 255, 0.15);
+    border: none;
+    border-radius: 20px;
+
+    cursor: pointer;
+}
+
+main > .header > .createBtn:hover {
+    background: linear-gradient(-45deg, rgba(255, 255, 255, 0.0) 40%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0.0) 60%) no-repeat;
+    background-color: rgba(255, 255, 255, 0.15);
+
+    animation-name: diagonalMove;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+}
+
+@keyframes diagonalMove {
+    from {
+        background-position-x: -70px;
+    }
+    to {
+        background-position-x: 100px;
+    }
+}
+
+main > .header > .createBtn > img {
+    width: 25px;
+    margin-right: 5px;
 }
 
 .filter {
@@ -327,4 +372,223 @@ main > .title {
     font-weight: 600;
 
     margin-right: 3px;
+}
+
+/* 업로드 dialog */
+.dialog {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+    
+    width: 100%;
+    height: 100%;
+    
+    background-color: rgba(0, 0, 0, 0.7);
+
+    z-index: 2;
+}
+
+.dialog > .box {
+    position: absolute;
+    
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    width: 1200px;
+    height: 650px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    
+    background-color: rgb(40, 40, 40);
+
+    display: flex;
+    flex-direction: column;
+}
+
+.dialog > .box > .header {
+    width: 100%;
+    height: 60px;
+    
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 15px;
+    
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+
+    flex-shrink: 0;
+}
+
+.dialog > .box > .header > h2 {
+    margin: 0;
+}
+
+.dialog > .box > .header > .close {
+    width: 40px;
+    height: 40px;
+
+    padding: 5px;
+    border-radius: 50%;
+
+    border: none;
+    background-color: transparent;
+
+    cursor: pointer;
+}
+
+.dialog > .box > .header > .close > img {
+    width: 100%;
+    height: 100%;
+}
+
+.dialog > .box > .header > .close:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.dialog > .box > .bar {
+    position: relative;
+
+    width: 50%;
+    height: 3px;
+
+    background-color: white;
+
+    flex-shrink: 0;
+}
+
+.dialog > .box > .bar > span {
+    position: absolute;
+
+    top: 7px;
+    left: 100%;
+    transform: translateX(-50%);
+
+    padding: 3px 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+
+    font-size: 13px;
+    
+    border-radius: 10px;
+}
+
+.dialog > .box > main {
+    flex-grow: 1;
+    
+    padding: 10px;
+}
+
+
+
+.dialog > .box > main.upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.dialog > .box > main.upload > .icon {
+    width: 150px;
+    
+    padding: 30px;
+    border-radius: 50%;
+    background: linear-gradient(rgb(183, 223, 165) 0%, rgb(137, 228, 109) 60%) no-repeat;
+}
+
+.dialog > .box > .upload > .title {
+    font-size: 25px;
+    font-weight: bold;
+
+    margin-top: 15px;
+}
+
+.dialog > .box > .upload > .fileSelect {
+    padding: 5px 10px;
+    margin-top: 5px;
+    
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+
+    cursor: pointer;
+}
+
+.dialog > .box > .upload > .fileSelect:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.dialog > .box > .upload_detail {
+    display: flex;
+}
+
+.dialog > .box > .upload_detail > .property {
+    flex-grow: 1;
+    /* border: 1px solid red; */
+}
+
+.dialog > .box > .upload_detail > .property > .description {
+    margin-top: 20px;
+}
+
+.inputContainer {
+    position: relative;
+
+    width: max-content;
+    height: max-content;
+    
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 5px;
+
+    margin-top: 6px;
+}
+
+.inputContainer > .title {
+    position: absolute;
+    top: 0;
+    left: 6px;
+    transform: translateY(-50%);
+    background-color: #282828;
+    padding: 0 5px;
+
+    color: rgb(200, 200, 200);
+    font-size: 14px;
+}
+
+.inputContainer > input {
+    /* width: 100%;
+    height: 100%; */
+    width: 500px;
+    height: 43px;
+
+    border: none;
+    outline: none;
+    background-color: transparent;
+    
+    font-size: 15px;
+    color: white;
+    
+    padding: 10px;
+}
+
+.inputContainer > textarea {
+    width: 500px !important;
+    height: 300px !important;
+
+    padding: 10px;
+
+    background-color: transparent;
+    border: none;
+    outline: none;
+    resize: none;
+}
+
+.dialog > .box > .upload_detail > .video {
+    width: 230px;
+    height: 300px;
+
+    border: 1px solid blue;
+    /* background-color: black; */
+    margin-left: 10px;
 }

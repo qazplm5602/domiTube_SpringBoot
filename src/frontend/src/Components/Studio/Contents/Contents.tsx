@@ -8,10 +8,15 @@ import cancelSvg from './cancel.svg';
 import clipSvg from './clip.svg';
 import arrowSvg from './arrow.svg';
 import arrowMaxSvg from './arrowMax.svg';
+import videoSvg from './video.svg';
+import closeSvg from './close.svg';
 
 export default function StudioContents() {
     return <main>
-        <h2 className={style.title}>동영상 목록</h2>
+        <div className={style.header}>
+            <h2 className={style.title}>동영상 목록</h2>
+            <Button icon={videoSvg} className={style.createBtn}>만들기</Button>
+        </div>
 
         <Filter />
 
@@ -24,6 +29,8 @@ export default function StudioContents() {
         </Section>
 
         <PageControl />
+
+        <DialogBox />
     </main>;
 }
 
@@ -94,4 +101,61 @@ function PageControl() {
         <Button className={style.flip} icon={arrowSvg} />
         <Button className={style.flip} icon={arrowMaxSvg} />
     </Section>
+}
+
+
+/////// dialog
+function DialogBox() {
+    return <div className={style.dialog}>
+        <div className={style.box}>
+            <Section className={style.header}>
+                <h2>동영상 업로드</h2>
+                <Button className={style.close} icon={closeSvg} />
+            </Section>
+
+            <div className={style.bar}>
+                <span>50%</span>
+            </div>
+
+            {/* <UploadContent /> */}
+            <UploadDetail />
+        </div>
+    </div>;
+}
+
+function UploadContent() {
+    return <main className={style.upload}>
+        <img className={style.icon} src={videoSvg} />
+        <div className={style.title}>여기로 끌어서 놓으세요!</div>
+        <Button className={style.fileSelect}>파일 선택하기</Button>
+    </main>;
+}
+
+function UploadDetail() {
+    return <main className={style.upload_detail}>
+        <Section className={style.property}>
+            <UploadInputBorder title="제목">
+                <input type="text" />
+            </UploadInputBorder>
+
+            <UploadInputBorder title="설명" className={[style.description]}>
+                <textarea>밍</textarea>
+            </UploadInputBorder>
+
+        </Section>
+        
+        <Section className={style.video}>
+
+        </Section>
+    </main>;
+}
+
+function UploadInputBorder({title, children, className = []}: {title: string, children: React.ReactElement, className?: string[]}) {
+    className.push(style.inputContainer);
+
+    return <div className={className.join(" ")}>
+        <span className={style.title}>{title}</span>
+        {/* <input type="text" /> */}
+        {children}
+    </div>;
 }
