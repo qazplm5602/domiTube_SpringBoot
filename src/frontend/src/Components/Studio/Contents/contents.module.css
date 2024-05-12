@@ -589,6 +589,28 @@ main > .header > .createBtn > img {
     background-color: rgb(40, 40, 40);
 }
 
+.dialog > .box > .upload_detail > .save {
+    position: absolute;
+    right: 13px;
+    bottom: 13px;
+
+    border: none;
+    padding: 8px 18px;
+    font-size: 15px;
+
+    color: white;
+    font-weight: 500;
+
+    border-radius: 3px;
+    background-color: rgb(74, 153, 214);
+
+    cursor: pointer;
+}
+
+.dialog > .box > .upload_detail > .save:hover {
+    background-color: rgb(57, 131, 188);
+}
+
 .inputContainer {
     position: relative;
 

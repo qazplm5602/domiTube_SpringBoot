@@ -173,6 +173,8 @@ function UploadDetail() {
             <div className={style.subT}>파일 이름</div>
             <div className={style.mainT}>doming.mp4</div>
         </Section>
+        
+        <Button className={style.save}>저장</Button>
     </main>;
 }
 
