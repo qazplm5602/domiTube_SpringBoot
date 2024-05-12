@@ -32,7 +32,7 @@ export default function StudioContents() {
 
         <PageControl />
 
-        <DialogBox />
+        {/* <DialogBox /> */}
     </main>;
 }
 
