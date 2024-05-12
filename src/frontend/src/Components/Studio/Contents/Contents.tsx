@@ -10,6 +10,8 @@ import arrowSvg from './arrow.svg';
 import arrowMaxSvg from './arrowMax.svg';
 import videoSvg from './video.svg';
 import closeSvg from './close.svg';
+import pictureSvg from './picture.svg';
+import { Link } from 'react-router-dom';
 
 export default function StudioContents() {
     return <main>
@@ -142,10 +144,34 @@ function UploadDetail() {
                 <textarea>밍</textarea>
             </UploadInputBorder>
 
+            <div className={style.title}>썸네일</div>
+            <Section className={style.thumbnail_section}>
+                <div className={style.upload}>
+                    <img src={pictureSvg} />
+                    <div>업로드하려면 끌어다놓거나 클릭하세요.</div>
+                </div>
+
+                <img className={style.preview} src="https://i.ytimg.com/vi/T9dJ_cE5Asw/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLB4VYvk8T391uvCZgEfFg62tuAVDQ" />
+            </Section>
+
+            <div className={style.title}>공개 옵션</div>
+            <select className={style.secret}>
+                <option value="0" selected>👁️ 공개</option>
+                <option value="1">📎 일부공개</option>
+                <option value="2">🔒 비공개</option>
+            </select>
         </Section>
         
         <Section className={style.video}>
-
+            <div className={style.thumbnail_container}>
+                <div className={style.text}>동영상 업로드...</div>
+            </div>
+            
+            <div className={style.subT}>제목</div>
+            <Link to="/watch/domi" className={style.mainT}>domitube.com/watch/ming</Link>
+            
+            <div className={style.subT}>파일 이름</div>
+            <div className={style.mainT}>doming.mp4</div>
         </Section>
     </main>;
 }
