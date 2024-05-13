@@ -3,6 +3,10 @@ import style from './video.module.css';
 import Section from '../../Recycle/Section';
 import Button from '../../Recycle/Button';
 import { ImageUploadBox } from '../Contents/Contents';
+import { Comment } from '../Comment/Comment';
+
+import arrow from '../Contents/arrow.svg';
+import arrowMax from '../Contents/arrowMax.svg';
 
 export default function StudioVideo() {
     const { videoId } = useParams();
@@ -11,6 +15,7 @@ export default function StudioVideo() {
         <Section className={style.content}>
             
             <VideoSetting />
+            <VideoComment />
 
         </Section>
 
@@ -47,4 +52,37 @@ function VideoSetting() {
         <div className={style.title}>썸네일</div>
         <ImageUploadBox />
     </Section>
+}
+
+function VideoComment() {
+    return <Section className={[style.box, style.videoComment].join(" ")}>
+        <h2 className={style.title}>댓글</h2>
+
+        <Comment />
+        <Comment />
+        <Comment />
+        <Comment />
+        <Comment />
+        <Comment />
+        <Comment />
+        <Comment />
+        <Comment />
+        <Comment />
+        <Comment />
+        <Comment />
+        <Comment />
+        <Comment />
+        <Comment />
+        <Comment />
+
+        <Section className={style.pageable}>
+            <Button icon={arrowMax} />
+            <Button icon={arrow} />
+
+            <div className={style.page}><span>1</span>/10</div>
+
+            <Button className={style.reverse} icon={arrow} />
+            <Button className={style.reverse} icon={arrowMax} />
+        </Section>
+    </Section>;
 }

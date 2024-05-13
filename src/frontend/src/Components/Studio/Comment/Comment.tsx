@@ -21,7 +21,7 @@ export default function StudioComment() {
     </main>;
 }
 
-function Comment() {
+export function Comment() {
     return <Section className={style.comment}>
         <img className={style.icon} src={noProfile} />
         
