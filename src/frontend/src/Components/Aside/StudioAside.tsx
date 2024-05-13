@@ -9,6 +9,10 @@ import dashboardSvg from './dashboard.svg';
 import contentSvg from './contents.svg';
 import commentSvg from './comment.svg';
 import settingSvg from './setting.svg';
+import { useSelector } from 'react-redux';
+import IStore from '../Redux/Type';
+import { IloginStore } from '../Redux/LoginStore';
+import { useEffect } from 'react';
 
 const MENUS = [
     ["", "대시보드", dashboardSvg],
@@ -18,23 +22,31 @@ const MENUS = [
 ]
 
 export default function StudioAside() {
+    const login = useSelector<IStore, IloginStore>(value => value.login);
     const location = useLocation();
     const navigate = useNavigate();
     const setLocation = (page :string) => {
         navigate(`/studio/${page}`);
     }
 
+    useEffect(() => {
+        // 로그인 정보 불러오는중은 아닌데.. 로그인중ㅇ이 아닌경우
+        if (!login.loading && !login.logined) {
+            navigate("/login");
+        }
+    }, [login.loading, login.logined]);
+
     return <aside className={style.main}>
         <Section className={style.channel}>
-            <Link to="/channel/domi" className={style.icon}>
-                <img src={noProfile} />
+            <Link to={`/channel/${login.id}`} className={style.icon}>
+                <img src={login.logined && login.image ? `/api/image/user/${login.id}` : noProfile} />
                 <div className={style.move}>
                     <img src={newtabSvg} />
                 </div>
             </Link>
             
             <div className={style.title}>내 채널</div>
-            <div className={style.channel_name}>도미임</div>
+            <div className={style.channel_name}>{login.name || "--"}</div>
         </Section>
 
         <Section title="MENU" titleClass={style.menu_title} className={style.menu}>

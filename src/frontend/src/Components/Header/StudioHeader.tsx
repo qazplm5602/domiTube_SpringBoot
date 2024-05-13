@@ -8,8 +8,13 @@ import noProfile from '../../assets/no-profile.png';
 
 import Input from '../Recycle/Input';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { IloginStore } from '../Redux/LoginStore';
+import IStore from '../Redux/Type';
 
 export default function StudioHeader() {
+    const login = useSelector<IStore, IloginStore>(value => value.login);
+    
     return <header className={style.header}>
         <section>
             <Button icon={listSvg} />
@@ -19,7 +24,7 @@ export default function StudioHeader() {
         <SearchBox />
         
         <section>
-            <img className={style.profile} src={noProfile} />
+            <img className={style.profile} src={login.logined && login.image ? `/api/image/user/${login.id}` : noProfile} />
         </section>
     </header>;
 }
