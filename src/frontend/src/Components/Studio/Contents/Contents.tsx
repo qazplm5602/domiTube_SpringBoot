@@ -145,14 +145,7 @@ function UploadDetail() {
             </UploadInputBorder>
 
             <div className={style.title}>썸네일</div>
-            <Section className={style.thumbnail_section}>
-                <div className={style.upload}>
-                    <img src={pictureSvg} />
-                    <div>업로드하려면 끌어다놓거나 클릭하세요.</div>
-                </div>
-
-                <img className={style.preview} src="https://i.ytimg.com/vi/T9dJ_cE5Asw/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLB4VYvk8T391uvCZgEfFg62tuAVDQ" />
-            </Section>
+            <ImageUploadBox />
 
             <div className={style.title}>공개 옵션</div>
             <select className={style.secret}>
@@ -186,4 +179,15 @@ function UploadInputBorder({title, children, className = []}: {title: string, ch
         {/* <input type="text" /> */}
         {children}
     </div>;
+}
+
+export function ImageUploadBox() {
+    return <Section className={style.thumbnail_section}>
+        <div className={style.upload}>
+            <img src={pictureSvg} />
+            <div>업로드하려면 끌어다놓거나 클릭하세요.</div>
+        </div>
+
+        <img className={style.preview} src="https://i.ytimg.com/vi/T9dJ_cE5Asw/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLB4VYvk8T391uvCZgEfFg62tuAVDQ" />
+    </Section>;
 }

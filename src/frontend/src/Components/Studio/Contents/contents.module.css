@@ -539,12 +539,12 @@ main > .header > .createBtn > img {
     margin-top: 10px;
 }
 
-.dialog > .box > .upload_detail > .property > .thumbnail_section {
+.thumbnail_section {
     display: flex;
     align-items: center;
 }
 
-.dialog > .box > .upload_detail > .property > .thumbnail_section > .preview {
+.thumbnail_section > .preview {
     width: 220px;
     height: 115px;
     
@@ -553,7 +553,7 @@ main > .header > .createBtn > img {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
 }
 
-.dialog > .box > .upload_detail > .property > .thumbnail_section > .upload {
+.thumbnail_section > .upload {
     width: 240px;
     height: 135px;
     margin-top: 5px;
@@ -567,11 +567,11 @@ main > .header > .createBtn > img {
     justify-content: center;
 }
 
-.dialog > .box > .upload_detail > .property > .thumbnail_section > .upload > img {
+.thumbnail_section > .upload > img {
     height: 50px;
 }
 
-.dialog > .box > .upload_detail > .property > .thumbnail_section > .upload > div {
+.thumbnail_section > .upload > div {
     font-size: 13px;
     margin-top: 5px;
     color: rgb(183, 183, 183);
