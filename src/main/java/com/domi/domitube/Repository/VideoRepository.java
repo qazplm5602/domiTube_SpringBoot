@@ -21,4 +21,17 @@ public interface VideoRepository extends JpaRepository<Video, Object> {
     List<Video> GetVideosByUserPopular(@Param("user") User user, Pageable pageable);
     @Query("SELECT c FROM Video c WHERE c.owner = :user ORDER BY c.created")
     List<Video> GetVideosByUserDate(@Param("user") User user, Pageable pageable);
+
+    ////////// STUDIO
+    @Query("SELECT sum(c.views) FROM Video c WHERE c.owner = :owner")
+    Long GetAllViewCount(@Param("owner") User user);
+
+    @Query("SELECT c FROM Video c WHERE c.owner = :owner ORDER BY c.created DESC")
+    Video GetLastVideo(@Param("owner") User user);
+
+    @Query("SELECT c FROM Video c WHERE c.owner = :owner ORDER BY c.views DESC")
+    Video GetPopularVideo(@Param("owner") User user);
+
+    @Query("SELECT c FROM Video c WHERE c.owner = :owner ORDER BY c.good DESC")
+    Video GetGoodVideo(@Param("owner") User user);
 }

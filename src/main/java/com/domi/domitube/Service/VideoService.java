@@ -1,8 +1,10 @@
 package com.domi.domitube.Service;
 
+import com.domi.domitube.DTO.VideoDataDTO;
 import com.domi.domitube.Repository.Entity.User;
 import com.domi.domitube.Repository.Entity.Video;
 import com.domi.domitube.Repository.VideoRepository;
+import com.domi.domitube.Studio.StudioVideoAnalyze;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -41,6 +43,31 @@ public class VideoService {
 
     public void CreateVideo(Video video) {
         videoRepository.save(video);
+    }
+
+    public long GetAllViewCountByUser(User user) {
+        Long value = videoRepository.GetAllViewCount(user);
+        if (value == null) value = 0L;
+
+        return value;
+    }
+
+    public StudioVideoAnalyze GetStudioAnalyze(User user) {
+        StudioVideoAnalyze result = new StudioVideoAnalyze();
+
+        Video last = videoRepository.GetLastVideo(user);
+        if (last != null)
+            result.setLast(VideoDataDTO.ConvertVideo(last));
+
+        Video popular = videoRepository.GetPopularVideo(user);
+        if (popular != null)
+            result.setPopular(VideoDataDTO.ConvertVideo(popular));
+
+        Video good = videoRepository.GetGoodVideo(user);
+        if (good != null)
+            result.setGood(VideoDataDTO.ConvertVideo(good));
+
+        return result;
     }
 
     public enum SortType {
