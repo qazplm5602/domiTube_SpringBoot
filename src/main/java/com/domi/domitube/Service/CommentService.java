@@ -68,6 +68,7 @@ public class CommentService {
             Comment comment = (Comment)data.get("target");
 
             result.add(Map.of(
+                "id", comment.getId(),
                 "user", comment.getWriter().getId(),
                 "content", comment.getContent(),
                 "reply", amount,
