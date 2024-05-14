@@ -28,4 +28,7 @@ public interface CommentRepository extends JpaRepository<Comment, Object> {
 
     @Query("SELECT c FROM Comment c WHERE c.reply = :comment ORDER BY c.created DESC")
     List<Comment> GetReplysComment(@Param("comment") Comment comment);
+
+//    @Query("SELECT c FROM Comment c WHERE c.video.owner = :user")
+
 }

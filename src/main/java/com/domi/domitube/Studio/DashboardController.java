@@ -2,6 +2,7 @@ package com.domi.domitube.Studio;
 
 import com.domi.domitube.DTO.VideoDataDTO;
 import com.domi.domitube.Repository.Entity.User;
+import com.domi.domitube.Service.CommentService;
 import com.domi.domitube.Service.SubscribeService;
 import com.domi.domitube.Service.UserService;
 import com.domi.domitube.Service.VideoService;
@@ -32,6 +33,7 @@ public class DashboardController {
     final SubscribeService subscribeService;
     final VideoService videoService;
     final UserService userService;
+    final CommentService commentService;
 
     @GetMapping("/dashboard")
     ResponseEntity GetDashboard(HttpServletRequest request) {
