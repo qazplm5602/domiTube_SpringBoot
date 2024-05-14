@@ -55,17 +55,18 @@ public class VideoService {
     public StudioVideoAnalyze GetStudioAnalyze(User user) {
         StudioVideoAnalyze result = new StudioVideoAnalyze();
 
-        Video last = videoRepository.GetLastVideo(user);
-        if (last != null)
-            result.setLast(VideoDataDTO.ConvertVideo(last));
+        Pageable page = PageRequest.of(0, 1);
+        var last = videoRepository.GetLastVideo(user, page);
+        if (!last.isEmpty())
+            result.setLast(VideoDataDTO.ConvertVideo(last.get(0)));
 
-        Video popular = videoRepository.GetPopularVideo(user);
-        if (popular != null)
-            result.setPopular(VideoDataDTO.ConvertVideo(popular));
+        var popular = videoRepository.GetPopularVideo(user, page);
+        if (!popular.isEmpty())
+            result.setPopular(VideoDataDTO.ConvertVideo(popular.get(0)));
 
-        Video good = videoRepository.GetGoodVideo(user);
-        if (good != null)
-            result.setGood(VideoDataDTO.ConvertVideo(good));
+        var good = videoRepository.GetGoodVideo(user, page);
+        if (!good.isEmpty())
+            result.setGood(VideoDataDTO.ConvertVideo(good.get(0)));
 
         return result;
     }

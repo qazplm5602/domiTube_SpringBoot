@@ -2,6 +2,7 @@ package com.domi.domitube.Service;
 
 import com.domi.domitube.Repository.CommentRepository;
 import com.domi.domitube.Repository.Entity.Comment;
+import com.domi.domitube.Repository.Entity.User;
 import com.domi.domitube.Repository.Entity.Video;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -51,6 +52,27 @@ public class CommentService {
 
         for (Map<String, Object> row : rows) {
             result.put((Long)row.get((Object)"id"), (Long)row.get((Object)"amount"));
+        }
+
+        return result;
+    }
+
+    // STUDIO
+
+    public List<Map<String, Object>> GetCommentPopular(User user) {
+        Pageable page = PageRequest.of(0, 10);
+
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (var data : commentRepository.GetCommentsTopReply(user, page)) {
+            Long amount = (Long)data.get("amount");
+            Comment comment = (Comment)data.get("target");
+
+            result.add(Map.of(
+                "user", comment.getWriter().getId(),
+                "content", comment.getContent(),
+                "reply", amount,
+                "video", comment.getVideo().getId()
+            ));
         }
 
         return result;

@@ -1,6 +1,7 @@
 package com.domi.domitube.Repository;
 
 import com.domi.domitube.Repository.Entity.Comment;
+import com.domi.domitube.Repository.Entity.User;
 import com.domi.domitube.Repository.Entity.Video;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -29,6 +30,6 @@ public interface CommentRepository extends JpaRepository<Comment, Object> {
     @Query("SELECT c FROM Comment c WHERE c.reply = :comment ORDER BY c.created DESC")
     List<Comment> GetReplysComment(@Param("comment") Comment comment);
 
-//    @Query("SELECT c FROM Comment c WHERE c.video.owner = :user")
-
+    @Query("SELECT new map(c.reply as target, count(c) as amount) FROM Comment c WHERE c.video.owner = :user AND c.reply is not NULL GROUP BY c.reply ORDER BY count(c) DESC")
+    List<Map<String, Object>> GetCommentsTopReply(@Param("user") User user, Pageable pageable);
 }

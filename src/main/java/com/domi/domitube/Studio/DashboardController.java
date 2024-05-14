@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -24,6 +25,7 @@ class DashboardDTO {
     long myViews;
 
     StudioVideoAnalyze videoAnalyze;
+    List<Map<String, Object>> commentAnalyze;
 }
 
 @RestController
@@ -45,11 +47,13 @@ public class DashboardController {
         int myFollow = subscribeService.GetSubscribers(user.getId()).size();
         long myViews = videoService.GetAllViewCountByUser(user);
         StudioVideoAnalyze videoAnalyze = videoService.GetStudioAnalyze(user);
+        var commentAnalyze = commentService.GetCommentPopular(user);
 
         DashboardDTO result = new DashboardDTO();
         result.setMyFollow(myFollow);
         result.setMyViews(myViews);
         result.setVideoAnalyze(videoAnalyze);
+        result.setCommentAnalyze(commentAnalyze);
 
         return ResponseEntity.ok(result);
     }
