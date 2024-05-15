@@ -72,6 +72,10 @@ public class VideoService {
         return result;
     }
 
+    public Long GetVideoLengthByUser(User user) {
+        return videoRepository.GetVideoLengthByUser(user);
+    }
+
     public enum SortType {
         Lastest,
         Popular,

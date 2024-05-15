@@ -12,8 +12,48 @@ import videoSvg from './video.svg';
 import closeSvg from './close.svg';
 import pictureSvg from './picture.svg';
 import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { videoDataType } from '../../Watch/Watch';
+import { useSelector } from 'react-redux';
+import IStore from '../../Redux/Type';
+import { request } from '../../Utils/Fetch';
+import { numberWithCommas } from '../../Utils/Misc';
+
+interface StudioVideoType extends videoDataType {
+    secret: number,
+    comment: number
+}
+
+const MAX_CONTENT = 20;
 
 export default function StudioContents() {
+    const [page, setPage] = useState(0);
+    const [maxpage, setMaxpage] = useState(0);
+    const [list, setList] = useState<StudioVideoType[]>([]);
+    const logined = useSelector<IStore, boolean>(value => value.login.logined);
+    
+    const loadContents = async function() {
+        const { code, data } = await request(`/api/studio/content/list?page=${page}`);
+        if (code !== 200) return;
+
+        setList(data);
+    }
+
+    useEffect(() => {
+        if (logined === true) {
+            loadContents();
+        }
+    }, [logined, page]);
+
+    useEffect(() => {
+        if (logined === true) {
+            request(`/api/studio/content/list/size`).then(({ code, data }) => {
+                if (code !== 200) return;
+                setMaxpage(data);
+            });
+        }
+    }, [logined]);
+
     return <main>
         <div className={style.header}>
             <h2 className={style.title}>동영상 목록</h2>
@@ -26,11 +66,10 @@ export default function StudioContents() {
 
         {/* Table Content */}
         <Section className={style.table_content}>
-            <TableBox />
-            <TableBox />
+            {list.map(value => <TableBox key={value.id} value={value} />)}
         </Section>
 
-        <PageControl />
+        <PageControl page={page + 1} max={maxpage} />
 
         {/* <DialogBox /> */}
     </main>;
@@ -60,45 +99,49 @@ function TableHeader() {
     </Section>;
 }
 
-function TableBox() {
+function TableBox({ value }: {value: StudioVideoType}) {
+    const createDate = new Date(value.create);
+    const dateFormat = `${createDate.getFullYear()}.${(createDate.getMonth() + 1).toString().padStart(2, '0')}.${createDate.getDate().toString().padStart(2, '0')}`;
+    const goodPercent = Math.max(Math.floor(((value.good - value.bad) / value.good) * 100), 0);
+
     return <Section className={style.box}>
         <div className={style.check}>
             <input type="checkbox" />
         </div>
         <div className={style.video}>
             <div className={style.thumbnail}>
-                <img src="https://i.ytimg.com/vi/T9dJ_cE5Asw/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLB4VYvk8T391uvCZgEfFg62tuAVDQ" />
+                <img src={`/api/image/thumbnail/${value.id}`} />
                 <span>59:12</span>
             </div>
             
             <div className={style.detail}>
-                <div className={style.title}>아무 제목임니다.</div>
-                <div className={style.desc}>으악 밍밍밍밍</div>
+                <div className={style.title}>{value.title}</div>
+                <div className={style.desc}>{value.description}</div>
             </div>
         </div>
         <div className={style.secret}>
             <img src={clipSvg} />
             비공개
         </div>
-        <div className={style.date}>2024.05.11</div>
-        <div className={style.view}>999,999,999</div>
-        <div className={style.comment}>5</div>
+        <div className={style.date}>{dateFormat}</div>
+        <div className={style.view}>{numberWithCommas(value.views)}</div>
+        <div className={style.comment}>{numberWithCommas(value.comment)}</div>
         <div className={style.good}>
-            <div className={style.text}>100%</div>
-            <div className={style.sub}>좋아요 5개</div>
+            <div className={style.text}>{goodPercent}%</div>
+            <div className={style.sub}>좋아요 {numberWithCommas(value.good)}개</div>
             <div className={style.bar}>
-                <div className={style.barIn}></div>
+                <div className={style.barIn} style={{width: `${goodPercent}%`}}></div>
             </div>
         </div>
     </Section>;
 }
 
-function PageControl() {
+function PageControl({ page, max }: { page: number, max: number }) {
     return <Section className={style.page}>
         <Button icon={arrowMaxSvg} />
         <Button icon={arrowSvg} />
 
-        <div className={style.text}><span>1</span>/30</div>
+        <div className={style.text}><span>{page}</span>/{max}</div>
 
         <Button className={style.flip} icon={arrowSvg} />
         <Button className={style.flip} icon={arrowMaxSvg} />

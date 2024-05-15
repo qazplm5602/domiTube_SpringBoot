@@ -34,4 +34,7 @@ public interface VideoRepository extends JpaRepository<Video, Object> {
 
     @Query("SELECT c FROM Video c WHERE c.owner = :owner ORDER BY c.good DESC")
     List<Video> GetGoodVideo(@Param("owner") User user, Pageable pageable);
+
+    @Query("SELECT count(c) FROM Video c WHERE c.owner = :user")
+    Long GetVideoLengthByUser(@Param("user") User user);
 }

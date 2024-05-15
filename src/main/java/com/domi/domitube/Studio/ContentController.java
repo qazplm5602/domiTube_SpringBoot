@@ -6,12 +6,14 @@ import com.domi.domitube.Service.CommentService;
 import com.domi.domitube.Service.UserService;
 import com.domi.domitube.Service.VideoService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -23,8 +25,8 @@ class StudioVideoDTO {
     public int secret;
     public long views;
     public long good;
-    public long dislike;
-    public long created;
+    public long bad;
+    public long create;
     public long comment;
 }
 
@@ -54,11 +56,46 @@ public class ContentController {
             data.description = video.getDescription();
             data.views = video.getViews();
             data.good = video.getGood();
-            data.dislike = video.getDislike();
-            data.comment = comments.get(video.getId());
+            data.bad = video.getDislike();
+            data.create = video.getCreated().toInstant(ZoneOffset.of("+09:00")).toEpochMilli();
+
+            Long commentAmount = (Long)comments.get(video.getId());
+            if (commentAmount == null) commentAmount = 0L;
+
+            data.comment = commentAmount;
+
+            int secret = 0;
+            switch(video.getSecret()) {
+                case HalfPublic -> {
+                    secret = 1;
+                    break;
+                }
+                case Private -> {
+                    secret = 2;
+                    break;
+                }
+            }
+
+            data.secret = secret;
+
+            response.add(data);
         }
 
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/list/size")
+    Long GetVideoMaxSize(HttpServletRequest request, HttpServletResponse response) {
+        User user = userService.GetUserForRequest(request);
+        if (user == null) {
+            response.setStatus(401);
+            return -1L;
+        }
+
+        Long amount = videoService.GetVideoLengthByUser(user);
+        if (amount == null)
+            amount = 0L;
+
+        return amount;
+    }
 }
