@@ -69,10 +69,17 @@ public class CommentService {
 
             result.add(Map.of(
                 "id", comment.getId(),
-                "user", comment.getWriter().getId(),
+                "user", Map.of(
+                    "id", comment.getWriter().getId(),
+                    "name", comment.getWriter().getName(),
+                    "image", comment.getWriter().getImage()
+                ),
                 "content", comment.getContent(),
                 "reply", amount,
-                "video", comment.getVideo().getId()
+                "video", Map.of(
+                    "id", comment.getVideo().getId(),
+                    "title", comment.getVideo().getTitle()
+                )
             ));
         }
 

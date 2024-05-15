@@ -208,6 +208,9 @@ main > .title > span {
 .comment_status > .comment > .icon {
     width: 45px;
     height: 45px;
+
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.05);
 }
 
 .comment_status > .comment > .thumbnail_container {

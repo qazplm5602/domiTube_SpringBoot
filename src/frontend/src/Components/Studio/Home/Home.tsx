@@ -13,8 +13,15 @@ import { dateWithKorean, numberWithCommas, numberWithKorean } from '../../Utils/
 
 type commentMinType = {
     id: number,
-    video: string,
-    user: string,
+    video: {
+        id: string,
+        title: string
+    },
+    user: {
+        id: string,
+        name: string,
+        image: boolean
+    },
     content: string,
     reply: number
 }
@@ -133,17 +140,17 @@ function VideoBox({video}: {video: videoDataType}) {
 
 function CommentBox({ comment }: {comment: commentMinType}) {
     return <Section className={style.comment}>
-        <img className={style.icon} src={noProfile} />
+        <img className={style.icon} src={comment.user.image ? `/api/image/user/${comment.user.id}` : noProfile} />
         <Section className={style.detail}>
-            <div className={style.name}>도미인뎅<span className={style.date}>1일 전</span></div>
+            <div className={style.name}>{comment.user.name}<span className={style.date}>1일 전</span></div>
             <div className={style.content}>{comment.content}</div>
 
             <div className={style.reply}>답글 {numberWithCommas(comment.reply)}개</div>
         </Section>
         
         <div className={style.thumbnail_container}>
-            <img src="https://i.ytimg.com/vi/ptKDIAXYoE8/hqdefault.jpg?sqp=-oaymwEXCOADEI4CSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLCW4NGQ4w8xCuAujh_yEYnvn9TLxw" />
-            <span>블루아카이븡</span>
+            <img src={`/api/image/thumbnail/${comment.video.id}`} />
+            <span>{comment.video.title}</span>
         </div>
     </Section>
 }
