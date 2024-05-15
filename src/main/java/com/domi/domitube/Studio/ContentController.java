@@ -1,6 +1,7 @@
 package com.domi.domitube.Studio;
 
 import com.domi.domitube.Repository.Entity.User;
+import com.domi.domitube.Repository.Entity.Video;
 import com.domi.domitube.Service.UserService;
 import com.domi.domitube.Service.VideoService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,6 +10,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+class StudioVideoDTO {
+    public String id;
+    public String title;
+    public String description;
+    public int secret;
+    public int views;
+    public int good;
+    public int dislike;
+    public long created;
+    public long comment;
+}
 
 @RestController
 @RequestMapping("/api/studio/content")
@@ -24,7 +39,12 @@ public class ContentController {
             return ResponseEntity.status(401).build();
         }
 
-        videoService.GetVideosByUser(user, VideoService.SortType.Lastest, 0);
+        List<Video> result = videoService.GetVideosByUser(user, VideoService.SortType.Lastest, 0);
+
+
+        for(var video : result) {
+
+        }
 
         return null;
     }

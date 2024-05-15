@@ -32,4 +32,7 @@ public interface CommentRepository extends JpaRepository<Comment, Object> {
 
     @Query("SELECT new map(c.reply as target, count(c) as amount) FROM Comment c WHERE c.video.owner = :user AND c.reply is not NULL GROUP BY c.reply ORDER BY count(c) DESC")
     List<Map<String, Object>> GetCommentsTopReply(@Param("user") User user, Pageable pageable);
+
+    @Query("SELECT new map(c.video.id AS id, count(c) AS amount) FROM Comment c WHERE c.video IN :videos GROUP BY c.video")
+    List<Map<String, Object>> GetCommentSizesForVideos(@Param("videos") List<Video> videos);
 }
