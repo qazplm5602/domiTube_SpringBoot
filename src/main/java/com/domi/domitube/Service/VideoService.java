@@ -45,6 +45,7 @@ public class VideoService {
         videoRepository.save(video);
     }
 
+    /////// STUDIO
     public long GetAllViewCountByUser(User user) {
         Long value = videoRepository.GetAllViewCount(user);
         if (value == null) value = 0L;
