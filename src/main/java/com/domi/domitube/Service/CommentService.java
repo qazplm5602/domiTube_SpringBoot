@@ -58,6 +58,14 @@ public class CommentService {
     }
 
     // STUDIO
+    public Map<String, Long> GetCommentSizesForVideos(List<Video> include) {
+        Map<String, Long> result = new HashMap<>();
+        for (var data : commentRepository.GetCommentSizesForVideos(include)) {
+            result.put((String)data.get("id"), (Long)data.get("amount"));
+        }
+
+        return result;
+    }
 
     public List<Map<String, Object>> GetCommentPopular(User user) {
         Pageable page = PageRequest.of(0, 10);
