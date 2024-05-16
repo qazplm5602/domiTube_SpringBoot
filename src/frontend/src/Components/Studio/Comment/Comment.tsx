@@ -19,6 +19,7 @@ type cacheVideoType = {[key: string]: string};
 
 export default function StudioComment() {
     const [page, setPage] = useState(0);
+    const [sort, setSort] = useState(0);
     const [loading, setLoading] = useState(false);
     const [barBottom, setBarBottom] = useState(false);
     const [list, setList] = useState<CommentStudioType[]>([]);
@@ -28,10 +29,16 @@ export default function StudioComment() {
     const process = useRef<{ user: processObj, video: processObj }>({ user: {}, video: {} });
 
     const listRef = useRef<any>();
+    
+    const changeSort = function(value: number) {
+        setSort(value);
+        setPage(0);
+        setList([]);
+    }
 
     const onScroll = function(e: Event) {
         const { clientHeight, scrollHeight, scrollTop } = listRef.current;
-        setBarBottom(scrollHeight - clientHeight <= scrollTop);
+        setBarBottom(scrollHeight - clientHeight <= scrollTop + 1);
     }
 
     const loadCacheUser = async function(id: string) {
@@ -59,7 +66,7 @@ export default function StudioComment() {
     const loadComments = async function() {
         setLoading(true);
         
-        const { code, data } = await request(`/api/studio/comment/list?sort=0&page=${page}`);
+        const { code, data } = await request(`/api/studio/comment/list?sort=${sort}&page=${page}`);
         if (code !== 200) return;
         
         (data as CommentStudioType[]).forEach(value => {
@@ -80,11 +87,10 @@ export default function StudioComment() {
         const { clientHeight, scrollHeight } = listRef.current;
         
         // 보이는 화면이 작슴니다. (댓글이 아직 꽉 안차있슴)
-        console.log(barBottom);
         if (scrollHeight <= clientHeight || barBottom) {
             loadComments();
         }
-    }, [page, loading, barBottom]);
+    }, [sort, page, loading, barBottom]);
 
     useEffect(() => {
         listRef.current.addEventListener("scroll", onScroll);
@@ -95,9 +101,9 @@ export default function StudioComment() {
         <h2 className={style.header_title}>댓글</h2>
 
         <Section className={style.sort}>
-            <div className={[style.box, style.active].join(" ")}>최신순</div>
-            <div className={style.box}>좋아요순</div>
-            <div className={style.box}>날짜순</div>
+            <div onClick={() => changeSort(0)} className={[style.box, sort === 0 ? style.active : ''].join(" ")}>최신순</div>
+            <div onClick={() => changeSort(1)} className={[style.box, sort === 1 ? style.active : ''].join(" ")}>좋아요순</div>
+            <div onClick={() => changeSort(2)} className={[style.box, sort === 2 ? style.active : ''].join(" ")}>날짜순</div>
         </Section>
 
         <Section className={style.comment_list}>

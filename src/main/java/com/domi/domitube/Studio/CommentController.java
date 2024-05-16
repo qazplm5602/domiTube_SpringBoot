@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 class VideoCommentDTO extends CommentDataDTO {
@@ -42,13 +43,19 @@ public class CommentController {
             case 2 -> type = VideoService.SortType.Date ;
         }
 
-        List<VideoCommentDTO> result = commentService.GetAllCommentByUserSorting(user, type, page).stream().map(value -> {
+        List<Comment> list = commentService.GetAllCommentByUserSorting(user, type, page);
+        Map<Long, Long> replyCount = commentService.GetReplyAmounts(list);
+        List<VideoCommentDTO> result = list.stream().map(value -> {
             VideoCommentDTO data = new VideoCommentDTO();
             data.id = value.getId();
             data.content = value.getContent();
             data.owner = value.getWriter().getId();
             data.video = value.getVideo().getId();
             data.created = value.getCreated().toInstant(ZoneOffset.of("+09:00")).toEpochMilli();
+
+            Long reply = replyCount.get((Long)value.getId());
+            if (reply != null)
+                data.reply = reply;
 
             return data;
         }).collect(Collectors.toList());
