@@ -1,5 +1,6 @@
 package com.domi.domitube.Controller;
 
+import com.domi.domitube.DTO.CommentDataDTO;
 import com.domi.domitube.Repository.Entity.Comment;
 import com.domi.domitube.Repository.Entity.User;
 import com.domi.domitube.Repository.Entity.Video;
@@ -17,14 +18,6 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-class CommentDataDTO {
-    public long id;
-    public String owner;
-    public String content;
-    public long created;
-    public long reply;
-}
 
 @RestController
 @RequiredArgsConstructor

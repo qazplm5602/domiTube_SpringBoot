@@ -9,10 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -92,5 +89,16 @@ public class CommentService {
         }
 
         return result;
+    }
+
+    public List<Comment> GetAllCommentByUserSorting(User user, VideoService.SortType sort, int page) {
+        Pageable pages = PageRequest.of(page, 20);
+
+        switch (sort) {
+            case Lastest -> { return commentRepository.GetAllCommentsByUserLatest(user, pages); }
+            case Date -> { return commentRepository.GetAllCommentsByUserOld(user, pages); }
+        }
+
+        return new ArrayList<>();
     }
 }
