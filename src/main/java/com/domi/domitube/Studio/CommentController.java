@@ -14,8 +14,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.stream.Collectors;
+
+class VideoCommentDTO extends CommentDataDTO {
+    public String video;
+}
 
 @RestController("StudioCommentController")
 @RequestMapping("/api/studio/comment")
@@ -37,10 +42,13 @@ public class CommentController {
             case 2 -> type = VideoService.SortType.Date ;
         }
 
-        List<CommentDataDTO> result = commentService.GetAllCommentByUserSorting(user, type, page).stream().map(value -> {
-            CommentDataDTO data = new CommentDataDTO();
+        List<VideoCommentDTO> result = commentService.GetAllCommentByUserSorting(user, type, page).stream().map(value -> {
+            VideoCommentDTO data = new VideoCommentDTO();
             data.id = value.getId();
             data.content = value.getContent();
+            data.owner = value.getWriter().getId();
+            data.video = value.getVideo().getId();
+            data.created = value.getCreated().toInstant(ZoneOffset.of("+09:00")).toEpochMilli();
 
             return data;
         }).collect(Collectors.toList());

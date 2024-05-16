@@ -36,7 +36,7 @@ export interface videoDataType {
     channel: string
 }
 
-interface CommentDataType {
+export interface CommentDataType {
     id: number,
     owner: string,
     content: string,
