@@ -165,4 +165,20 @@ public class CommentController {
 
         return ResponseEntity.ok(result);
     }
+
+    @PostMapping("/test")
+    void CreateCommentTest() {
+        User user = userService.GetUserForId("domi");
+        Video video = videoService.GetVideoById("DOMI1");
+
+        for (int i = 0; i < 50; i++) {
+            Comment comment = new Comment();
+            comment.setWriter(user);
+            comment.setContent("댓글 테스트 - "+i);
+            comment.setVideo(video);
+            comment.setCreated(LocalDateTime.now());
+
+            commentService.Save(comment);
+        }
+    }
 }

@@ -70,6 +70,7 @@ export default function StudioComment() {
         });
         setList([...list, ...data]);
         setLoading(false);
+        setBarBottom(false);
         setPage(data.length < 20 ? -1 : page + 1);
     }
 
@@ -79,6 +80,7 @@ export default function StudioComment() {
         const { clientHeight, scrollHeight } = listRef.current;
         
         // 보이는 화면이 작슴니다. (댓글이 아직 꽉 안차있슴)
+        console.log(barBottom);
         if (scrollHeight <= clientHeight || barBottom) {
             loadComments();
         }
