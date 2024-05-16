@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.ZoneOffset;
@@ -39,14 +40,14 @@ public class ContentController {
     final CommentService commentService;
 
     @GetMapping("/list")
-    ResponseEntity GetVideoForOwner(HttpServletRequest request) {
+    ResponseEntity GetVideoForOwner(HttpServletRequest request, @RequestParam("page") int page) {
         User user = userService.GetUserForRequest(request);
         if (user == null) {
             return ResponseEntity.status(401).build();
         }
 
         List<StudioVideoDTO> response = new ArrayList<>();
-        List<Video> result = videoService.GetVideosByUser(user, VideoService.SortType.Lastest, 0);
+        List<Video> result = videoService.GetVideosByUser(user, VideoService.SortType.Lastest, page);
         Map<String, Long> comments = commentService.GetCommentSizesForVideos(result);
 
         for(var video : result) {

@@ -36,10 +36,30 @@ export default function StudioContents() {
     const logined = useSelector<IStore, boolean>(value => value.login.logined);
     
     const loadContents = async function() {
+        setList([]);
+
         const { code, data } = await request(`/api/studio/content/list?page=${page}`);
         if (code !== 200) return;
 
         setList(data);
+    }
+    const pageChanged = function(type: PageEvent) {
+        switch (type) {
+            case PageEvent.Min:
+                setPage(0);
+                break;
+            case PageEvent.Next:
+                setPage(page + 1);
+                break;
+            case PageEvent.Prev:
+                setPage(page - 1);
+                break;
+            case PageEvent.Max:
+                setPage(maxpage - 1);
+                break;
+            default:
+                break;
+        }
     }
 
     useEffect(() => {
@@ -72,7 +92,7 @@ export default function StudioContents() {
             {list.map(value => <TableBox key={value.id} value={value} />)}
         </Section>
 
-        <PageControl page={page + 1} max={maxpage} />
+        <PageControl page={page + 1} max={maxpage} event={pageChanged} />
 
         {/* <DialogBox /> */}
     </main>;
@@ -105,7 +125,7 @@ function TableHeader() {
 function TableBox({ value }: {value: StudioVideoType}) {
     const createDate = new Date(value.create);
     const dateFormat = `${createDate.getFullYear()}.${(createDate.getMonth() + 1).toString().padStart(2, '0')}.${createDate.getDate().toString().padStart(2, '0')}`;
-    const goodPercent = Math.max(Math.floor(((value.good - value.bad) / value.good) * 100), 0);
+    const goodPercent = value.good === 0 ? 0 : Math.max(Math.floor(((value.good - value.bad) / value.good) * 100), 0);
 
     return <Section className={style.box}>
         <div className={style.check}>
@@ -138,15 +158,19 @@ function TableBox({ value }: {value: StudioVideoType}) {
     </Section>;
 }
 
-function PageControl({ page, max }: { page: number, max: number }) {
-    return <Section className={style.page}>
-        <Button icon={arrowMaxSvg} />
-        <Button icon={arrowSvg} />
+enum PageEvent {
+    Min, Next, Prev, Max
+}
+
+function PageControl({ page, max, event }: { page: number, max: number, event: (type: PageEvent) => void }) {
+    return <Section className={style.page}> 
+        <Button onClick={() => event(PageEvent.Min)} disabled={page <= 1} icon={arrowMaxSvg} />
+        <Button onClick={() => event(PageEvent.Prev)} disabled={page <= 1} icon={arrowSvg} />
 
         <div className={style.text}><span>{page}</span>/{max}</div>
 
-        <Button className={style.flip} icon={arrowSvg} />
-        <Button className={style.flip} icon={arrowMaxSvg} />
+        <Button onClick={() => event(PageEvent.Next)} disabled={page >= max} className={style.flip} icon={arrowSvg} />
+        <Button onClick={() => event(PageEvent.Max)} disabled={page >= max} className={style.flip} icon={arrowMaxSvg} />
     </Section>
 }
 

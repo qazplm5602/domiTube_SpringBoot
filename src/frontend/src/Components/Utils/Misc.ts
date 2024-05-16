@@ -26,6 +26,9 @@ export function dateWithKorean(value: Date) {
   if (diff.getFullYear() - 1970 > 0) {
     num = diff.getFullYear() - 1970;
     prefix = "년";
+  } else if (diff.getMonth() > 0) {
+    num = diff.getMonth();
+    prefix = "달";
   } else if (diff.getDate() - 1 > 0) {
     num = diff.getDate() - 1;
     prefix = "일";
