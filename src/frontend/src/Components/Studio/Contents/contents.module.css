@@ -241,7 +241,8 @@ main > .header > .createBtn > img {
     opacity: 0.5;
     
     margin-top: -5px;
-    height: 28px;
+    width: 25px;
+    /* height: 28px; */
 }
 
 .table_content > .box > .good {

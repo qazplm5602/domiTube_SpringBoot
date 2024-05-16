@@ -11,6 +11,9 @@ import arrowMaxSvg from './arrowMax.svg';
 import videoSvg from './video.svg';
 import closeSvg from './close.svg';
 import pictureSvg from './picture.svg';
+import publicSvg from './public.svg';
+import privateSvg from './private.svg';
+
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { videoDataType } from '../../Watch/Watch';
@@ -49,7 +52,7 @@ export default function StudioContents() {
         if (logined === true) {
             request(`/api/studio/content/list/size`).then(({ code, data }) => {
                 if (code !== 200) return;
-                setMaxpage(data);
+                setMaxpage(Math.ceil(data / MAX_CONTENT));
             });
         }
     }, [logined]);
@@ -120,8 +123,7 @@ function TableBox({ value }: {value: StudioVideoType}) {
             </div>
         </div>
         <div className={style.secret}>
-            <img src={clipSvg} />
-            비공개
+            {SecretBox(value.secret)}
         </div>
         <div className={style.date}>{dateFormat}</div>
         <div className={style.view}>{numberWithCommas(value.views)}</div>
@@ -146,6 +148,33 @@ function PageControl({ page, max }: { page: number, max: number }) {
         <Button className={style.flip} icon={arrowSvg} />
         <Button className={style.flip} icon={arrowMaxSvg} />
     </Section>
+}
+
+function SecretBox(secret: number) {
+    let icon = "";
+    let text = "";
+    
+    switch (secret) {
+        case 0:
+            icon = publicSvg;
+            text = "";
+            break;
+
+        case 1:
+            icon = clipSvg;
+            text = "일부"
+            break;
+
+        case 2:
+            icon = privateSvg;
+            text = "비"
+            break;
+        default:
+            text = "unknown "
+            break;
+    }
+
+    return <><img src={icon} />{text}공개</>;
 }
 
 
