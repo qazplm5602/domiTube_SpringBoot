@@ -13,17 +13,47 @@ interface CommentStudioType extends CommentDataType {
     video: string
 }
 
+type processObj = { [key: string]: boolean };
+type cacheUserType = {[key: string]: {name: string, image: boolean}};
+type cacheVideoType = {[key: string]: string};
+
 export default function StudioComment() {
     const [page, setPage] = useState(0);
     const [loading, setLoading] = useState(false);
     const [barBottom, setBarBottom] = useState(false);
     const [list, setList] = useState<CommentStudioType[]>([]);
+    
+    const [cacheUser, setCacheUser] = useState<cacheUserType>({});
+    const [cacheVideo, setCacheVideo] = useState<cacheVideoType>({});
+    const process = useRef<{ user: processObj, video: processObj }>({ user: {}, video: {} });
 
     const listRef = useRef<any>();
-    
+
     const onScroll = function(e: Event) {
         const { clientHeight, scrollHeight, scrollTop } = listRef.current;
         setBarBottom(scrollHeight - clientHeight <= scrollTop);
+    }
+
+    const loadCacheUser = async function(id: string) {
+        process.current.user[id] = true;
+
+        const { code, data } = await request(`/api/channel/${id}/info`);
+        if (code !== 200) return;
+
+        setCacheUser((prev: cacheUserType) => {
+            return {...prev, [id]: { name: data.name, image: data.icon } };
+        });
+    }
+
+    const loadCacheVideo = async function(id: string) {
+        process.current.video[id] = true;
+
+        const { code, data } = await request(`/api/video/${id}`);
+        if (code !== 200) return;
+
+        setCacheVideo((prev: cacheVideoType) => {
+            return {...prev, [id]: data.data.title };
+        });
     }
 
     const loadComments = async function() {
@@ -32,6 +62,12 @@ export default function StudioComment() {
         const { code, data } = await request(`/api/studio/comment/list?sort=0&page=${page}`);
         if (code !== 200) return;
         
+        (data as CommentStudioType[]).forEach(value => {
+            if (process.current.user[value.owner] === undefined)
+                loadCacheUser(value.owner)
+            if (process.current.video[value.video] === undefined)
+                loadCacheVideo(value.video);
+        });
         setList([...list, ...data]);
         setLoading(false);
         setPage(data.length < 20 ? -1 : page + 1);
@@ -50,7 +86,7 @@ export default function StudioComment() {
 
     useEffect(() => {
         listRef.current.addEventListener("scroll", onScroll);
-        return () => listRef.current.removeEventListener("scroll", onScroll);
+        return () => listRef?.current?.removeEventListener("scroll", onScroll);
     }, []);
     
     return <main ref={listRef}>
@@ -63,7 +99,7 @@ export default function StudioComment() {
         </Section>
 
         <Section className={style.comment_list}>
-            {list.map(value => <Comment key={value.id} id={value.id} p_id={value.owner} p_name="--" p_image={false} video_id={value.video} video_title='--' created={value.created} content={value.content} reply={value.reply} isReply={false}  />)}
+            {list.map(value => <Comment key={value.id} id={value.id} p_id={value.owner} p_name={cacheUser[value.owner]?.name || "--"} p_image={cacheUser[value.owner]?.image === true} video_id={value.video} video_title={cacheVideo[value.video] || "--"} created={value.created} content={value.content} reply={value.reply} isReply={false}  />)}
         </Section>
     </main>;
 }
