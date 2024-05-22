@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SettingController {
     final UserService userService;
 
-    @GetMapping("/baner")
+    @GetMapping("/banner")
     boolean GetMyBanner(HttpServletRequest request, HttpServletResponse response) {
         User user = userService.GetUserForRequest(request);
         if (user == null) {
