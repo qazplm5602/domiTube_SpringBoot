@@ -5,9 +5,9 @@ import com.domi.domitube.Service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,5 +24,13 @@ public class SettingController {
         }
 
         return user.getBanner();
+    }
+
+    @PostMapping("/upload")
+    ResponseEntity UploadSetting(@RequestParam(value ="name", required=false) String name, @RequestParam(value ="icon", required=false) MultipartFile iconFile, @RequestParam(value ="banner", required=false) MultipartFile bannerFile, HttpServletRequest request) {
+        System.out.println(name);
+        System.out.println(iconFile);
+        System.out.println(bannerFile);
+        return ResponseEntity.ok("test");
     }
 }

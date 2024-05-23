@@ -26,13 +26,16 @@ export default function StudioSetting() {
     const iconFile = useRef<File | boolean /* File: 이걸로 바꿀꺼임 / false: 바뀐게 없음 / true: 기본값으로 바꿈.. */>(false);
     const bannerFile = useRef<File | boolean>(false);
 
-    const checkChanges = function() {
-        let change = false;
-        
-        if (name !== user.name) change = true;
-        if (iconFile.current instanceof File || (user.image !== false && iconFile.current === true)) change = true;
-        if (bannerFile.current instanceof File || (banner.current !== false && bannerFile.current === true)) change = true;
+    const getChanges = function(): { name: boolean, icon: boolean, banner: boolean } {
+        return {
+            name: name !== user.name,
+            icon: iconFile.current instanceof File || (user.image !== false && iconFile.current === true),
+            banner: bannerFile.current instanceof File || (banner.current !== false && bannerFile.current === true)
+        }
+    }
 
+    const checkChanges = function() {
+        const change = Object.values(getChanges()).some(v => v);
         setChanges(change);
     }
     
@@ -42,6 +45,23 @@ export default function StudioSetting() {
         
         banner.current = data;
         setLoading(false);
+    }
+
+    const saveChanges = function() {
+        const form = new FormData();
+        const change = getChanges();
+        
+        if (change.name)
+            form.append("name", name);
+        
+        if (change.icon)
+            form.append("icon", (iconFile.current instanceof File) ? iconFile.current : new Blob());
+
+        if (bannerFile.current instanceof File) {
+            form.append("banner", bannerFile.current);
+        }
+
+        request(`/api/studio/setting/upload`, { method: "POST", body: form });
     }
 
     useEffect(() => {
@@ -66,7 +86,7 @@ export default function StudioSetting() {
             
             <div className={style.right}>
                 {changes && <div>변경사항이 있습니다.</div>}
-                <Button disabled={!changes}>변경사항 저장</Button>
+                <Button disabled={!changes} onClick={saveChanges}>변경사항 저장</Button>
             </div>
         </Section>
 
