@@ -26,4 +26,8 @@ public class UserService {
 
         return GetUserForId(boxing.toString());
     }
+
+    public void Save(User user) {
+        userRepository.save(user);
+    }
 }

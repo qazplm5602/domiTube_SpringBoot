@@ -57,8 +57,8 @@ export default function StudioSetting() {
         if (change.icon)
             form.append("icon", (iconFile.current instanceof File) ? iconFile.current : new Blob());
 
-        if (bannerFile.current instanceof File) {
-            form.append("banner", bannerFile.current);
+        if (change.banner) {
+            form.append("banner", (bannerFile.current instanceof File) ? bannerFile.current : new Blob());
         }
 
         request(`/api/studio/setting/upload`, { method: "POST", body: form });
