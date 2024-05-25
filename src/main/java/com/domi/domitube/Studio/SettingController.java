@@ -1,6 +1,7 @@
 package com.domi.domitube.Studio;
 
 import com.domi.domitube.Repository.Entity.User;
+import com.domi.domitube.Service.AssetService;
 import com.domi.domitube.Service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,6 +17,7 @@ import java.io.IOException;
 @RequestMapping("/api/studio/setting")
 public class SettingController {
     final UserService userService;
+    final AssetService assetService;
 
     @GetMapping("/banner")
     boolean GetMyBanner(HttpServletRequest request, HttpServletResponse response) {
@@ -40,14 +42,30 @@ public class SettingController {
         }
 
         if (iconFile != null) {
-
+            if (iconFile.isEmpty()) {
+                if (user.getImage()) {
+                    user.setImage(false);
+                    assetService.DeleteFile(AssetService.Category.user, user.getId());
+                }
+            } else {
+                user.setImage(true);
+                assetService.AddFile(AssetService.Category.user, user.getId(), iconFile);
+            }
         }
 
         if (bannerFile != null) {
-
+            if (bannerFile.isEmpty()) {
+                if (user.getBanner()) {
+                    user.setBanner(false);
+                    assetService.DeleteFile(AssetService.Category.banner, user.getId());
+                }
+            } else {
+                user.setBanner(true);
+                assetService.AddFile(AssetService.Category.banner, user.getId(), bannerFile);
+            }
         }
 
         userService.Save(user);
-        return ResponseEntity.ok("test");
+        return ResponseEntity.ok(true);
     }
 }

@@ -47,7 +47,7 @@ export default function StudioSetting() {
         setLoading(false);
     }
 
-    const saveChanges = function() {
+    const saveChanges = async function() {
         const form = new FormData();
         const change = getChanges();
         
@@ -61,15 +61,13 @@ export default function StudioSetting() {
             form.append("banner", (bannerFile.current instanceof File) ? bannerFile.current : new Blob());
         }
 
-        request(`/api/studio/setting/upload`, { method: "POST", body: form });
+        const { code } = await request(`/api/studio/setting/upload`, { method: "POST", body: form });
+        if (code !== 200) return;
+        
+        
     }
 
     useEffect(() => {
-        // origin.current = {
-        //     name: "test",
-        //     icon: false,
-        //     banner: false,
-        // };
         if (!user.logined) return;
 
         getInfo();
