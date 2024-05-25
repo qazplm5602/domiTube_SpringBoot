@@ -1,8 +1,10 @@
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { request } from "../Utils/Fetch";
+import Istore from "../Redux/Type";
 
 export default function AccountSys() {
+    const loading = useSelector<Istore, boolean>(value => value.login.loading);
     const dispatch = useDispatch();
     
     const loadUser = async function() {
@@ -33,8 +35,9 @@ export default function AccountSys() {
     }
 
     useEffect(() => {
-        loadUser();
-    }, []);
+        if (loading)
+            loadUser();
+    }, [loading]);
 
     return null;
 }

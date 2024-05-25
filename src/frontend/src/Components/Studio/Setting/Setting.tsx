@@ -4,7 +4,7 @@ import style from './setting.module.css';
 
 import noProfile from '../../../assets/no-profile.png';
 import { useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import IStore from '../../Redux/Type';
 import { IloginStore } from '../../Redux/LoginStore';
 import { request } from '../../Utils/Fetch';
@@ -16,6 +16,7 @@ interface settingType {
 }
 
 export default function StudioSetting() {
+    const dispatch = useDispatch();
     const user = useSelector<IStore, IloginStore>(value => value.login);
     const banner = useRef(false);
 
@@ -64,7 +65,12 @@ export default function StudioSetting() {
         const { code } = await request(`/api/studio/setting/upload`, { method: "POST", body: form });
         if (code !== 200) return;
         
-        
+
+        iconFile.current = false;
+        banner.current = bannerFile.current instanceof File;
+        bannerFile.current = false;
+        setChanges(false);
+        dispatch({ type: "login.set", loading: true });
     }
 
     useEffect(() => {
