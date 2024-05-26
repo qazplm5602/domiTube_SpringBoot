@@ -15,7 +15,7 @@ import publicSvg from './public.svg';
 import privateSvg from './private.svg';
 
 import { Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { videoDataType } from '../../Watch/Watch';
 import { useSelector } from 'react-redux';
 import IStore from '../../Redux/Type';
@@ -272,12 +272,20 @@ function UploadContent({ onUpload }: { onUpload: (file: File) => void }) {
         setDragged(false);
         
         const file = e.dataTransfer.files[0];
-        console.log(file);
+        onUpload(file);
     }
-    
+
+    const inputChange: React.ChangeEventHandler<HTMLInputElement>  = function(e) {
+        const files = e.target.files;
+        if (files === null || files.length === 0) return;
+        
+        onUpload(files[0]);
+    }
+
     return <main style={dragged ? {backgroundColor: 'rgb(56, 71, 51)'} : {}} onDragEnter={dragEnter} onDragOver={dragOver} onDragLeave={dragLeave} onDrop={dragDrop} className={style.upload}>
         <img className={style.icon} src={videoSvg} />
         <div className={style.title}>여기로 끌어서 놓으세요! {dragged}</div>
+        <input onChange={inputChange} style={{display: "none"}} type="file" />
         <Button className={style.fileSelect}>파일 선택하기</Button>
     </main>;
 }
