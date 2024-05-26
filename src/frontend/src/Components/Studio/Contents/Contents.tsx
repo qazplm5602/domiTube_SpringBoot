@@ -34,6 +34,8 @@ export default function StudioContents() {
     const [maxpage, setMaxpage] = useState(0);
     const [list, setList] = useState<StudioVideoType[]>([]);
     const logined = useSelector<IStore, boolean>(value => value.login.logined);
+
+    const [uploadDialog, setUploadDialog] = useState(false);
     
     const loadContents = async function() {
         setList([]);
@@ -62,6 +64,10 @@ export default function StudioContents() {
         }
     }
 
+    const onCloseDialog = function() {
+        setUploadDialog(false);
+    }
+
     useEffect(() => {
         if (logined === true) {
             loadContents();
@@ -80,7 +86,7 @@ export default function StudioContents() {
     return <main>
         <div className={style.header}>
             <h2 className={style.title}>동영상 목록</h2>
-            <Button icon={videoSvg} className={style.createBtn}>만들기</Button>
+            <Button icon={videoSvg} className={style.createBtn} onClick={() => setUploadDialog(true)}>만들기</Button>
         </div>
 
         <Filter />
@@ -94,7 +100,7 @@ export default function StudioContents() {
 
         <PageControl page={page + 1} max={maxpage} event={pageChanged} />
 
-        {/* <DialogBox /> */}
+        {uploadDialog && <DialogBox onClose={onCloseDialog} />}
     </main>;
 }
 
@@ -203,28 +209,75 @@ function SecretBox(secret: number) {
 
 
 /////// dialog
-function DialogBox() {
+enum dialogScreen { upload, detail }
+
+function DialogBox({ onClose }: { onClose: () => void }) {
+    const [progress, setProgress] = useState(-1);
+    const [screen, setSceen] = useState<dialogScreen>(dialogScreen.upload);
+
+    const closeBtn = function() {
+        onClose();
+    }
+
+    const uploadVideo = async function(file: File) {
+        const buffer = await file.arrayBuffer();
+        
+    }
+
     return <div className={style.dialog}>
         <div className={style.box}>
             <Section className={style.header}>
                 <h2>동영상 업로드</h2>
-                <Button className={style.close} icon={closeSvg} />
+                <Button onClick={closeBtn} className={style.close} icon={closeSvg} />
             </Section>
 
-            <div className={style.bar}>
-                <span>50%</span>
-            </div>
+            {progress >= 0 && <div className={style.bar}>
+                <span>{progress}%</span>
+            </div>}
 
-            {/* <UploadContent /> */}
-            <UploadDetail />
+            {screen === dialogScreen.upload && <UploadContent onUpload={uploadVideo} />}
+            {screen === dialogScreen.detail && <UploadDetail />}
         </div>
     </div>;
 }
 
-function UploadContent() {
-    return <main className={style.upload}>
+function UploadContent({ onUpload }: { onUpload: (file: File) => void }) {
+    const [dragged, setDragged] = useState(false);
+    
+    const dragEnter = function(e: React.DragEvent) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        setDragged(true);
+    }
+
+    const dragOver = function(e: React.DragEvent) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        if (e.dataTransfer.files) setDragged(true);
+    }
+
+    const dragLeave = function(e: React.DragEvent) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        setDragged(false);
+    }
+
+    const dragDrop = function(e: React.DragEvent) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        setDragged(false);
+        
+        const file = e.dataTransfer.files[0];
+        console.log(file);
+    }
+    
+    return <main style={dragged ? {backgroundColor: 'rgb(56, 71, 51)'} : {}} onDragEnter={dragEnter} onDragOver={dragOver} onDragLeave={dragLeave} onDrop={dragDrop} className={style.upload}>
         <img className={style.icon} src={videoSvg} />
-        <div className={style.title}>여기로 끌어서 놓으세요!</div>
+        <div className={style.title}>여기로 끌어서 놓으세요! {dragged}</div>
         <Button className={style.fileSelect}>파일 선택하기</Button>
     </main>;
 }
