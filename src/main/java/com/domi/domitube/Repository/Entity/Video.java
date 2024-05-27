@@ -43,8 +43,6 @@ public class Video {
     int time;
     @Column(nullable = false)
     long size;
-    @Column(nullable = false)
-    int uploads;
 
     @Column(nullable = false)
     @CreatedDate

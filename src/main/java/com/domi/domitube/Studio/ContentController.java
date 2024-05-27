@@ -20,6 +20,7 @@ import java.io.*;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -53,6 +54,8 @@ public class ContentController {
     final VideoService videoService;
     final CommentService commentService;
     final AssetService assetService;
+
+    Map<String, Integer> process = new HashMap<String, Integer>();
 
     @GetMapping("/list")
     ResponseEntity GetVideoForOwner(HttpServletRequest request, @RequestParam("page") int page) {
@@ -130,11 +133,12 @@ public class ContentController {
         video.setTitle("domiTube Gen");
         video.setTime(0);
         video.setSize(size);
-        video.setUploads(0);
         video.setCreated(LocalDateTime.now());
         video.setSecret(Video.VideoSecretType.Private); // 일단 임시로 비공개
 
         videoService.CreateVideo(video);
+
+        process.put(videoId, 0);
 
         ResponseVO response = new ResponseVO(true, videoId);
         return ResponseEntity.ok(response);
@@ -142,7 +146,7 @@ public class ContentController {
 
     final int FILE_SLICE = 1024 * 1024 * 5;
     @PostMapping("/create/upload")
-    ResponseEntity<ResponseVO> VideoUpload(HttpServletRequest request, @RequestParam(value = "file") MultipartFile file, @RequestParam(value = "num") int index, @RequestParam(value = "video") String videoId) throws IOException {
+    synchronized ResponseEntity<ResponseVO> VideoUpload(HttpServletRequest request, @RequestParam(value = "file") MultipartFile file, @RequestParam(value = "num") int index, @RequestParam(value = "video") String videoId) throws IOException {
         User user = userService.GetUserForRequest(request);
         if (user == null) {
             return ResponseEntity.status(401).body(new ResponseVO(false, "로그인 하심시오."));
@@ -157,7 +161,8 @@ public class ContentController {
             return ResponseEntity.status(403).body(new ResponseVO(false, "error"));
         }
 
-        if (video.getUploads() == -1) {
+        Integer uploads = process.get(videoId);
+        if (uploads == null) {
             return ResponseEntity.status(400).body(new ResponseVO(false, "이미 영상이 업로드 되었습니다."));
         }
 
@@ -166,7 +171,7 @@ public class ContentController {
             return ResponseEntity.status(400).body(new ResponseVO(false, "잘못된 index"));
         }
 
-        if (video.getUploads() >= uploadMaxCount) { // 이미 업로드를 다 함
+        if (uploads >= uploadMaxCount) { // 이미 업로드를 다 함
             return ResponseEntity.status(400).body(new ResponseVO(false, "이미 영상이 업로드 되었습니다."));
         }
 
@@ -182,13 +187,12 @@ public class ContentController {
         file.transferTo(tempFile);
 
         // 파일 업로드 횟수 올리고~~
-        int upCount = video.getUploads() + 1;
-        video.setUploads(upCount);
-        videoService.CreateVideo(video);
+        uploads++;
+        process.replace(videoId, uploads);
 
         // 이제 다 업로드 된거임 이정도면
-        System.out.println(upCount+" 올림 / max: "+uploadMaxCount);
-        if (upCount == uploadMaxCount) {
+        System.out.println(uploads+" 올림 / max: "+uploadMaxCount);
+        if (uploads == uploadMaxCount) {
             CombineVideo(videoId, uploadMaxCount);
         }
 
@@ -199,8 +203,10 @@ public class ContentController {
         String videoPath = String.format("%s/%s.mp4", assetService.GetPath(AssetService.Category.video), videoId);
         String tempPath = assetService.GetPath(AssetService.Category.temp);
 
+        process.remove(videoId);
+
         File file = new File(videoPath);
-        if (file.exists() || file.createNewFile()) return; // 이미 있는뎅?? || 없으면 새로 만드렁
+        if (file.exists() || !file.createNewFile()) return; // 이미 있는뎅?? || 없으면 새로 만드렁
 
 //        BufferedWriter writer = new BufferedWriter(new FileWriter(file, true));
         FileOutputStream stream = new FileOutputStream(videoPath);
@@ -213,10 +219,11 @@ public class ContentController {
         }
 
         stream.close();
+        process.remove(videoId);
 
-        Video video = videoService.GetVideoById(videoId);
-        video.setUploads(-1);
-
-        videoService.CreateVideo(video);
+//        Video video = videoService.GetVideoById(videoId);
+//        video.setUploads(-1);
+//
+//        videoService.CreateVideo(video);
     }
 }
