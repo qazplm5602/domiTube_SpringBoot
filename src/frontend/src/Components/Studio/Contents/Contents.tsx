@@ -28,6 +28,7 @@ interface StudioVideoType extends videoDataType {
 }
 
 const MAX_CONTENT = 20;
+const FILE_SLICE = 1024 * 1024 * 5; // 파일 분할 한조각
 
 export default function StudioContents() {
     const [page, setPage] = useState(0);
@@ -220,8 +221,15 @@ function DialogBox({ onClose }: { onClose: () => void }) {
     }
 
     const uploadVideo = async function(file: File) {
-        const buffer = await file.arrayBuffer();
+        console.log(file);
+        if (file.type !== "video/mp4" || progress >= 0) return; // 영상만 지원함니다.
         
+        setProgress(0);
+
+        const { code, data } = await request("/api/studio/content/create", { method: "PUT" });
+
+        // const buffer = await file.arrayBuffer();
+            
     }
 
     return <div className={style.dialog}>
@@ -242,6 +250,7 @@ function DialogBox({ onClose }: { onClose: () => void }) {
 }
 
 function UploadContent({ onUpload }: { onUpload: (file: File) => void }) {
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const [dragged, setDragged] = useState(false);
     
     const dragEnter = function(e: React.DragEvent) {
@@ -275,6 +284,10 @@ function UploadContent({ onUpload }: { onUpload: (file: File) => void }) {
         onUpload(file);
     }
 
+    const inputOpen = function() {
+        fileInputRef.current?.click();
+    }
+
     const inputChange: React.ChangeEventHandler<HTMLInputElement>  = function(e) {
         const files = e.target.files;
         if (files === null || files.length === 0) return;
@@ -285,8 +298,8 @@ function UploadContent({ onUpload }: { onUpload: (file: File) => void }) {
     return <main style={dragged ? {backgroundColor: 'rgb(56, 71, 51)'} : {}} onDragEnter={dragEnter} onDragOver={dragOver} onDragLeave={dragLeave} onDrop={dragDrop} className={style.upload}>
         <img className={style.icon} src={videoSvg} />
         <div className={style.title}>여기로 끌어서 놓으세요! {dragged}</div>
-        <input onChange={inputChange} style={{display: "none"}} type="file" />
-        <Button className={style.fileSelect}>파일 선택하기</Button>
+        <input ref={fileInputRef} onChange={inputChange} style={{display: "none"}} type="file" />
+        <Button className={style.fileSelect} onClick={inputOpen}>파일 선택하기</Button>
     </main>;
 }
 

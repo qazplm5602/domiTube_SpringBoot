@@ -9,10 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -29,6 +26,11 @@ class StudioVideoDTO {
     public long bad;
     public long create;
     public long comment;
+}
+
+class ResponseVO {
+    public boolean result;
+    public String data;
 }
 
 @RestController
@@ -98,5 +100,15 @@ public class ContentController {
             amount = 0L;
 
         return amount;
+    }
+
+    @PutMapping("/create")
+    ResponseEntity<ResponseVO> CreateVideo(@RequestBody long size) {
+        ResponseVO response = new ResponseVO();
+
+        response.result = true;
+        response.data = "ming";
+
+        return ResponseEntity.ok(response);
     }
 }
