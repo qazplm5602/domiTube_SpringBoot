@@ -5,12 +5,14 @@ import com.domi.domitube.Repository.Entity.Video;
 import com.domi.domitube.Service.CommentService;
 import com.domi.domitube.Service.UserService;
 import com.domi.domitube.Service.VideoService;
+import com.domi.domitube.Utils.RandomStringGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
@@ -102,12 +104,30 @@ public class ContentController {
         return amount;
     }
 
-    @PutMapping("/create")
-    ResponseEntity<ResponseVO> CreateVideo(@RequestBody long size) {
-        ResponseVO response = new ResponseVO();
+        @PutMapping("/create")
+    ResponseEntity<ResponseVO> CreateVideo(HttpServletRequest request, @RequestBody long size) {
+        User user = userService.GetUserForRequest(request);
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
 
+        String videoId = RandomStringGenerator.GenerateRandomString(5);
+
+        Video video = new Video();
+        video.setId(videoId);
+        video.setOwner(user);
+        video.setTitle("domiTube Gen");
+        video.setTime(0);
+        video.setSize(size);
+        video.setUploads(0);
+        video.setCreated(LocalDateTime.now());
+        video.setSecret(Video.VideoSecretType.Private); // 일단 임시로 비공개
+
+        videoService.CreateVideo(video);
+
+        ResponseVO response = new ResponseVO();
         response.result = true;
-        response.data = "ming";
+        response.data = videoId;
 
         return ResponseEntity.ok(response);
     }
