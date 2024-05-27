@@ -13,12 +13,13 @@ public class AssetService {
         user,
         banner,
         thumnail,
-        video
+        video,
+        temp
     }
 
     final String startPath = System.getenv("DOMI_ASSETS");
 
-    String GetPath(Category category) {
+    public String GetPath(Category category) {
         return String.format("%s/%s", startPath, category.toString());
     }
 

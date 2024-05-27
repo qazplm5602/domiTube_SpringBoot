@@ -2,6 +2,7 @@ package com.domi.domitube.Studio;
 
 import com.domi.domitube.Repository.Entity.User;
 import com.domi.domitube.Repository.Entity.Video;
+import com.domi.domitube.Service.AssetService;
 import com.domi.domitube.Service.CommentService;
 import com.domi.domitube.Service.UserService;
 import com.domi.domitube.Service.VideoService;
@@ -9,9 +10,15 @@ import com.domi.domitube.Utils.RandomStringGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.io.output.WriterOutputStream;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -33,6 +40,11 @@ class StudioVideoDTO {
 class ResponseVO {
     public boolean result;
     public String data;
+
+    public ResponseVO(boolean _result, String _data) {
+        result = _result;
+        data = _data;
+    }
 }
 
 @RestController
@@ -42,6 +54,7 @@ public class ContentController {
     final UserService userService;
     final VideoService videoService;
     final CommentService commentService;
+    final AssetService assetService;
 
     @GetMapping("/list")
     ResponseEntity GetVideoForOwner(HttpServletRequest request, @RequestParam("page") int page) {
@@ -104,14 +117,14 @@ public class ContentController {
         return amount;
     }
 
-        @PutMapping("/create")
+    @PutMapping("/create")
     ResponseEntity<ResponseVO> CreateVideo(HttpServletRequest request, @RequestBody long size) {
         User user = userService.GetUserForRequest(request);
         if (user == null) {
             return ResponseEntity.status(401).build();
         }
 
-        String videoId = RandomStringGenerator.GenerateRandomString(5);
+        String videoId = RandomStringGenerator.GenerateRandomString(8);
 
         Video video = new Video();
         video.setId(videoId);
@@ -125,10 +138,70 @@ public class ContentController {
 
         videoService.CreateVideo(video);
 
-        ResponseVO response = new ResponseVO();
-        response.result = true;
-        response.data = videoId;
-
+        ResponseVO response = new ResponseVO(true, "ok");
         return ResponseEntity.ok(response);
+    }
+
+    final int FILE_SLICE = 1024 * 1024 * 5;
+    @PostMapping("/create/upload")
+    ResponseEntity<ResponseVO> VideoUpload(HttpServletRequest request, @RequestParam(value = "file") MultipartFile file, @RequestParam(value = "num") int index, @RequestParam(value = "video") String videoId) throws IOException {
+        User user = userService.GetUserForRequest(request);
+        if (user == null) {
+            return ResponseEntity.status(401).body(new ResponseVO(false, "로그인 하심시오."));
+        }
+
+        Video video = videoService.GetVideoById(videoId);
+        if (video == null) {
+            return ResponseEntity.status(404).body(new ResponseVO(false, "영상을 찾을 수 없습니다."));
+        }
+
+        if (video.getOwner() != user) {
+            return ResponseEntity.status(403).body(new ResponseVO(false, "error"));
+        }
+
+        if (video.getUploads() == -1) {
+            return ResponseEntity.status(400).body(new ResponseVO(false, "이미 영상이 업로드 되었습니다."));
+        }
+
+        int uploadMaxCount = (int)Math.ceil((double) video.getSize() / FILE_SLICE);
+        if (uploadMaxCount >= index) { // 분할 파일 갯수 넘음
+            return ResponseEntity.status(400).body(new ResponseVO(false, "잘못된 index"));
+        }
+
+        if (video.getUploads() >= uploadMaxCount) { // 이미 업로드를 다 함
+            return ResponseEntity.status(400).body(new ResponseVO(false, "이미 영상이 업로드 되었습니다."));
+        }
+
+        if (file.getSize() > FILE_SLICE /* 마지막에는 더 크기가 적기 때문에 검사 넣을꺼임 */) { // 파일 크기 넘음
+            return ResponseEntity.status(413).body(new ResponseVO(false, "파일 사이즈가 너무 큽니다."));
+        }
+
+        // 파일 넣기
+        String tempDir = assetService.GetPath(AssetService.Category.temp);
+        String path = String.format("%s/%s-%s.domi", tempDir, videoId, index);
+
+        File tempFile = new File(path);
+        file.transferTo(tempFile);
+
+        // 파일 업로드 횟수 올리고~~
+        int upCount = video.getUploads() + 1;
+        video.setUploads(upCount);
+        videoService.CreateVideo(video);
+
+        // 이제 다 업로드 된거임 이정도면
+        if (upCount == uploadMaxCount) {
+            CombineVideo(videoId, uploadMaxCount);
+        }
+
+        return ResponseEntity.ok(new ResponseVO(true, "ok"));
+    }
+
+    void CombineVideo(String videoId, int maxIndex) throws IOException {
+        String videoPath = String.format("%s/%s.mp4", assetService.GetPath(AssetService.Category.video), videoId);
+        File file = new File(videoPath);
+        if (file.exists() || file.createNewFile()) return; // 이미 있는뎅?? || 없으면 새로 만드렁
+
+        BufferedWriter writer = new BufferedWriter(new FileWriter(file, true));
+//        WriterOutputStream
     }
 }

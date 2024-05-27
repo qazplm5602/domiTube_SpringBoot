@@ -226,8 +226,8 @@ function DialogBox({ onClose }: { onClose: () => void }) {
         
         setProgress(0);
 
-        const { code, data } = await request("/api/studio/content/create", { method: "PUT" });
-
+        const { code, data } = await request("/api/studio/content/create", { method: "PUT", body: file.size.toString(), headers: { "Content-Type": "application/json" } });
+        console.log(code, data);
         // const buffer = await file.arrayBuffer();
             
     }
