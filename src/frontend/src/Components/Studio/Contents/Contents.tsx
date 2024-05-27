@@ -19,7 +19,7 @@ import { useEffect, useRef, useState } from 'react';
 import { videoDataType } from '../../Watch/Watch';
 import { useSelector } from 'react-redux';
 import IStore from '../../Redux/Type';
-import { request } from '../../Utils/Fetch';
+import { request, response } from '../../Utils/Fetch';
 import { numberWithCommas } from '../../Utils/Misc';
 
 interface StudioVideoType extends videoDataType {
@@ -226,10 +226,30 @@ function DialogBox({ onClose }: { onClose: () => void }) {
         
         setProgress(0);
 
-        const { code, data } = await request("/api/studio/content/create", { method: "PUT", body: file.size.toString(), headers: { "Content-Type": "application/json" } });
-        console.log(code, data);
-        // const buffer = await file.arrayBuffer();
+        const { code, data }: { code: number, data: { result: boolean, data: string } } = await request("/api/studio/content/create", { method: "PUT", body: file.size.toString(), headers: { "Content-Type": "application/json" } });
+        if (code !== 200) return;
+
+        
+        const maxIndex = Math.ceil(file.size / FILE_SLICE);
+        const buffer = await file.arrayBuffer();
+        const waitPromise: Promise<response>[] = [];
+        for (let i = 0; i < maxIndex; i++) {
+            const startIdx = i * FILE_SLICE;
+            const content = buffer.slice(startIdx, Math.min(startIdx + FILE_SLICE, file.size));
+            const form = new FormData();
             
+            form.append("num", i.toString());
+            form.append("video", data.data);
+            form.append("file", new Blob([content]));
+            
+            const waitHandler = request("/api/studio/content/create/upload", { method: "POST", body: form });
+            
+            if (waitPromise.length >= 5) {
+                await Promise.all(waitPromise);
+                // 기다리고..
+                waitPromise.slice(0, waitPromise.length); // 클리어
+            }
+        }
     }
 
     return <div className={style.dialog}>

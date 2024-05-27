@@ -136,7 +136,7 @@ public class ContentController {
 
         videoService.CreateVideo(video);
 
-        ResponseVO response = new ResponseVO(true, "ok");
+        ResponseVO response = new ResponseVO(true, videoId);
         return ResponseEntity.ok(response);
     }
 
@@ -162,7 +162,7 @@ public class ContentController {
         }
 
         int uploadMaxCount = (int)Math.ceil((double) video.getSize() / FILE_SLICE);
-        if (uploadMaxCount >= index) { // 분할 파일 갯수 넘음
+        if (uploadMaxCount <= index) { // 분할 파일 갯수 넘음
             return ResponseEntity.status(400).body(new ResponseVO(false, "잘못된 index"));
         }
 
@@ -187,6 +187,7 @@ public class ContentController {
         videoService.CreateVideo(video);
 
         // 이제 다 업로드 된거임 이정도면
+        System.out.println(upCount+" 올림 / max: "+uploadMaxCount);
         if (upCount == uploadMaxCount) {
             CombineVideo(videoId, uploadMaxCount);
         }
