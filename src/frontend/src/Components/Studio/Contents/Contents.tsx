@@ -211,6 +211,7 @@ function SecretBox(secret: number) {
 
 /////// dialog
 enum dialogScreen { upload, detail }
+type resultType = { result: boolean, data: string };
 
 function DialogBox({ onClose }: { onClose: () => void }) {
     const [progress, setProgress] = useState(-1);
@@ -226,7 +227,7 @@ function DialogBox({ onClose }: { onClose: () => void }) {
         
         setProgress(0);
 
-        const { code, data }: { code: number, data: { result: boolean, data: string } } = await request("/api/studio/content/create", { method: "PUT", body: file.size.toString(), headers: { "Content-Type": "application/json" } });
+        const { code, data }: { code: number, data: resultType } = await request("/api/studio/content/create", { method: "PUT", body: file.size.toString(), headers: { "Content-Type": "application/json" } });
         if (code !== 200) return;
 
         
@@ -241,8 +242,14 @@ function DialogBox({ onClose }: { onClose: () => void }) {
             form.append("num", i.toString());
             form.append("video", data.data);
             form.append("file", new Blob([content]));
+
+            const requestSuccess = function({ code, data }: { code: number, data: resultType }) {
+                if (code !== 200 || !data.result) return;
+                setProgress((value) => value + (1 / maxIndex) * 100);
+            }
             
             const waitHandler = request("/api/studio/content/create/upload", { method: "POST", body: form });
+            waitHandler.then(requestSuccess);
             
             if (waitPromise.length >= 5) {
                 await Promise.all(waitPromise);
@@ -259,7 +266,7 @@ function DialogBox({ onClose }: { onClose: () => void }) {
                 <Button onClick={closeBtn} className={style.close} icon={closeSvg} />
             </Section>
 
-            {progress >= 0 && <div className={style.bar}>
+            {progress >= 0 && <div style={{ width: `${progress}%` }} className={style.bar}>
                 <span>{progress}%</span>
             </div>}
 

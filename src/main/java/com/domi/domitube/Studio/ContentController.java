@@ -216,6 +216,8 @@ public class ContentController {
 
             byte[] buffer = FileUtils.readFileToByteArray(sliceFile);
             stream.write(buffer);
+
+            sliceFile.delete();
         }
 
         stream.close();
