@@ -10,15 +10,13 @@ import com.domi.domitube.Utils.RandomStringGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.output.WriterOutputStream;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -198,10 +196,26 @@ public class ContentController {
 
     void CombineVideo(String videoId, int maxIndex) throws IOException {
         String videoPath = String.format("%s/%s.mp4", assetService.GetPath(AssetService.Category.video), videoId);
+        String tempPath = assetService.GetPath(AssetService.Category.temp);
+
         File file = new File(videoPath);
         if (file.exists() || file.createNewFile()) return; // 이미 있는뎅?? || 없으면 새로 만드렁
 
-        BufferedWriter writer = new BufferedWriter(new FileWriter(file, true));
-//        WriterOutputStream
+//        BufferedWriter writer = new BufferedWriter(new FileWriter(file, true));
+        FileOutputStream stream = new FileOutputStream(videoPath);
+        for (int i = 0; i < maxIndex; i++) {
+            String path = String.format("%s/%s-%s.domi", tempPath, videoId, i);
+            File sliceFile = new File(path);
+
+            byte[] buffer = FileUtils.readFileToByteArray(sliceFile);
+            stream.write(buffer);
+        }
+
+        stream.close();
+
+        Video video = videoService.GetVideoById(videoId);
+        video.setUploads(-1);
+
+        videoService.CreateVideo(video);
     }
 }
