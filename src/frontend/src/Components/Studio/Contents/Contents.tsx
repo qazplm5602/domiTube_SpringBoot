@@ -216,6 +216,8 @@ type resultType = { result: boolean, data: string };
 function DialogBox({ onClose }: { onClose: () => void }) {
     const [progress, setProgress] = useState(-1);
     const [screen, setSceen] = useState<dialogScreen>(dialogScreen.upload);
+    const [videoId, setVideoId] = useState("");
+    const [fileName, setFileName] = useState("");
 
     const closeBtn = function() {
         onClose();
@@ -230,6 +232,9 @@ function DialogBox({ onClose }: { onClose: () => void }) {
         const { code, data }: { code: number, data: resultType } = await request("/api/studio/content/create", { method: "PUT", body: file.size.toString(), headers: { "Content-Type": "application/json" } });
         if (code !== 200) return;
 
+        setSceen(dialogScreen.detail);
+        setVideoId(data.data);
+        setFileName(file.name);
         
         const maxIndex = Math.ceil(file.size / FILE_SLICE);
         const buffer = await file.arrayBuffer();
@@ -271,7 +276,7 @@ function DialogBox({ onClose }: { onClose: () => void }) {
             </div>}
 
             {screen === dialogScreen.upload && <UploadContent onUpload={uploadVideo} />}
-            {screen === dialogScreen.detail && <UploadDetail />}
+            {screen === dialogScreen.detail && <UploadDetail video={videoId} fileName={fileName} />}
         </div>
     </div>;
 }
@@ -330,15 +335,19 @@ function UploadContent({ onUpload }: { onUpload: (file: File) => void }) {
     </main>;
 }
 
-function UploadDetail() {
+function UploadDetail({ video, fileName }: {video: string, fileName: string}) {
+    const [title, setTitle] = useState("");
+    const [desc, setDesc] = useState("");
+    const imageFileRef = useRef<File>(null);
+
     return <main className={style.upload_detail}>
         <Section className={style.property}>
             <UploadInputBorder title="제목">
-                <input type="text" />
+                <input value={title} onChange={e => setTitle(e.target.value)} type="text" />
             </UploadInputBorder>
 
             <UploadInputBorder title="설명" className={[style.description]}>
-                <textarea>밍</textarea>
+                <textarea value={desc} onChange={e => setDesc(e.target.value)}>밍</textarea>
             </UploadInputBorder>
 
             <div className={style.title}>썸네일</div>
@@ -358,10 +367,10 @@ function UploadDetail() {
             </div>
             
             <div className={style.subT}>제목</div>
-            <Link to="/watch/domi" className={style.mainT}>domitube.com/watch/ming</Link>
+            <Link to={`/watch/${video}`} className={style.mainT}>domitube.com/watch/{video}</Link>
             
             <div className={style.subT}>파일 이름</div>
-            <div className={style.mainT}>doming.mp4</div>
+            <div className={style.mainT}>{fileName}</div>
         </Section>
         
         <Button className={style.save}>저장</Button>
@@ -378,13 +387,66 @@ function UploadInputBorder({title, children, className = []}: {title: string, ch
     </div>;
 }
 
-export function ImageUploadBox() {
+export function ImageUploadBox({ defaultImg, onChangeFile }: {defaultImg?: string, onChangeFile?: (file: File) => void}) {
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    const [image, setImage] = useState<string | null>(defaultImg || null);
+    const [dragged, setDragged] = useState(false);
+
+    const imageUpload = function(file: File) {
+        const reader = new FileReader();
+        reader.onload = function() {
+            setImage(reader.result as string);
+        }        
+        reader.readAsDataURL(file);
+
+        if (onChangeFile)
+            onChangeFile(file);
+    }
+    
+    const dragEnter = function(e: React.DragEvent) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        setDragged(true);
+    }
+
+    const dragOver = function(e: React.DragEvent) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        if (e.dataTransfer.files) setDragged(true);
+    }
+
+    const dragLeave = function(e: React.DragEvent) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        setDragged(false);
+    }
+
+    const dragDrop = function(e: React.DragEvent) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        setDragged(false);
+        
+        const file = e.dataTransfer.files[0];
+        imageUpload(file);
+    }
+
+    const inputChanged = function(e: React.ChangeEvent<HTMLInputElement>) {
+        if (e.target.files === null) return;
+        imageUpload(e.target.files[0]);
+    }
+
     return <Section className={style.thumbnail_section}>
-        <div className={style.upload}>
+        <div className={style.upload} onClick={() => inputRef.current?.click()} onDragEnter={dragEnter} onDragOver={dragOver} onDragLeave={dragLeave} onDrop={dragDrop}>
             <img src={pictureSvg} />
             <div>업로드하려면 끌어다놓거나 클릭하세요.</div>
+            <input ref={inputRef} onChange={inputChanged} style={{display: "none"}} type="file" accept="image/png, image/jpeg" />
         </div>
 
-        <img className={style.preview} src="https://i.ytimg.com/vi/T9dJ_cE5Asw/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLB4VYvk8T391uvCZgEfFg62tuAVDQ" />
+        {image && <img className={style.preview} src={image} />}
     </Section>;
 }
