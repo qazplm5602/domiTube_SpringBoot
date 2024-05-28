@@ -338,7 +338,22 @@ function UploadContent({ onUpload }: { onUpload: (file: File) => void }) {
 function UploadDetail({ video, fileName }: {video: string, fileName: string}) {
     const [title, setTitle] = useState("");
     const [desc, setDesc] = useState("");
-    const imageFileRef = useRef<File>(null);
+    const [secret, setSecret] = useState("0");
+    const imageFileRef = useRef<File | null>(null);
+
+    const saveVideoInfo = function() {
+        if (title.length === 0 || imageFileRef.current === null) return;
+
+        const form = new FormData();
+        form.append("title", title);
+        if (desc !== "")
+            form.append("desc", desc);
+
+        form.append("secret", secret);
+        form.append("thumbnail", imageFileRef.current);
+
+        // request("/api/studio/") api
+    }
 
     return <main className={style.upload_detail}>
         <Section className={style.property}>
@@ -351,10 +366,10 @@ function UploadDetail({ video, fileName }: {video: string, fileName: string}) {
             </UploadInputBorder>
 
             <div className={style.title}>썸네일</div>
-            <ImageUploadBox />
+            <ImageUploadBox onChangeFile={e => imageFileRef.current = e} />
 
             <div className={style.title}>공개 옵션</div>
-            <select className={style.secret}>
+            <select className={style.secret} onChange={e => setSecret(e.target.value)} value={secret}>
                 <option value="0" selected>👁️ 공개</option>
                 <option value="1">📎 일부공개</option>
                 <option value="2">🔒 비공개</option>
@@ -373,7 +388,7 @@ function UploadDetail({ video, fileName }: {video: string, fileName: string}) {
             <div className={style.mainT}>{fileName}</div>
         </Section>
         
-        <Button className={style.save}>저장</Button>
+        <Button className={style.save} onClick={saveVideoInfo}>저장</Button>
     </main>;
 }
 
