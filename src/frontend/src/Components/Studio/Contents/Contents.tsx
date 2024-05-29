@@ -218,13 +218,19 @@ function DialogBox({ onClose }: { onClose: () => void }) {
     const [screen, setSceen] = useState<dialogScreen>(dialogScreen.upload);
     const [videoId, setVideoId] = useState("");
     const [fileName, setFileName] = useState("");
+    const closeWait = useRef(false);
 
     const closeBtn = function() {
+        if (Math.round(progress) < 100 && progress !== -1) return;
         onClose();
+    }
+    
+    const applyClose = function() { // 닫기 예약
+        if (Math.round(progress) >= 100) closeBtn();
+        closeWait.current = true;
     }
 
     const uploadVideo = async function(file: File) {
-        console.log(file);
         if (file.type !== "video/mp4" || progress >= 0) return; // 영상만 지원함니다.
         
         setProgress(0);
@@ -238,7 +244,7 @@ function DialogBox({ onClose }: { onClose: () => void }) {
         
         const maxIndex = Math.ceil(file.size / FILE_SLICE);
         const buffer = await file.arrayBuffer();
-        const waitPromise: Promise<response>[] = [];
+        let waitPromise: Promise<response>[] = [];
         for (let i = 0; i < maxIndex; i++) {
             const startIdx = i * FILE_SLICE;
             const content = buffer.slice(startIdx, Math.min(startIdx + FILE_SLICE, file.size));
@@ -255,14 +261,23 @@ function DialogBox({ onClose }: { onClose: () => void }) {
             
             const waitHandler = request("/api/studio/content/create/upload", { method: "POST", body: form });
             waitHandler.then(requestSuccess);
+            waitPromise.push(waitHandler);
             
+            console.log(waitPromise.length);
             if (waitPromise.length >= 5) {
                 await Promise.all(waitPromise);
                 // 기다리고..
-                waitPromise.slice(0, waitPromise.length); // 클리어
+                // waitPromise.slice(0, waitPromise.length); // 클리어
+                waitPromise = [];
             }
         }
     }
+
+    // 자동으로 닫기
+    useEffect(() => {
+        if (Math.round(progress) >= 100 && closeWait.current)
+            closeBtn();
+    }, [progress]);
 
     return <div className={style.dialog}>
         <div className={style.box}>
@@ -272,11 +287,11 @@ function DialogBox({ onClose }: { onClose: () => void }) {
             </Section>
 
             {progress >= 0 && <div style={{ width: `${progress}%` }} className={style.bar}>
-                <span>{progress}%</span>
+                <span>{Math.round(progress)}%</span>
             </div>}
 
             {screen === dialogScreen.upload && <UploadContent onUpload={uploadVideo} />}
-            {screen === dialogScreen.detail && <UploadDetail video={videoId} fileName={fileName} />}
+            {screen === dialogScreen.detail && <UploadDetail video={videoId} fileName={fileName} onClose={applyClose} />}
         </div>
     </div>;
 }
@@ -335,10 +350,11 @@ function UploadContent({ onUpload }: { onUpload: (file: File) => void }) {
     </main>;
 }
 
-function UploadDetail({ video, fileName }: {video: string, fileName: string}) {
+function UploadDetail({ video, fileName, onClose }: {video: string, fileName: string, onClose: () => void }) {
     const [title, setTitle] = useState("");
     const [desc, setDesc] = useState("");
     const [secret, setSecret] = useState("0");
+    const [disableSave, setDisableSave] = useState(false);
     const imageFileRef = useRef<File | null>(null);
 
     const saveVideoInfo = function() {
@@ -352,8 +368,11 @@ function UploadDetail({ video, fileName }: {video: string, fileName: string}) {
         form.append("secret", secret);
         form.append("thumbnail", imageFileRef.current);
 
+        setDisableSave(true);
+
         request(`/api/studio/content/edit/${video}`, { method: "POST", body: form }).then(({code, data}) => {
-            console.log("video edit!", code, data);
+            if (code !== 200) return;
+            onClose();
         });
     }
 
@@ -390,7 +409,7 @@ function UploadDetail({ video, fileName }: {video: string, fileName: string}) {
             <div className={style.mainT}>{fileName}</div>
         </Section>
         
-        <Button className={style.save} onClick={saveVideoInfo}>저장</Button>
+        <Button className={style.save} onClick={saveVideoInfo} disabled={disableSave}>저장</Button>
     </main>;
 }
 

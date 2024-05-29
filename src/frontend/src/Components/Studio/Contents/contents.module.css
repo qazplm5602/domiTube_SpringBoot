@@ -612,6 +612,11 @@ main > .header > .createBtn > img {
     background-color: rgb(57, 131, 188);
 }
 
+.dialog > .box > .upload_detail > .save:disabled {
+    background-color: rgb(83, 83, 83);
+    color: rgb(169, 169, 169);
+}
+
 .inputContainer {
     position: relative;
 
