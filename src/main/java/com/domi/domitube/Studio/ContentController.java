@@ -228,4 +228,67 @@ public class ContentController {
 //
 //        videoService.CreateVideo(video);
     }
+
+    @PostMapping("/edit/{video}")
+    ResponseEntity<ResponseVO> EditVideo(HttpServletRequest request, @PathVariable("video") String videoId,
+        @RequestParam(value = "title", required = false) String title, @RequestParam(value = "desc", required = false) String desc,
+        @RequestParam(value = "secret", required = false) Byte secret, @RequestParam(value = "thumbnail", required = false) MultipartFile thumbnail) throws IOException {
+
+        User user = userService.GetUserForRequest(request);
+        if (user == null) {
+            return ResponseEntity.status(401).body(new ResponseVO(false, "로그인 하심시오."));
+        }
+
+        Video video = videoService.GetVideoById(videoId);
+        if (video == null) {
+            return ResponseEntity.status(404).body(new ResponseVO(false, "영상을 찾을 수 없습니다."));
+        }
+        if (video.getOwner() != user) {
+            return ResponseEntity.status(403).body(new ResponseVO(false, "ming.."));
+        }
+
+        boolean isChanged = false;
+
+        if (title != null && !title.isEmpty()) {
+            video.setTitle(title);
+            isChanged = true;
+        }
+
+        if (desc != null && !desc.isEmpty()) {
+            video.setDescription(desc);
+            isChanged = true;
+        }
+
+        if (secret != null) {
+            Video.VideoSecretType type;
+            switch (secret) {
+                case 0:
+                    type = Video.VideoSecretType.Public;
+                    break;
+                case 1:
+                    type = Video.VideoSecretType.HalfPublic;
+                    break;
+                case 2:
+                    type = Video.VideoSecretType.Private;
+                    break;
+                default:
+                    type = null;
+                    break;
+            }
+
+            if (type != null) {
+                video.setSecret(type);
+                isChanged = true;
+            }
+        }
+
+        if (isChanged)
+            videoService.CreateVideo(video);
+
+        if (thumbnail != null && !thumbnail.isEmpty())
+            assetService.AddFile(AssetService.Category.thumnail, videoId, thumbnail);
+
+        return ResponseEntity.ok(new ResponseVO(true, "ok"));
+    }
+
 }

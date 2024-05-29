@@ -352,7 +352,9 @@ function UploadDetail({ video, fileName }: {video: string, fileName: string}) {
         form.append("secret", secret);
         form.append("thumbnail", imageFileRef.current);
 
-        // request("/api/studio/") api
+        request(`/api/studio/content/edit/${video}`, { method: "POST", body: form }).then(({code, data}) => {
+            console.log("video edit!", code, data);
+        });
     }
 
     return <main className={style.upload_detail}>
