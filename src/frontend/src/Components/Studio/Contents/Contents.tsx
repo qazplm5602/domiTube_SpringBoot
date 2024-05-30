@@ -165,12 +165,16 @@ function TableBox({ value }: {value: StudioVideoType}) {
     </Section>;
 }
 
-enum PageEvent {
+export enum PageEvent {
     Min, Next, Prev, Max
 }
 
-function PageControl({ page, max, event }: { page: number, max: number, event: (type: PageEvent) => void }) {
-    return <Section className={style.page}> 
+export function PageControl({ className, page, max, event }: { className?: string, page: number, max: number, event: (type: PageEvent) => void }) {
+    const classList = [style.page];
+    if (className)
+        classList.push(className);
+    
+    return <Section className={classList.join(' ')}> 
         <Button onClick={() => event(PageEvent.Min)} disabled={page <= 1} icon={arrowMaxSvg} />
         <Button onClick={() => event(PageEvent.Prev)} disabled={page <= 1} icon={arrowSvg} />
 

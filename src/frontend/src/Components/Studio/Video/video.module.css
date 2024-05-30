@@ -158,53 +158,6 @@
     padding-top: 10px;
 
     border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
 
-.main > .content > .videoComment > .pageable {
-    display: flex;
     justify-content: center;
-    align-items: center;
-}
-
-.main > .content > .videoComment > .pageable > .page {
-    font-size: 15px;
-    color: rgb(161, 161, 161);
-    font-weight: 300;
-
-    margin: 0 15px;
-}
-
-.main > .content > .videoComment > .pageable > .page > span {
-    font-size: 23px;
-    font-weight: 600;
-    color: white;
-
-    margin-right: 3px;
-}
-
-.main > .content > .videoComment > .pageable > button {
-    background-color: transparent;
-    
-    padding: 0;
-    
-    border: none;
-    border-radius: 50%;
-    /* background-color: rgba(255, 255, 255, 0.1); */
-
-    cursor: pointer;
-}
-
-.main > .content > .videoComment > .pageable > button > img {
-    width: 30px;
-    height: 30px;
-
-    opacity: 0.5;
-}
-
-.main > .content > .videoComment > .pageable > button:hover > img {
-    opacity: 1;
-}
-
-.main > .content > .videoComment > .pageable > button.reverse > img {
-    transform: rotateY(180deg);
 }

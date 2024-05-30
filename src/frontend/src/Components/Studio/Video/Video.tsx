@@ -2,20 +2,25 @@ import { Link, useParams } from 'react-router-dom';
 import style from './video.module.css';
 import Section from '../../Recycle/Section';
 import Button from '../../Recycle/Button';
-import { ImageUploadBox } from '../Contents/Contents';
+import { ImageUploadBox, PageControl, PageEvent } from '../Contents/Contents';
 import { Comment } from '../Comment/Comment';
 
 import arrow from '../Contents/arrow.svg';
 import arrowMax from '../Contents/arrowMax.svg';
+import { useEffect, useRef, useState } from 'react';
+import { CommentDataType } from '../../Watch/Watch';
+import { request } from '../../Utils/Fetch';
 
 export default function StudioVideo() {
     const { videoId } = useParams();
+
+    if (videoId === undefined) return;
 
     return <main className={style.main}>
         <Section className={style.content}>
             
             <VideoSetting />
-            <VideoComment />
+            <VideoComment videoId={videoId} />
 
         </Section>
 
@@ -54,35 +59,62 @@ function VideoSetting() {
     </Section>
 }
 
-function VideoComment() {
+type UserType = { name: string, icon: boolean };
+
+function VideoComment({ videoId }: { videoId: string }) {
+    const [page, setPage] = useState(0);
+    const [list, setList] = useState<CommentDataType[]>([]);
+    const [users, setUsers] = useState<{[key: string]: UserType}>({});
+    const process = useRef<{[key: string]: boolean}>({});
+
+    const loadUser = async function(user: string) {
+        const { code, data }: { code: number, data: UserType } = await request(`/api/channel/${user}/info?mini=1`);
+        if (code !== 200) return;
+
+        setUsers((value) => ({...value, [user]: data}));
+    }
+
+    const loadComment = async function() {
+        setList([]);
+
+        const { code, data } = await request(`/api/video/comment/list?video=${videoId}&page=${page}`);
+        if (code !== 200) return;
+
+        setList(data);
+        (data as CommentDataType[]).forEach(value => {
+            if (process.current[value.owner] === undefined)
+                loadUser(value.owner);
+        });
+    }
+
+    const pageClick = function(type: PageEvent) {
+        switch (type) {
+            case PageEvent.Min:
+                setPage(0);
+                break;
+            case PageEvent.Next:
+                setPage(page + 1);
+                break;
+            case PageEvent.Prev:
+                setPage(page - 1);
+                break;
+            case PageEvent.Max:
+                // setPage(maxpage - 1);
+                break;
+            default:
+                break;
+        }
+    }
+    
+    useEffect(() => {
+        loadComment();
+    }, [videoId]);
+
     return <Section className={[style.box, style.videoComment].join(" ")}>
         <h2 className={style.title}>댓글</h2>
 
-        <Comment />
-        <Comment />
-        <Comment />
-        <Comment />
-        <Comment />
-        <Comment />
-        <Comment />
-        <Comment />
-        <Comment />
-        <Comment />
-        <Comment />
-        <Comment />
-        <Comment />
-        <Comment />
-        <Comment />
-        <Comment />
+        {list.map(value => <Comment key={value.id} id={value.id} p_id={value.owner} p_name={users[value.owner]?.name} p_image={users[value.owner]?.icon} content={value.content} created={value.created} reply={value.reply} isReply={false} />)}
 
-        <Section className={style.pageable}>
-            <Button icon={arrowMax} />
-            <Button icon={arrow} />
-
-            <div className={style.page}><span>1</span>/10</div>
-
-            <Button className={style.reverse} icon={arrow} />
-            <Button className={style.reverse} icon={arrowMax} />
-        </Section>
+        <PageControl className={style.pageable} page={page} max={0} event={pageClick} />
     </Section>;
 }
