@@ -64,6 +64,10 @@ public class CommentService {
         return result;
     }
 
+    public Long GetCommentSize(Video video) {
+        return commentRepository.GetCommentSize(video);
+    }
+
     public List<Map<String, Object>> GetCommentPopular(User user) {
         Pageable page = PageRequest.of(0, 10);
 

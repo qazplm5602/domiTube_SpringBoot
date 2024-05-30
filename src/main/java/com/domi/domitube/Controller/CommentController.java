@@ -166,6 +166,17 @@ public class CommentController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping("/size")
+    long GetCommentSizeNoReply(@RequestParam("video") String videoId, HttpServletResponse response) {
+        Video video = videoService.GetVideoById(videoId);
+        if (video == null) {
+            response.setStatus(404);
+            return -1;
+        }
+
+        return commentService.GetCommentSize(video);
+    }
+
     @PostMapping("/test")
     void CreateCommentTest() {
         User user = userService.GetUserForId("domi");
