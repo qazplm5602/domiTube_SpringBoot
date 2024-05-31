@@ -5,21 +5,24 @@ import Button from '../../Recycle/Button';
 import { ImageUploadBox, PageControl, PageEvent } from '../Contents/Contents';
 import { Comment } from '../Comment/Comment';
 
-import arrow from '../Contents/arrow.svg';
-import arrowMax from '../Contents/arrowMax.svg';
 import { useEffect, useRef, useState } from 'react';
 import { CommentDataType, videoDataType } from '../../Watch/Watch';
 import { request } from '../../Utils/Fetch';
 
 export default function StudioVideo() {
     const { videoId } = useParams();
+    const [error, setError] = useState("");
 
     if (videoId === undefined) return;
+
+    if (error) {
+        return <h3>error: {error}</h3>;
+    }
 
     return <main className={style.main}>
         <Section className={style.content}>
             
-            <VideoSetting videoId={videoId} />
+            <VideoSetting videoId={videoId} setError={setError} />
             <VideoComment videoId={videoId} />
 
         </Section>
@@ -38,14 +41,21 @@ export default function StudioVideo() {
     </main>;
 }
 
-function VideoSetting({ videoId }: {videoId: string}) {
+function VideoSetting({ videoId, setError }: {videoId: string, setError: React.Dispatch<React.SetStateAction<string>>}) {
     const [title, setTitle] = useState("");
     const [desc, setDesc] = useState("");
+    const [change, setChange] = useState(false);
+    const [thumbnail, setThumbnail] = useState<File | null>(null);
     const origin = useRef<videoDataType>();
 
     const loadVideoInfo = async function() {
         const { code, data } = await request(`/api/video/${videoId}`);
-        if (code !== 200) return;
+        if (code !== 200) {
+            if (typeof data !== "object") return;
+            const response = data as { result: boolean, reason: string };
+            setError(response.reason);
+            return;
+        }
         
         origin.current = data.data;
         
@@ -57,26 +67,42 @@ function VideoSetting({ videoId }: {videoId: string}) {
     }
 
     useEffect(() => {
+        setError("");
         loadVideoInfo();
     }, [videoId]);
+
+    // 변경사항 확인
+    useEffect(() => {
+        setChange(origin.current?.title !== title || origin.current?.description !== desc || thumbnail !== null);
+    }, [title, desc, thumbnail]);
+    
+    console.log(change);
 
     return <Section className={[style.box, style.videoSetting].join(" ")}>
         <Section className={style.header}>
             <h2>동영상 세부정보</h2>
             <p>
-                <Button className={style.revert}>되돌리기</Button>
-                <Button className={style.save}>저장</Button>
+                {change && <Button className={style.revert}>되돌리기</Button>}
+                <Button className={style.save} disabled={!change}>저장</Button>
             </p>
         </Section>
 
         <div className={style.title}>제목</div>
-        <input className={style.input} value={title} type="text" />
+        <input className={style.input} value={title} onChange={e => setTitle(e.target.value)} type="text" />
         
         <div className={style.title}>설명</div>
-        <textarea className={style.input} value={desc}></textarea>
+        <textarea className={style.input} value={desc} onChange={e => setDesc(e.target.value)}></textarea>
 
+        <div className={style.title}>공개 설정</div>
+        <select className={style.secret} onChange={e => e} value={1}>
+            <option value="0" selected>👁️ 공개</option>
+            <option value="1">📎 일부공개</option>
+            <option value="2">🔒 비공개</option>
+        </select>
+
+ 
         <div className={style.title}>썸네일</div>
-        <ImageUploadBox defaultImg={`/api/image/thumbnail/${videoId}`} />
+        <ImageUploadBox defaultImg={`/api/image/thumbnail/${videoId}`} onChangeFile={file => setThumbnail(file)} />
     </Section>
 }
 
