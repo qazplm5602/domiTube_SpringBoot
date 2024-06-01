@@ -15,6 +15,7 @@ public class VideoDataDTO {
     public long good;
     public long bad;
     public long create;
+    public double time;
 
     static public VideoDataDTO ConvertVideo(Video video) {
         return VideoDataDTO.builder()
@@ -25,6 +26,7 @@ public class VideoDataDTO {
                 .views(video.getViews())
                 .good(video.getGood())
                 .bad(video.getDislike())
+                .time(video.getTime())
                 .create(video.getCreated().toInstant(ZoneOffset.of("+09:00")).toEpochMilli())
         .build();
     }

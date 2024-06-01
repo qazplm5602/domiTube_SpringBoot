@@ -20,7 +20,7 @@ import { videoDataType } from '../../Watch/Watch';
 import { useSelector } from 'react-redux';
 import IStore from '../../Redux/Type';
 import { request, response } from '../../Utils/Fetch';
-import { numberWithCommas } from '../../Utils/Misc';
+import { numberWithCommas, secondsToHMS } from '../../Utils/Misc';
 
 interface StudioVideoType extends videoDataType {
     secret: number,
@@ -141,7 +141,7 @@ function TableBox({ value }: {value: StudioVideoType}) {
         <div className={style.video}>
             <div className={style.thumbnail}>
                 <img src={`/api/image/thumbnail/${value.id}`} />
-                <span>59:12</span>
+                <span>{secondsToHMS(value.time)}</span>
             </div>
             
             <div className={style.detail}>

@@ -31,6 +31,7 @@ class StudioVideoDTO {
     public long bad;
     public long create;
     public long comment;
+    public double time;
 }
 
 class ResponseVO {
@@ -75,6 +76,7 @@ public class ContentController {
             data.good = video.getGood();
             data.bad = video.getDislike();
             data.create = video.getCreated().toInstant(ZoneOffset.of("+09:00")).toEpochMilli();
+            data.time = video.getTime();
 
             Long commentAmount = (Long)comments.get(video.getId());
             if (commentAmount == null) commentAmount = 0L;

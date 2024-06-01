@@ -4,7 +4,7 @@ import style from './videoBox.module.css';
 import otherSVG from '../Header/other.svg';
 import { useNavigate } from 'react-router-dom';
 import { videoDataType } from '../Watch/Watch';
-import { dateWithKorean, numberWithKorean } from '../Utils/Misc';
+import { dateWithKorean, numberWithKorean, secondsToHMS } from '../Utils/Misc';
 
 export default function VideoBox({video, channelHide = false, className = [], horizontal = false}: {video: videoDataType, channelHide?: boolean, className?: string[], horizontal?: boolean}) {
     const navigate = useNavigate();
@@ -16,7 +16,7 @@ export default function VideoBox({video, channelHide = false, className = [], ho
     return <div onClick={() => navigate(`/watch/${video.id}`)} className={className.join(" ")}>
         <div className={style.thumnail}>
             <img src={`/api/image/thumbnail/${video.id}`} />
-            <span className={style.time}>10:10</span>
+            <span className={style.time}>{secondsToHMS(video.time)}</span>
         </div>
 
         <div className={style.details}>

@@ -33,7 +33,8 @@ export interface videoDataType {
     views: number,
     good: number,
     bad: number,
-    channel: string
+    channel: string,
+    time: number
 }
 
 export interface CommentDataType {
