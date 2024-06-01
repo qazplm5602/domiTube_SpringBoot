@@ -295,7 +295,7 @@ function DialogBox({ onClose }: { onClose: () => void }) {
             </div>}
 
             {screen === dialogScreen.upload && <UploadContent onUpload={uploadVideo} />}
-            {screen === dialogScreen.detail && <UploadDetail video={videoId} fileName={fileName} onClose={applyClose} />}
+            {screen === dialogScreen.detail && <UploadDetail video={videoId} fileName={fileName} onClose={applyClose} progress={progress} />}
         </div>
     </div>;
 }
@@ -354,15 +354,16 @@ function UploadContent({ onUpload }: { onUpload: (file: File) => void }) {
     </main>;
 }
 
-function UploadDetail({ video, fileName, onClose }: {video: string, fileName: string, onClose: () => void }) {
+function UploadDetail({ video, fileName, progress, onClose }: {video: string, fileName: string, progress: number, onClose: () => void }) {
     const [title, setTitle] = useState("");
     const [desc, setDesc] = useState("");
     const [secret, setSecret] = useState("0");
     const [disableSave, setDisableSave] = useState(false);
     const imageFileRef = useRef<File | null>(null);
+    const imageInputReset = useRef<(url?: string) => void>();
 
     const saveVideoInfo = function() {
-        if (title.length === 0 || imageFileRef.current === null) return;
+        if (title.length === 0) return;
 
         const form = new FormData();
         form.append("title", title);
@@ -370,7 +371,9 @@ function UploadDetail({ video, fileName, onClose }: {video: string, fileName: st
             form.append("desc", desc);
 
         form.append("secret", secret);
-        form.append("thumbnail", imageFileRef.current);
+
+        if (imageFileRef.current)
+            form.append("thumbnail", imageFileRef.current);
 
         setDisableSave(true);
 
@@ -379,6 +382,11 @@ function UploadDetail({ video, fileName, onClose }: {video: string, fileName: st
             onClose();
         });
     }
+
+    useEffect(() => {
+        if (Math.round(progress) === 100 && imageInputReset.current)
+            imageInputReset.current(`/api/image/thumbnail/${video}`);
+    }, [progress]);
 
     return <main className={style.upload_detail}>
         <Section className={style.property}>
@@ -391,7 +399,7 @@ function UploadDetail({ video, fileName, onClose }: {video: string, fileName: st
             </UploadInputBorder>
 
             <div className={style.title}>썸네일</div>
-            <ImageUploadBox onChangeFile={e => imageFileRef.current = e} />
+            <ImageUploadBox onChangeFile={e => imageFileRef.current = e} setPreview={imageInputReset} />
 
             <div className={style.title}>공개 옵션</div>
             <select className={style.secret} onChange={e => setSecret(e.target.value)} value={secret}>
@@ -427,7 +435,7 @@ function UploadInputBorder({title, children, className = []}: {title: string, ch
     </div>;
 }
 
-export function ImageUploadBox({ defaultImg, onChangeFile }: {defaultImg?: string, onChangeFile?: (file: File) => void}) {
+export function ImageUploadBox({ defaultImg, onChangeFile, setPreview }: {defaultImg?: string, onChangeFile?: (file: File) => void, setPreview?: React.MutableRefObject<((url?: string) => void) | undefined>}) {
     const inputRef = useRef<HTMLInputElement>(null);
 
     const [image, setImage] = useState<string | null>(defaultImg || null);
@@ -479,6 +487,11 @@ export function ImageUploadBox({ defaultImg, onChangeFile }: {defaultImg?: strin
         if (e.target.files === null) return;
         imageUpload(e.target.files[0]);
     }
+
+    if (setPreview)
+        setPreview.current = function(url?: string) {
+            setImage(url || defaultImg || "");
+        }
 
     return <Section className={style.thumbnail_section}>
         <div className={style.upload} onClick={() => inputRef.current?.click()} onDragEnter={dragEnter} onDragOver={dragOver} onDragLeave={dragLeave} onDrop={dragDrop}>

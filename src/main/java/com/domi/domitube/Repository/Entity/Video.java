@@ -40,7 +40,7 @@ public class Video {
     long dislike;
 
     @Column(nullable = false)
-    int time;
+    double time;
     @Column(nullable = false)
     long size;
 

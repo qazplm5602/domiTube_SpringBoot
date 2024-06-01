@@ -2,10 +2,7 @@ package com.domi.domitube.Studio;
 
 import com.domi.domitube.Repository.Entity.User;
 import com.domi.domitube.Repository.Entity.Video;
-import com.domi.domitube.Service.AssetService;
-import com.domi.domitube.Service.CommentService;
-import com.domi.domitube.Service.UserService;
-import com.domi.domitube.Service.VideoService;
+import com.domi.domitube.Service.*;
 import com.domi.domitube.Utils.RandomStringGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -54,6 +51,7 @@ public class ContentController {
     final VideoService videoService;
     final CommentService commentService;
     final AssetService assetService;
+    final FFmpegService ffmpegService;
 
     Map<String, Integer> process = new HashMap<String, Integer>();
 
@@ -223,10 +221,18 @@ public class ContentController {
         stream.close();
         process.remove(videoId);
 
-//        Video video = videoService.GetVideoById(videoId);
-//        video.setUploads(-1);
-//
-//        videoService.CreateVideo(video);
+        double duration = ffmpegService.GetVideoDuration(videoPath);
+        String thumbnailPath = String.format("%s/%s.jpg", assetService.GetPath(AssetService.Category.thumnail), videoId);
+        
+        // 썸네일 없으면 만드렁
+        if (!new File(thumbnailPath).exists()) {
+            ffmpegService.CreateThumbnail(videoPath, thumbnailPath);
+        }
+
+        Video video = videoService.GetVideoById(videoId);
+        video.setTime(duration);
+
+        videoService.CreateVideo(video);
     }
 
     @PostMapping("/edit/{video}")
