@@ -2,11 +2,11 @@ import { Link, useParams } from 'react-router-dom';
 import style from './video.module.css';
 import Section from '../../Recycle/Section';
 import Button from '../../Recycle/Button';
-import { ImageUploadBox, PageControl, PageEvent } from '../Contents/Contents';
+import { ImageUploadBox, PageControl, PageEvent, StudioVideoType } from '../Contents/Contents';
 import { Comment } from '../Comment/Comment';
 
 import { useEffect, useRef, useState } from 'react';
-import { CommentDataType, videoDataType } from '../../Watch/Watch';
+import { CommentDataType } from '../../Watch/Watch';
 import { request } from '../../Utils/Fetch';
 
 export default function StudioVideo() {
@@ -34,8 +34,8 @@ export default function StudioVideo() {
                 <div className={style.subT}>동영상 링크</div>
                 <Link to="/watch/DOMI1" className={style.text}>https://domi.kr/watch/DOMI1</Link>
 
-                <div className={style.subT}>파일 이름</div>
-                <div className={style.text}>doming.mp4</div>
+                {/* <div className={style.subT}>파일 이름</div>
+                <div className={style.text}>doming.mp4</div> */}
             </div>
         </Section>
     </main>;
@@ -44,9 +44,23 @@ export default function StudioVideo() {
 function VideoSetting({ videoId, setError }: {videoId: string, setError: React.Dispatch<React.SetStateAction<string>>}) {
     const [title, setTitle] = useState("");
     const [desc, setDesc] = useState("");
+    const [secret, setSecret] = useState("0");
     const [change, setChange] = useState(false);
     const [thumbnail, setThumbnail] = useState<File | null>(null);
-    const origin = useRef<videoDataType>();
+    const setPreview = useRef<(url?: string) => void>();
+    const origin = useRef<StudioVideoType>({
+        bad: 0,
+        comment: 0,
+        create: 0,
+        channel: "",
+        description: "",
+        good: 0,
+        id: "",
+        secret: 0,
+        time: 0,
+        title: "",
+        views: 0
+    });
 
     const loadVideoInfo = async function() {
         const { code, data } = await request(`/api/video/${videoId}`);
@@ -57,7 +71,7 @@ function VideoSetting({ videoId, setError }: {videoId: string, setError: React.D
             return;
         }
         
-        origin.current = data.data;
+        Object.assign(origin.current, data.data);
         
         if (origin.current) {
             const { title, description } = origin.current;
@@ -66,24 +80,81 @@ function VideoSetting({ videoId, setError }: {videoId: string, setError: React.D
         }
     }
 
+    const loadVideoSecretInfo = async function() {
+        const { code, data } = await request(`/api/studio/content/secret/${videoId}`);
+        if (code !== 200) return;
+        
+        setSecret(data);
+        origin.current.secret = data;
+    }
+
+    const revertBtn = function() {
+        if (setPreview.current)
+            setPreview.current();
+
+        setThumbnail(null);
+        setTitle(origin.current.title);
+        setDesc(origin.current.description);
+        setSecret(origin.current.secret.toString());
+    }
+
+    const saveBtn = function() {
+        const changes = getChangeField();
+        const form = new FormData();
+        
+        if (changes.title)
+            form.append("title", title);
+
+        if (changes.desc)
+            form.append("desc", desc);
+
+        if (changes.secret)
+            form.append("secret", secret);
+        
+        if (changes.thumbnail && thumbnail !== null)
+            form.append("thumbnail", thumbnail);
+
+        request(`/api/studio/content/edit/${videoId}`, { method: "POST", body: form });
+        setChange(false);
+        
+        if (changes.title)
+            origin.current.title = title;
+        if (changes.desc)
+            origin.current.description = desc;
+        if (changes.secret)
+            origin.current.secret = Number(secret);
+        if (changes.thumbnail)
+            setThumbnail(null);
+    }
+
+    const getChangeField = function() {
+        return {
+            title: origin.current?.title !== title,
+            desc: origin.current?.description !== desc,
+            secret: origin.current?.secret !== Number(secret),
+            thumbnail: thumbnail !== null
+        };
+    }
+
     useEffect(() => {
         setError("");
         loadVideoInfo();
+        loadVideoSecretInfo();
     }, [videoId]);
 
     // 변경사항 확인
     useEffect(() => {
-        setChange(origin.current?.title !== title || origin.current?.description !== desc || thumbnail !== null);
-    }, [title, desc, thumbnail]);
-    
-    console.log(change);
+        const changes = getChangeField();
+        const isChange = Object.values(changes).some(v => v);
+        setChange(isChange);
+    }, [title, desc, secret, thumbnail]);
 
     return <Section className={[style.box, style.videoSetting].join(" ")}>
         <Section className={style.header}>
             <h2>동영상 세부정보</h2>
             <p>
-                {change && <Button className={style.revert}>되돌리기</Button>}
-                <Button className={style.save} disabled={!change}>저장</Button>
+                {change && <Button className={style.revert} onClick={revertBtn}>되돌리기</Button>}
+                <Button className={style.save} onClick={saveBtn} disabled={!change}>저장</Button>
             </p>
         </Section>
 
@@ -94,15 +165,15 @@ function VideoSetting({ videoId, setError }: {videoId: string, setError: React.D
         <textarea className={style.input} value={desc} onChange={e => setDesc(e.target.value)}></textarea>
 
         <div className={style.title}>공개 설정</div>
-        <select className={style.secret} onChange={e => e} value={1}>
-            <option value="0" selected>👁️ 공개</option>
+        <select className={style.secret} onChange={e => setSecret(e.target.value)} value={secret}>
+            <option value="0">👁️ 공개</option>
             <option value="1">📎 일부공개</option>
             <option value="2">🔒 비공개</option>
         </select>
 
  
         <div className={style.title}>썸네일</div>
-        <ImageUploadBox defaultImg={`/api/image/thumbnail/${videoId}`} onChangeFile={file => setThumbnail(file)} />
+        <ImageUploadBox defaultImg={`/api/image/thumbnail/${videoId}`} onChangeFile={file => setThumbnail(file)} setPreview={setPreview} />
     </Section>
 }
 

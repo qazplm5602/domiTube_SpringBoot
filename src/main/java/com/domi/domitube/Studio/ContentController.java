@@ -237,6 +237,30 @@ public class ContentController {
         videoService.CreateVideo(video);
     }
 
+    @GetMapping("/secret/{video}")
+    ResponseEntity<Byte> GetVideoSecret(HttpServletRequest request, @PathVariable("video") String videoId) {
+        User user = userService.GetUserForRequest(request);
+        if (user == null) {
+            return ResponseEntity.status(401).build();
+        }
+
+        Video video = videoService.GetVideoById(videoId);
+        if (video == null) {
+            return ResponseEntity.status(404).build();
+        }
+        if (video.getOwner() != user) {
+            return ResponseEntity.status(403).build();
+        }
+
+        byte result = 0;
+        switch (video.getSecret()) {
+            case HalfPublic -> result = 1;
+            case Private -> result = 2;
+        }
+
+        return ResponseEntity.ok(result);
+    }
+
     @PostMapping("/edit/{video}")
     ResponseEntity<ResponseVO> EditVideo(HttpServletRequest request, @PathVariable("video") String videoId,
         @RequestParam(value = "title", required = false) String title, @RequestParam(value = "desc", required = false) String desc,

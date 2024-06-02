@@ -22,7 +22,7 @@ import IStore from '../../Redux/Type';
 import { request, response } from '../../Utils/Fetch';
 import { numberWithCommas, secondsToHMS } from '../../Utils/Misc';
 
-interface StudioVideoType extends videoDataType {
+export interface StudioVideoType extends videoDataType {
     secret: number,
     comment: number
 }

@@ -96,6 +96,11 @@
     background-color: rgb(76, 152, 58);
 }
 
+.main > .content > .videoSetting > .header > p > .save:disabled {
+    color: rgb(212, 212, 212);
+    background-color: gray;
+}
+
 .main > .content > .videoSetting > .header > p > .revert {
     background-color: transparent;
     border: none;
@@ -127,6 +132,13 @@
 .main > .content > .videoSetting > textarea.input {
     height: 200px;
     resize: none;
+}
+
+.main > .content > .videoSetting > .secret {
+    font-size: 15px;
+    padding: 3px;
+    background-color: #141517;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .main > .content > .videoSetting > .thumbnail {
