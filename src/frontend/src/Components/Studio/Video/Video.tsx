@@ -6,8 +6,9 @@ import { ImageUploadBox, PageControl, PageEvent, StudioVideoType } from '../Cont
 import { Comment } from '../Comment/Comment';
 
 import { useEffect, useRef, useState } from 'react';
-import { CommentDataType } from '../../Watch/Watch';
+import { ChatSubReplyInput, CommentDataType } from '../../Watch/Watch';
 import { request } from '../../Utils/Fetch';
+import React from 'react';
 
 export default function StudioVideo() {
     const { videoId } = useParams();
@@ -185,6 +186,36 @@ function VideoComment({ videoId }: { videoId: string }) {
     const [list, setList] = useState<CommentDataType[]>([]);
     const [users, setUsers] = useState<{[key: string]: UserType}>({});
     const process = useRef<{[key: string]: boolean}>({});
+    
+    const [replyInputId, setReplyInputId] = useState(-1);
+    const replyAdd = function(originId: number, newId: number, content: string) {
+        setList((data: CommentDataType[]) => {
+            let commentIdx: number = -1;
+            data.forEach((v, i) => {
+                if (v.id === originId) {
+                    commentIdx = i;
+                    return false;
+                }
+            });
+
+            if (commentIdx !== -1) {
+                if (data[commentIdx + 1] !== undefined && data[commentIdx + 1].isReply) { // 밑에 답글이 있으믄
+                    data.splice(commentIdx, 0, {
+                        created: Number(new Date()),
+                        content,
+                        id: newId,
+                        owner: "",
+                        isReply: true,
+                        reply: 0
+                    });
+                } else {
+                    data[commentIdx].reply ++;
+                }
+            }
+
+            return [...data];
+        });
+    }
 
     const loadUser = async function(user: string) {
         
@@ -245,7 +276,12 @@ function VideoComment({ videoId }: { videoId: string }) {
     return <Section className={[style.box, style.videoComment].join(" ")}>
         <h2 className={style.title}>댓글</h2>
 
-        {list.map(value => <Comment key={value.id} id={value.id} p_id={value.owner} p_name={users[value.owner]?.name} p_image={users[value.owner]?.icon} content={value.content} created={value.created} reply={value.reply} isReply={false} />)}
+        {list.map(value => {
+            return <React.Fragment key={value.id}>
+                <Comment onReply={() => setReplyInputId(value.id)} id={value.id} p_id={value.owner} p_name={users[value.owner]?.name} p_image={users[value.owner]?.icon} content={value.content} created={value.created} reply={value.reply} isReply={false} />
+                {replyInputId === value.id && <ChatSubReplyInput onAdd={(id, content) => replyAdd(value.id, id, content)} onReset={() => setReplyInputId(-1)} targetId={value.id} />}
+            </React.Fragment>
+        })}
 
         <PageControl className={style.pageable} page={page + 1} max={max} event={pageClick} />
     </Section>;

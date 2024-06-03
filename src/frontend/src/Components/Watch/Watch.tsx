@@ -617,7 +617,7 @@ function ChatReplyInput({disable, icon, btnActive, value, onChange, onPost, onCa
     </ChatUser>
 }
 
-function ChatSubReplyInput({targetId, onAdd, onReset}: {targetId: number, onReset: () => void, onAdd: (id: number, content: string) => void}) {
+export function ChatSubReplyInput({targetId, onAdd, onReset}: {targetId: number, onReset: () => void, onAdd: (id: number, content: string) => void}) {
     const [replyVal, setReplyVal] = useState("");
     const [replyDisable, setReplyDisable] = useState(false);
     const replyChangeValue = (e: React.ChangeEvent<HTMLInputElement>) => setReplyVal(e.target.value);

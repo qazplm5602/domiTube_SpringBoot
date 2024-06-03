@@ -112,7 +112,7 @@ export default function StudioComment() {
     </main>;
 }
 
-export function Comment({ id, p_name, p_id, p_image, video_id, video_title, created, content, reply, isReply }: { id: number, p_name: string, p_id: string, p_image: boolean, video_id?: string, video_title?: string, created: number, content: string, reply: number, isReply: boolean }) {
+export function Comment({ id, p_name, p_id, p_image, video_id, video_title, created, content, onReply, reply, isReply }: { id: number, p_name: string, p_id: string, p_image: boolean, video_id?: string, video_title?: string, created: number, content: string, reply: number, isReply: boolean, onReply?: () => void }) {
     return <Section className={style.comment}>
         <img className={style.icon} src={p_image ? `/api/image/user/${p_id}` : noProfile} />
         
@@ -121,7 +121,7 @@ export function Comment({ id, p_name, p_id, p_image, video_id, video_title, crea
             <div className={style.content}>{content}</div>
             
             <Section className={style.interaction}>
-                <Button>답글</Button>
+                <Button onClick={onReply}>답글</Button>
                 <Button disabled={true}>답글 {numberWithCommas(reply)}개</Button>
                 <Button className={style.icon} icon={goodSvg} />
                 <Button className={[style.icon, style.reverse].join(" ")} icon={goodSvg} />

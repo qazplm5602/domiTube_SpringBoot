@@ -205,29 +205,29 @@
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-.main > .video_container > .myInput {
+.myInput {
     align-items: initial;
     margin-top: 15px;
     margin-bottom: 30px;
 }
 
-.main > .video_container > .myInput.replyInput {
+.myInput.replyInput {
     padding-left: 50px;
     margin-top: 0;
 }
 
-.main > .video_container > .myInput.replyInput > img {
+.myInput.replyInput > img {
     display: none;
 }
 
-.main > .video_container > .myInput > div {
+.myInput > div {
     flex-grow: 1;
 
     display: flex;
     flex-direction: column;
 }
 
-.main > .video_container > .myInput > div > input {
+.myInput > div > input {
     outline: none;
 
     border: none;
@@ -240,11 +240,11 @@
     transition: border 250ms;
 }
 
-.main > .video_container > .myInput > div > input:focus {
+.myInput > div > input:focus {
     border-color: rgba(255, 255, 255, 0.5);
 }
 
-.main > .video_container > .myInput > div > section {
+.myInput > div > section {
     margin-top: 10px;
     margin-left: auto;
     
@@ -253,7 +253,7 @@
     gap: 0 5px;
 }
 
-.main > .video_container > .myInput > div > section > .send {
+.myInput > div > section > .send {
     width: max-content;
     height: max-content;
 
@@ -266,11 +266,11 @@
     cursor: pointer;
 }
 
-.main > .video_container > .myInput > div > section > .send:hover {
+.myInput > div > section > .send:hover {
     background-color: rgba(255, 255, 255, 0.2);
 }
 
-.main > .video_container > .myInput > div > section > .close {
+.myInput > div > section > .close {
     width: max-content;
     height: max-content;
 
@@ -284,7 +284,7 @@
     cursor: pointer;
 }
 
-.main > .video_container > .myInput > div > section > .close:hover {
+.myInput > div > section > .close:hover {
     background: rgba(255,255,255,0.05);
 }
 
