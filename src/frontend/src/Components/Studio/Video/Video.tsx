@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from 'react';
 import { ChatSubReplyInput, CommentDataType } from '../../Watch/Watch';
 import { request } from '../../Utils/Fetch';
 import React from 'react';
+import Spinner from '../../Recycle/Spinner';
 
 export default function StudioVideo() {
     const { videoId } = useParams();
@@ -186,6 +187,7 @@ function VideoComment({ videoId }: { videoId: string }) {
     const [list, setList] = useState<CommentDataType[]>([]);
     const [users, setUsers] = useState<{[key: string]: UserType}>({});
     const process = useRef<{[key: string]: boolean}>({});
+    const [statusReply, setStatusReply] = useState<{[key: number]: boolean}>({});
     
     const [replyInputId, setReplyInputId] = useState(-1);
     const replyAdd = function(originId: number, newId: number, content: string) {
@@ -200,7 +202,7 @@ function VideoComment({ videoId }: { videoId: string }) {
 
             if (commentIdx !== -1) {
                 if (data[commentIdx + 1] !== undefined && data[commentIdx + 1].isReply) { // 밑에 답글이 있으믄
-                    data.splice(commentIdx, 0, {
+                    data.splice(commentIdx + 1, 0, {
                         created: Number(new Date()),
                         content,
                         id: newId,
@@ -214,6 +216,38 @@ function VideoComment({ videoId }: { videoId: string }) {
             }
 
             return [...data];
+        });
+    }
+    const loadReply = async function(commentId: number) {
+        if (statusReply[commentId] !== undefined) return;
+        
+        setStatusReply({...statusReply, [commentId]: true}); // 로딩중...
+
+        const { code, data } = await request(`/api/video/comment/reply?id=${commentId}`);
+        if (code !== 200) return;
+        
+        setStatusReply((state: {[key: number]: boolean}) => ({...state, [commentId]: false})); // 로딩중...
+        setList((list: CommentDataType[]) => {
+            let commentIdx = -1;
+            list.forEach((v, i) => {
+                if (v.id  === commentId) {
+                    commentIdx = i;
+                    return false;
+                }
+            });
+            
+            if (commentIdx !== -1) {
+                const datas = (data as CommentDataType[]).map(v => {
+                    v.isReply = true;
+                    if (process.current[v.owner] === undefined) {
+                        process.current[v.owner] = true;
+                        loadUser(v.owner);
+                    }
+                    return v;
+                });
+                list.splice(commentIdx + 1, 0, ...datas);
+            }
+            return [...list];
         });
     }
 
@@ -278,8 +312,9 @@ function VideoComment({ videoId }: { videoId: string }) {
 
         {list.map(value => {
             return <React.Fragment key={value.id}>
-                <Comment onReply={() => setReplyInputId(value.id)} id={value.id} p_id={value.owner} p_name={users[value.owner]?.name} p_image={users[value.owner]?.icon} content={value.content} created={value.created} reply={value.reply} isReply={false} />
+                <Comment onReply={() => setReplyInputId(value.id)} onOpenReply={() => loadReply(value.id)} id={value.id} p_id={value.owner} p_name={users[value.owner]?.name} p_image={users[value.owner]?.icon} content={value.content} created={value.created} reply={value.reply} isReply={value.isReply} />
                 {replyInputId === value.id && <ChatSubReplyInput onAdd={(id, content) => replyAdd(value.id, id, content)} onReset={() => setReplyInputId(-1)} targetId={value.id} />}
+                {statusReply[value.id] === true && <Spinner className={style.replySpinner} />}
             </React.Fragment>
         })}
 

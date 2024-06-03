@@ -54,10 +54,19 @@
     padding: 10px 0;
 }
 
+.comment.reply {
+    padding-left: 30px;
+}
+
 .comment > .icon {
     width: 45px;
     height: 45px;
     border-radius: 50%;
+}
+
+.comment.reply > .icon {
+    width: 35px;
+    height: 35px;
 }
 
 .comment > .detail {

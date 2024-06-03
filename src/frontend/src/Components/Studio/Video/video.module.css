@@ -173,3 +173,10 @@
 
     justify-content: center;
 }
+
+.main > .content > .videoComment > .replySpinner {
+    margin-top: -15px;
+    margin-left: 15px;
+    scale: 0.5;
+    opacity: 0.5;
+}
