@@ -126,7 +126,7 @@ export function Comment({ id, p_name, p_id, p_image, video_id, video_title, crea
             
             <Section className={style.interaction}>
                 {!isReply && <Button onClick={onReply}>답글</Button>}
-                {!isReply && <Button disabled={false} onClick={onOpenReply}>답글 {numberWithCommas(reply)}개</Button>}
+                {!isReply && <Button disabled={reply === 0} onClick={onOpenReply}>답글 {numberWithCommas(reply)}개</Button>}
                 <Button className={style.icon} icon={goodSvg} />
                 <Button className={[style.icon, style.reverse].join(" ")} icon={goodSvg} />
                 <Button className={style.icon} icon={"삭제"} />

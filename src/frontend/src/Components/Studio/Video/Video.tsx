@@ -10,6 +10,8 @@ import { ChatSubReplyInput, CommentDataType } from '../../Watch/Watch';
 import { request } from '../../Utils/Fetch';
 import React from 'react';
 import Spinner from '../../Recycle/Spinner';
+import { useSelector } from 'react-redux';
+import Istore from '../../Redux/Type';
 
 export default function StudioVideo() {
     const { videoId } = useParams();
@@ -187,10 +189,14 @@ function VideoComment({ videoId }: { videoId: string }) {
     const [list, setList] = useState<CommentDataType[]>([]);
     const [users, setUsers] = useState<{[key: string]: UserType}>({});
     const process = useRef<{[key: string]: boolean}>({});
+    const userId = useSelector<Istore, string | null>(value => value.login.id);
+
     const [statusReply, setStatusReply] = useState<{[key: number]: boolean}>({});
-    
     const [replyInputId, setReplyInputId] = useState(-1);
+
     const replyAdd = function(originId: number, newId: number, content: string) {
+        if (userId === null) return;
+
         setList((data: CommentDataType[]) => {
             let commentIdx: number = -1;
             data.forEach((v, i) => {
@@ -206,10 +212,14 @@ function VideoComment({ videoId }: { videoId: string }) {
                         created: Number(new Date()),
                         content,
                         id: newId,
-                        owner: "",
+                        owner: userId,
                         isReply: true,
                         reply: 0
                     });
+                    if (process.current[userId] === undefined) {
+                        process.current[userId] = true;
+                        loadUser(userId);
+                    }
                 } else {
                     data[commentIdx].reply ++;
                 }
@@ -266,6 +276,8 @@ function VideoComment({ videoId }: { videoId: string }) {
         if (code !== 200) return;
 
         setList(data);
+        setStatusReply({});
+        setReplyInputId(-1);
         (data as CommentDataType[]).forEach(value => {
             if (process.current[value.owner] === undefined) {
                 process.current[value.owner] = true;
