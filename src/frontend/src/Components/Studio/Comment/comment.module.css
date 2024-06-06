@@ -45,6 +45,13 @@
     height: max-content;
 }
 
+.comment_list > .replySpinner {
+    scale: 0.5;
+    opacity: 0.5;
+    margin-top: -15px;
+    margin-left: 20px;
+}
+
 .comment {
     width: 100%;
     height: max-content;

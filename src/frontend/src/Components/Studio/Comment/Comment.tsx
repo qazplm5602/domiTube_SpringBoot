@@ -9,6 +9,9 @@ import { request } from '../../Utils/Fetch';
 import { ChatSubReplyInput, CommentDataType } from '../../Watch/Watch';
 import { dateWithKorean, numberWithCommas } from '../../Utils/Misc';
 import React from 'react';
+import Istore from '../../Redux/Type';
+import { useSelector } from 'react-redux';
+import Spinner from '../../Recycle/Spinner';
 
 interface CommentStudioType extends CommentDataType {
     video: string
@@ -19,6 +22,8 @@ type cacheUserType = {[key: string]: {name: string, image: boolean}};
 type cacheVideoType = {[key: string]: string};
 
 export default function StudioComment() {
+    const myId = useSelector<Istore, string | null>(value => value.login.id);
+    
     const [page, setPage] = useState(0);
     const [sort, setSort] = useState(0);
     const [loading, setLoading] = useState(false);
@@ -32,6 +37,7 @@ export default function StudioComment() {
     const listRef = useRef<any>();
 
     const [replyInput, setReplyInput] = useState(-1);
+    const [replyProcess, setReplyProcess] = useState<{[key: number]: boolean}>({});
     
     const changeSort = function(value: number) {
         setSort(value);
@@ -91,6 +97,71 @@ export default function StudioComment() {
     const replyInputClose = () => setReplyInput(-1);
 
     const replyAdd = function(commentId: number, replyId: number, content: string) {
+        console.log(commentId, replyId, content, myId);
+        if (myId === null) return;
+
+        setList((comments: CommentStudioType[]) => {
+            let commentIdx = -1;
+            
+            comments.forEach((v, i) => {
+                if (commentId === v.id) {
+                    commentIdx = i;
+                    return false;
+                }
+            });
+
+            if (commentIdx !== -1) {
+                comments[commentIdx].reply ++;
+                
+                if (comments[commentIdx + 1]?.isReply === true) {
+                    comments.splice(commentIdx + 1, 0, {
+                        id: replyId,
+                        video: comments[commentIdx].video,
+                        owner: myId,
+                        isReply: true,
+                        reply: 0,
+                        created: Number(new Date()),
+                        content
+                    });
+
+                    if (process.current.user[myId] === undefined) 
+                        loadCacheUser(myId);
+                }
+            }
+
+            return [...comments];
+        });
+    }
+
+    const replyOpen = async function(commentId: number) {
+        if (replyProcess[commentId] !== undefined) return; // 이미 진행중
+        setReplyProcess((v: {[key: number]: boolean}) => ({...v, [commentId]: true}));
+
+        const { code, data } = await request(`/api/video/comment/reply?id=${commentId}`);
+        if (code !== 200) return;
+
+        setList((comments: CommentStudioType[]) => {
+            let commentIdx = -1;
+            
+            comments.forEach((v, i) => {
+                if (commentId === v.id) {
+                    commentIdx = i;
+                    return false;
+                }
+            });
+
+            if (commentIdx !== -1) {
+                comments.splice(commentIdx + 1, 0, ...(data as CommentStudioType[]).map(v => {
+                    if (process.current.user[v.owner] === undefined )
+                        loadCacheUser(v.owner);
+
+                    return {...v, isReply: true};
+                }));
+            }
+
+            return [...comments];
+        });
+        setReplyProcess((v: {[key: number]: boolean}) => ({...v, [commentId]: false}));
     }
 
     useEffect(() => {
@@ -121,8 +192,9 @@ export default function StudioComment() {
         <Section className={style.comment_list}>
             {list.map(value => {
                 return <React.Fragment key={value.id}>
-                    <Comment id={value.id} p_id={value.owner} p_name={cacheUser[value.owner]?.name || "--"} p_image={cacheUser[value.owner]?.image === true} video_id={value.video} video_title={cacheVideo[value.video] || "--"} created={value.created} content={value.content} reply={value.reply} isReply={false} onOpenReply={() => {}} onReply={() => replyInputOpen(value.id)} />
+                    <Comment id={value.id} p_id={value.owner} p_name={cacheUser[value.owner]?.name || "--"} p_image={cacheUser[value.owner]?.image === true} video_id={value.video} video_title={cacheVideo[value.video] || "--"} created={value.created} content={value.content} reply={value.reply} isReply={value.isReply} onOpenReply={() => replyOpen(value.id)} onReply={() => replyInputOpen(value.id)} />
                     {replyInput === value.id && <ChatSubReplyInput targetId={value.id} onReset={replyInputClose} onAdd={(replyId, content) => replyAdd(value.id, replyId, content)} />}
+                    {replyProcess[value.id] === true && <Spinner className={style.replySpinner} />}
                 </React.Fragment>
             })}
         </Section>
