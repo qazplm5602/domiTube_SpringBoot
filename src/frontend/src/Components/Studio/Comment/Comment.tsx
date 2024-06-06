@@ -6,8 +6,9 @@ import noProfile from '../../../assets/no-profile.png';
 import goodSvg from '../../Watch/good.svg';
 import { useEffect, useRef, useState } from 'react';
 import { request } from '../../Utils/Fetch';
-import { CommentDataType } from '../../Watch/Watch';
+import { ChatSubReplyInput, CommentDataType } from '../../Watch/Watch';
 import { dateWithKorean, numberWithCommas } from '../../Utils/Misc';
+import React from 'react';
 
 interface CommentStudioType extends CommentDataType {
     video: string
@@ -29,6 +30,8 @@ export default function StudioComment() {
     const process = useRef<{ user: processObj, video: processObj }>({ user: {}, video: {} });
 
     const listRef = useRef<any>();
+
+    const [replyInput, setReplyInput] = useState(-1);
     
     const changeSort = function(value: number) {
         setSort(value);
@@ -81,6 +84,15 @@ export default function StudioComment() {
         setPage(data.length < 20 ? -1 : page + 1);
     }
 
+    const replyInputOpen = function(id: number) {
+        setReplyInput(id);
+    }
+
+    const replyInputClose = () => setReplyInput(-1);
+
+    const replyAdd = function(commentId: number, replyId: number, content: string) {
+    }
+
     useEffect(() => {
         if (loading || page === -1) return;
 
@@ -107,7 +119,12 @@ export default function StudioComment() {
         </Section>
 
         <Section className={style.comment_list}>
-            {list.map(value => <Comment key={value.id} id={value.id} p_id={value.owner} p_name={cacheUser[value.owner]?.name || "--"} p_image={cacheUser[value.owner]?.image === true} video_id={value.video} video_title={cacheVideo[value.video] || "--"} created={value.created} content={value.content} reply={value.reply} isReply={false}  />)}
+            {list.map(value => {
+                return <React.Fragment key={value.id}>
+                    <Comment id={value.id} p_id={value.owner} p_name={cacheUser[value.owner]?.name || "--"} p_image={cacheUser[value.owner]?.image === true} video_id={value.video} video_title={cacheVideo[value.video] || "--"} created={value.created} content={value.content} reply={value.reply} isReply={false} onOpenReply={() => {}} onReply={() => replyInputOpen(value.id)} />
+                    {replyInput === value.id && <ChatSubReplyInput targetId={value.id} onReset={replyInputClose} onAdd={(replyId, content) => replyAdd(value.id, replyId, content)} />}
+                </React.Fragment>
+            })}
         </Section>
     </main>;
 }
