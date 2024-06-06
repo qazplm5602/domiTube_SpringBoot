@@ -14,7 +14,7 @@ import pictureSvg from './picture.svg';
 import publicSvg from './public.svg';
 import privateSvg from './private.svg';
 
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import { videoDataType } from '../../Watch/Watch';
 import { useSelector } from 'react-redux';
@@ -34,6 +34,7 @@ export default function StudioContents() {
     const [page, setPage] = useState(0);
     const [maxpage, setMaxpage] = useState(0);
     const [list, setList] = useState<StudioVideoType[]>([]);
+    const [checks, setChecks] = useState<Set<string>>(new Set());
     const logined = useSelector<IStore, boolean>(value => value.login.logined);
 
     const [uploadDialog, setUploadDialog] = useState(false);
@@ -69,6 +70,17 @@ export default function StudioContents() {
         setUploadDialog(false);
     }
 
+    const setCheck = function(video_id: string) {
+        if (checks.has(video_id)) {
+            checks.delete(video_id);
+        } else {
+            checks.add(video_id);
+        }
+
+        setChecks(new Set([...checks]));
+    }
+    const setAllCheck = function() {}
+
     useEffect(() => {
         if (logined === true) {
             loadContents();
@@ -96,7 +108,7 @@ export default function StudioContents() {
 
         {/* Table Content */}
         <Section className={style.table_content}>
-            {list.map(value => <TableBox key={value.id} value={value} />)}
+            {list.map(value => <TableBox key={value.id} value={value} check={checks.has(value.id)} onCheck={() => setCheck(value.id)} />)}
         </Section>
 
         <PageControl page={page + 1} max={maxpage} event={pageChanged} />
@@ -115,10 +127,10 @@ function Filter() {
     </div>
 }
 
-function TableHeader() {
+function TableHeader({check, onCheck}: { check: boolean, onCheck: () => void }) {
     return <Section className={style.table_header}>
         <div>
-            <input type="checkbox" />
+            <input type="checkbox" checked={check} onChange={onCheck} />
         </div>
         <div>동영상</div>
         <div>공개 상태</div>
@@ -129,16 +141,18 @@ function TableHeader() {
     </Section>;
 }
 
-function TableBox({ value }: {value: StudioVideoType}) {
+function TableBox({ value, check, onCheck }: {value: StudioVideoType, check: boolean, onCheck: (check: boolean) => void}) {
+    const navigate = useNavigate();
     const createDate = new Date(value.create);
     const dateFormat = `${createDate.getFullYear()}.${(createDate.getMonth() + 1).toString().padStart(2, '0')}.${createDate.getDate().toString().padStart(2, '0')}`;
     const goodPercent = value.good === 0 ? 0 : Math.max(Math.floor(((value.good - value.bad) / value.good) * 100), 0);
+    const redirection = () => navigate(`./${value.id}`);
 
-    return <Section className={style.box}>
+    return <Section  className={style.box}>
         <div className={style.check}>
-            <input type="checkbox" />
+            <input type="checkbox" onChange={() => onCheck(!check)} checked={check} />
         </div>
-        <div className={style.video}>
+        <div className={style.video} onClick={redirection}>
             <div className={style.thumbnail}>
                 <img src={`/api/image/thumbnail/${value.id}`} />
                 <span>{secondsToHMS(value.time)}</span>
