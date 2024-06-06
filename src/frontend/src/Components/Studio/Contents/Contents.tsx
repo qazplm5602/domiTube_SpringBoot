@@ -15,7 +15,7 @@ import publicSvg from './public.svg';
 import privateSvg from './private.svg';
 
 import { Link, useNavigate } from 'react-router-dom';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { videoDataType } from '../../Watch/Watch';
 import { useSelector } from 'react-redux';
 import IStore from '../../Redux/Type';
@@ -70,6 +70,8 @@ export default function StudioContents() {
         setUploadDialog(false);
     }
 
+    const isAllChecked = useMemo<boolean>(() => list.every(v => checks.has(v.id)), [list, checks]);
+
     const setCheck = function(video_id: string) {
         if (checks.has(video_id)) {
             checks.delete(video_id);
@@ -79,7 +81,14 @@ export default function StudioContents() {
 
         setChecks(new Set([...checks]));
     }
-    const setAllCheck = function() {}
+    const setAllCheck = function() {
+        let videoIds: string[] = [];
+
+        if (!isAllChecked)
+           videoIds = list.map(v => v.id);
+
+        setChecks(new Set(videoIds));
+    }
 
     useEffect(() => {
         if (logined === true) {
@@ -104,7 +113,7 @@ export default function StudioContents() {
 
         <Filter />
 
-        <TableHeader />
+        <TableHeader check={isAllChecked} onCheck={setAllCheck} />
 
         {/* Table Content */}
         <Section className={style.table_content}>

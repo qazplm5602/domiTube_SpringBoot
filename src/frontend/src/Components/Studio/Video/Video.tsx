@@ -36,7 +36,7 @@ export default function StudioVideo() {
                 <img className={style.player} src="https://i.ytimg.com/vi/T9dJ_cE5Asw/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLB4VYvk8T391uvCZgEfFg62tuAVDQ" />
                 
                 <div className={style.subT}>동영상 링크</div>
-                <Link to="/watch/DOMI1" className={style.text}>https://domi.kr/watch/DOMI1</Link>
+                <Link to={`/watch/${videoId}`} className={style.text}>https://domi.kr/watch/{videoId}</Link>
 
                 {/* <div className={style.subT}>파일 이름</div>
                 <div className={style.text}>doming.mp4</div> */}
