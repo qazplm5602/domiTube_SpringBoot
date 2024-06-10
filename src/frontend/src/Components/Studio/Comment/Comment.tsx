@@ -14,7 +14,7 @@ import { useSelector } from 'react-redux';
 import Spinner from '../../Recycle/Spinner';
 
 interface CommentStudioType extends CommentDataType {
-    video: string
+    video?: string
 }
 
 type processObj = { [key: string]: boolean };
@@ -81,7 +81,7 @@ export default function StudioComment() {
         (data as CommentStudioType[]).forEach(value => {
             if (process.current.user[value.owner] === undefined)
                 loadCacheUser(value.owner)
-            if (process.current.video[value.video] === undefined)
+            if (value.video && process.current.video[value.video] === undefined)
                 loadCacheVideo(value.video);
         });
         setList([...list, ...data]);
@@ -116,7 +116,7 @@ export default function StudioComment() {
                 if (comments[commentIdx + 1]?.isReply === true) {
                     comments.splice(commentIdx + 1, 0, {
                         id: replyId,
-                        video: comments[commentIdx].video,
+                        // video: comments[commentIdx].video,
                         owner: myId,
                         isReply: true,
                         reply: 0,
@@ -192,7 +192,7 @@ export default function StudioComment() {
         <Section className={style.comment_list}>
             {list.map(value => {
                 return <React.Fragment key={value.id}>
-                    <Comment id={value.id} p_id={value.owner} p_name={cacheUser[value.owner]?.name || "--"} p_image={cacheUser[value.owner]?.image === true} video_id={value.video} video_title={cacheVideo[value.video] || "--"} created={value.created} content={value.content} reply={value.reply} isReply={value.isReply} onOpenReply={() => replyOpen(value.id)} onReply={() => replyInputOpen(value.id)} />
+                    <Comment id={value.id} p_id={value.owner} p_name={cacheUser[value.owner]?.name || "--"} p_image={cacheUser[value.owner]?.image === true} video_id={value.video} video_title={(value.video && cacheVideo[value.video]) || "--"} created={value.created} content={value.content} reply={value.reply} isReply={value.isReply} onOpenReply={() => replyOpen(value.id)} onReply={() => replyInputOpen(value.id)} />
                     {replyInput === value.id && <ChatSubReplyInput targetId={value.id} onReset={replyInputClose} onAdd={(replyId, content) => replyAdd(value.id, replyId, content)} />}
                     {replyProcess[value.id] === true && <Spinner className={style.replySpinner} />}
                 </React.Fragment>
