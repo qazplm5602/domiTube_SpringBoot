@@ -37,4 +37,7 @@ public interface VideoRepository extends JpaRepository<Video, Object> {
 
     @Query("SELECT count(c) FROM Video c WHERE c.owner = :user")
     Long GetVideoLengthByUser(@Param("user") User user);
+
+    @Query("SELECT c FROM Video c WHERE c.owner = :user AND ( c.title LIKE CONCAT('%', :value, '%') OR c.description LIKE CONCAT('%', :value, '%') )")
+    List<Video> GetSearchVideoByUser(@Param("user") User user, @Param("value") String value);
 }

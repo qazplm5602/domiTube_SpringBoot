@@ -1,5 +1,6 @@
 package com.domi.domitube.Studio;
 
+import com.domi.domitube.DTO.VideoDataDTO;
 import com.domi.domitube.Repository.Entity.User;
 import com.domi.domitube.Repository.Entity.Video;
 import com.domi.domitube.Service.*;
@@ -323,4 +324,14 @@ public class ContentController {
         return ResponseEntity.ok(new ResponseVO(true, "ok"));
     }
 
+    @GetMapping("/search")
+    ResponseEntity<List<VideoDataDTO>> GetSearchVideo(HttpServletRequest request, @RequestParam("v") String value) {
+        User user = userService.GetUserForRequest(request);
+        if (user == null) {
+            return ResponseEntity.status(401).body(List.of());
+        }
+
+        List<VideoDataDTO> result = videoService.GetSearchMyVideo(user, value).stream().map(VideoDataDTO::ConvertVideo).toList();
+        return ResponseEntity.ok(result);
+    }
 }
