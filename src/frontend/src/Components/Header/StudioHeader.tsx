@@ -40,6 +40,7 @@ export default function StudioHeader() {
 function SearchBox() {
     const [value, setValue] = useState("");
     const [show, setShow] = useState(false);
+    const [focus, setFocus] = useState(false);
     const [loading, setLoading] = useState(false);
     const [list, setList] = useState<videoDataType[]>([]);
 
@@ -57,19 +58,27 @@ function SearchBox() {
         setLoading(false);
     }
 
+    const changeInputValue = function(val: string) {
+        setValue(val);
+    }
+
     const hideSearchBox = function() {
         if (waitHandler.current) clearTimeout(waitHandler.current);
         waitHandler.current = setTimeout(() => {
-            setShow(false);
+            setFocus(false);
         }, 100);
     }
 
     useEffect(() => {
         if (waitHandler.current) clearTimeout(waitHandler.current);
-        if (!show || value === "") {
-            // if (show) setShow(false);
+
+        if (value === "") {
+            setShow(false);
             return;
         }
+
+        if (show !== focus)
+            setShow(focus);
 
         setList([]);
         setLoading(true);
@@ -78,11 +87,11 @@ function SearchBox() {
             loadSearch();
             waitHandler.current = undefined;
         }, 1000);
-    }, [value, show]);
+    }, [value, focus]);
 
     return <div className={style.search_main}>
         <img src={searchSvg} />
-        <Input className={style.box_container} type='text' placeholder="채널에서 검색하기" value={value} onChange={(e) => setValue(e.target.value)} onFocus={() => setShow(true)} onBlur={hideSearchBox} />
+        <Input className={style.box_container} type='text' placeholder="채널에서 검색하기" value={value} onChange={(e) => changeInputValue(e.target.value)} onFocus={() => setFocus(true)} onBlur={hideSearchBox} />
         
         {show && <Section className={style.find_list}>
             {loading && <div className={style.load}>불러오는 중...</div>}
