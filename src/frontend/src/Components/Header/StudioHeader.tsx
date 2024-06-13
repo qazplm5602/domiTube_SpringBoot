@@ -9,12 +9,14 @@ import editSvg from './edit.svg';
 import videoSvg from './video.svg';
 
 import Input from '../Recycle/Input';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { IloginStore } from '../Redux/LoginStore';
 import IStore from '../Redux/Type';
 import Section from '../Recycle/Section';
 import { Link } from 'react-router-dom';
+import { videoDataType } from '../Watch/Watch';
+import { request } from '../Utils/Fetch';
 
 export default function StudioHeader() {
     const login = useSelector<IStore, IloginStore>(value => value.login);
@@ -36,18 +38,48 @@ export default function StudioHeader() {
 // 검색
 function SearchBox() {
     const [value, setValue] = useState("");
+    const [show, setShow] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [list, setList] = useState<videoDataType[]>([]);
+
+    const waitHandler = useRef<NodeJS.Timeout>();
+    const requestId = useRef(0);
+
+    const loadSearch = async function() {
+        const idx = ++ requestId.current;
+
+        const { code, data } = await request(`/api/studio/content/search?v=${value}`);
+        console.log(data, requestId.current, idx);
+        if (requestId.current !== idx || code !== 200) return;
+
+        setList(data);
+        setLoading(false);
+    }
+
+    useEffect(() => {
+        if (waitHandler.current) clearTimeout(waitHandler.current);
+        if (!show || value === "") return;
+
+        setLoading(true);
+
+        waitHandler.current = setTimeout(() => {
+            loadSearch();
+            waitHandler.current = undefined;
+        }, 1000);
+    }, [value, show]);
 
     return <div className={style.search_main}>
         <img src={searchSvg} />
-        <Input className={style.box_container} type='text' placeholder="채널에서 검색하기" value={value} onChange={(e) => setValue(e.target.value)} />
+        <Input className={style.box_container} type='text' placeholder="채널에서 검색하기" value={value} onChange={(e) => setValue(e.target.value)} onFocus={() => setShow(true)} onBlur={() => setShow(false)} />
         
-        <Section className={style.find_list}>
-            <div className={style.load}>불러오는 중...</div>
+        {show && <Section className={style.find_list}>
+            {loading && <div className={style.load}>불러오는 중...</div>}
+            {list.map(v => <VideoBox key={v.id} />)}
             {/* <VideoBox />
             <VideoBox />
             <VideoBox />
             <VideoBox /> */}
-        </Section>
+        </Section>}
     </div>;
 }
 
