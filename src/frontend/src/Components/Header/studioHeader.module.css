@@ -112,6 +112,7 @@
     
     width: calc(100% + 2px) /* border px 포함 */;
     height: max-content;
+    max-height: 500px;
 
     bottom: -1px;
     left: -1px;
@@ -123,6 +124,8 @@
     background-color: rgba(44, 44, 44, 0.9);
     
     backdrop-filter: blur(10px);
+
+    overflow: auto;    
 }
 
 .header > .search_main > .find_list > .load {

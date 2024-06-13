@@ -17,6 +17,7 @@ import Section from '../Recycle/Section';
 import { Link } from 'react-router-dom';
 import { videoDataType } from '../Watch/Watch';
 import { request } from '../Utils/Fetch';
+import { secondsToHMS } from '../Utils/Misc';
 
 export default function StudioHeader() {
     const login = useSelector<IStore, IloginStore>(value => value.login);
@@ -56,10 +57,21 @@ function SearchBox() {
         setLoading(false);
     }
 
+    const hideSearchBox = function() {
+        if (waitHandler.current) clearTimeout(waitHandler.current);
+        waitHandler.current = setTimeout(() => {
+            setShow(false);
+        }, 100);
+    }
+
     useEffect(() => {
         if (waitHandler.current) clearTimeout(waitHandler.current);
-        if (!show || value === "") return;
+        if (!show || value === "") {
+            // if (show) setShow(false);
+            return;
+        }
 
+        setList([]);
         setLoading(true);
 
         waitHandler.current = setTimeout(() => {
@@ -70,33 +82,29 @@ function SearchBox() {
 
     return <div className={style.search_main}>
         <img src={searchSvg} />
-        <Input className={style.box_container} type='text' placeholder="채널에서 검색하기" value={value} onChange={(e) => setValue(e.target.value)} onFocus={() => setShow(true)} onBlur={() => setShow(false)} />
+        <Input className={style.box_container} type='text' placeholder="채널에서 검색하기" value={value} onChange={(e) => setValue(e.target.value)} onFocus={() => setShow(true)} onBlur={hideSearchBox} />
         
         {show && <Section className={style.find_list}>
             {loading && <div className={style.load}>불러오는 중...</div>}
-            {list.map(v => <VideoBox key={v.id} />)}
-            {/* <VideoBox />
-            <VideoBox />
-            <VideoBox />
-            <VideoBox /> */}
+            {list.map(v => <VideoBox key={v.id} video={v} />)}
         </Section>}
     </div>;
 }
 
-function VideoBox() {
+function VideoBox({ video }: {video: videoDataType}) {
     return <Section className={style.videoBox}>
         <div className={style.img_container}>
-            <img src={`/api/image/thumbnail/DOMI1`} />
-            <span>10:10</span>
+            <img src={`/api/image/thumbnail/${video.id}`} />
+            <span>{secondsToHMS(video.time)}</span>
         </div>
 
         <div className={style.detail}>
-            <h1 className={style.title}>테스트 임니다.</h1>
-            <div className={style.description}>테스트 임니다.....................</div>
+            <h1 className={style.title}>{video.title}</h1>
+            <div className={style.description}>{video.description}</div>
         
             <div className={style.interaction}>
-                <Link to={`/studio/`}><Button icon={editSvg} /></Link>
-                <Link to={`/studio/`}><Button icon={videoSvg} /></Link>
+                <Link to={`/studio/contents/${video.id}`}><Button icon={editSvg} /></Link>
+                <Link to={`/watch/${video.id}`}><Button icon={videoSvg} /></Link>
             </div>
         </div>
     </Section>
