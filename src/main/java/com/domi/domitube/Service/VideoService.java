@@ -45,6 +45,11 @@ public class VideoService {
         videoRepository.save(video);
     }
 
+    public List<Video> SearchVideo(String value, int page) {
+        Pageable pageable = PageRequest.of(page, 5);
+        return videoRepository.findByTitleContainsOrDescriptionContains(value, value, pageable);
+    }
+
     /////// STUDIO
     public long GetAllViewCountByUser(User user) {
         Long value = videoRepository.GetAllViewCount(user);

@@ -213,4 +213,9 @@ public class VideoController {
         }
 
     }
+
+    @GetMapping("/search")
+    ResponseEntity<List<VideoDataDTO>> GetSearchVideo(@RequestParam("v") String value, @RequestParam("page") int page) {
+        return ResponseEntity.ok(videoService.SearchVideo(value, page).stream().map(VideoDataDTO::ConvertVideo).toList());
+    }
 }
