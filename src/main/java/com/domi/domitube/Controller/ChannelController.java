@@ -1,5 +1,7 @@
 package com.domi.domitube.Controller;
 
+import com.domi.domitube.DTO.ChannelDataDTO;
+import com.domi.domitube.DTO.UserDataDTO;
 import com.domi.domitube.Repository.Entity.User;
 import com.domi.domitube.Service.SubscribeService;
 import com.domi.domitube.Service.UserService;
@@ -18,19 +20,21 @@ public class ChannelController {
     final SubscribeService subscribeService;
 
     @GetMapping("/{id}/info")
-    Map<String, Object> GetChannelInfo(@PathVariable("id") String id, @RequestParam(value = "mini", required = false) boolean lite, HttpServletRequest request, HttpServletResponse response) {
+    UserDataDTO GetChannelInfo(@PathVariable("id") String id, @RequestParam(value = "mini", required = false) boolean lite, HttpServletRequest request, HttpServletResponse response) {
         User user = userService.GetUserForId(id);
+        UserDataDTO result = new UserDataDTO();
 
         if (user == null) {
             response.setStatus(404);
-            return Map.of("result", false);
+            return result;
         }
-        
+
+        result.id = id;
+        result.name = user.getName();
+        result.icon = user.getImage();
+
         if (lite) { // 최소한
-            return Map.of(
-                "name", user.getName(),
-                "icon", user.getImage()
-            );
+            return result;
         }
 
         boolean myFollow = false;
@@ -39,13 +43,12 @@ public class ChannelController {
             myFollow = subscribeService.HasSubscribeUser(myId, id);
         }
 
-        return Map.of(
-                "id", id,
-                "name", user.getName(),
-                "icon", user.getImage(),
-                "banner", user.getBanner(),
-                "follower", subscribeService.GetSubscribers(id).size(),
-                "subscribe", myFollow
-        );
+        ChannelDataDTO channelDTO = ChannelDataDTO.ConvertUserData(result);
+        channelDTO.banner = user.getBanner();
+        channelDTO.follower = subscribeService.GetSubscribers(id).size();
+        channelDTO.subscribe = myFollow;
+        result = channelDTO;
+
+        return result;
     }
 }
