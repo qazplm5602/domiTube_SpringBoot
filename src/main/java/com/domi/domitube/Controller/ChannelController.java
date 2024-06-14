@@ -10,6 +10,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -37,18 +39,33 @@ public class ChannelController {
             return result;
         }
 
+        User myUser = userService.GetUserForRequest(request);
+        result = CreateChannelDTO(user, myUser);
+
+        return result;
+    }
+
+    @GetMapping("/search")
+    List<ChannelDataDTO> GetSearch(HttpServletRequest request, @RequestParam("v") String value, @RequestParam("page") int page) {
+        User myUser = userService.GetUserForRequest(request);
+        return userService.SearchUser(value, page).stream().map(v -> CreateChannelDTO(v, myUser)).toList();
+    }
+
+    ChannelDataDTO CreateChannelDTO(User user, User my) {
+        ChannelDataDTO result = new ChannelDataDTO();
+
+        result.id = user.getId();
+        result.name = user.getName();
+        result.icon = user.getImage();
+
         boolean myFollow = false;
-        String myId = (String) request.getAttribute("user.id");
-        if (myId != null) {
-            myFollow = subscribeService.HasSubscribeUser(myId, id);
+        if (my != null) {
+            myFollow = subscribeService.HasSubscribeUser(my.getId(), user.getId());
         }
 
-        ChannelDataDTO channelDTO = ChannelDataDTO.ConvertUserData(result);
-        channelDTO.banner = user.getBanner();
-        channelDTO.follower = subscribeService.GetSubscribers(id).size();
-        channelDTO.subscribe = myFollow;
-        result = channelDTO;
-
+        result.banner = user.getBanner();
+        result.follower = subscribeService.GetSubscribers(user.getId()).size();
+        result.subscribe = myFollow;
         return result;
     }
 }
