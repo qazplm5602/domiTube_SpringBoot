@@ -1,0 +1,47 @@
+.main {
+    margin: 0 auto;
+    padding: 0 15px;
+    max-width: 1500px;
+}
+
+.channelBox {
+    display: flex;
+    align-items: center;
+
+    height: 150px;
+    
+    /* border: 1px solid red; */
+}
+
+.channelBox > .icon_container {
+    flex-basis: 300px;
+}
+
+.channelBox > .icon_container > img {
+    width: 120px;
+    height: 120px;
+    
+    display: block;
+    margin: 0 auto;
+}
+
+.channelBox > .info {
+    /* flex-shrink: 1; */
+    flex-grow: 1;
+    flex-basis: 500px;
+}
+
+.channelBox > .info > .title {
+    font-size: 20px;
+    margin: 0;
+    margin-bottom: 10px;
+}
+
+.channelBox > .info > div {
+    font-size: 13px;
+    color: rgb(200, 200, 200);
+}
+
+.channelBox > .subscribe {
+    flex-shrink: 0;
+}

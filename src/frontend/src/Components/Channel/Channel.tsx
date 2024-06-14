@@ -17,6 +17,7 @@ import { useSelector } from "react-redux";
 import IStore from "../Redux/Type";
 
 export interface channelMain {
+    id: string,
     name: string,
     icon: boolean,
     banner: boolean,
