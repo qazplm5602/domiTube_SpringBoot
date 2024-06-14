@@ -8,7 +8,7 @@ import noProfile from '../../assets/no-profile.png';
 
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Button from '../Recycle/Button';
 
 import StoreType from '../Redux/Type';
@@ -52,14 +52,21 @@ function Section({children, ...props}: {children: React.ReactNode, [key: string]
 }
 
 function SearchBox() {
+    const navigate = useNavigate();
     const classList = [style.searchMain];
+    const [value, setValue] = useState("");
     const [focus, setFocus] = useState(false);
 
     if (focus)
         classList.push(style.active);
 
+    const searchMove = function(e: React.KeyboardEvent) {
+        if (e.key !== "Enter" || value === "") return;
+        navigate(`/search?v=${encodeURI(value)}`);
+    }
+
     return <Section className={classList.join(" ")}>
-        <input placeholder='검색' type="text" onFocus={() => setFocus(true)} onBlur={() => setFocus(false)} />
+        <input placeholder='검색' type="text" onFocus={() => setFocus(true)} onBlur={() => setFocus(false)} onKeyDown={searchMove}  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setValue(e.currentTarget.value)} />
         <IconButton icon={searchSVG} />
     </Section>;
 }
