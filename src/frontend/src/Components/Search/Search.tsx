@@ -1,4 +1,4 @@
-import { SubscribeButton, channelMain as channelDataType } from "../Channel/Channel";
+import Channel, { SubscribeButton, channelMain as channelDataType } from "../Channel/Channel";
 import MainLayout from "../Layout/MainLayout";
 import Section from "../Recycle/Section";
 import VideoBox from "../Recycle/VideoBox";
@@ -19,7 +19,7 @@ export default function Search() {
     const [searchParams, setSearchParams] = useSearchParams();
     const searchValue = searchParams.get("v");
 
-    const [list, setList] = useState<listType[]>();
+    const [list, setList] = useState<listType[]>([]);
     const [loading, setLoading] = useState(false);
     const [bottom, setBottom] = useState(false);
 
@@ -35,9 +35,7 @@ export default function Search() {
         if (searchValue === null || searchValue === "") return;
         const ID = page.current.id;
 
-        console.log("requestLoad");
         setLoading(true);
-        console.log("setLoading true");
 
         let waitChannel: Promise<response | number> = new Promise(reslove => reslove(0));
         let waitVideo: Promise<response | number> = new Promise(reslove => reslove(0));
@@ -51,12 +49,12 @@ export default function Search() {
 
         const [ channelResponse, videoResponse ] = await Promise.all([waitChannel, waitVideo]);
 
+        console.log("page.current.id !== ID", page.current.id !== ID);
         if (page.current.id !== ID) return; // 전 데이터
 
         let channels: channelDataType[] = [];
         if (page.current.channel !== -1) {
             channels = (channelResponse as response).data;
-            console.log("d", channelResponse, channels);
             if (channels.length < 5)
                 page.current.channel = -1;
             else
@@ -74,22 +72,36 @@ export default function Search() {
 
         let channelIdx = 0;
         let videoIdx = 0;
-        let loopMax = 0;
-        
-        // 최대 몇번 돌꺼임?
-        
+        const result: listType[] = [];
 
-        // for (let i = 0; i < ; i++) {
+        while (channels.length > channelIdx || videos.length > videoIdx) {
+            if (channels.length > channelIdx) {
+                const endIdx = channelIdx + randomNumber(0, channels.length - channelIdx);
+                for (let i = channelIdx; i < endIdx; i++) {
+                    result.push({
+                        type: dataType.channel,
+                        data: channels[i]
+                    });
+                    channelIdx++;
+                }
+            }
+            if (videos.length > videoIdx) {
+                const endIdx = videoIdx + randomNumber(0, videos.length - videoIdx);
+                for (let i = videoIdx; i < endIdx; i++) {
+                    result.push({
+                        type: dataType.video,
+                        data: videos[i]
+                    });
+                    videoIdx++;
+                }
+            }
+        }
 
-        // }
-
-        // setLoading(false);
-
-        console.log(channels, videos);
+        setList((prevList: listType[]) => [...prevList, ...result]);
+        setLoading(false);
     }
 
     useEffect(() => {
-        console.log(loading);
         if (loading) return;
 
         if (bottom || (mainRef.current && mainRef.current.scrollHeight <= mainRef.current.clientHeight)) {
@@ -109,24 +121,33 @@ export default function Search() {
         setLoading(false);
         setList([]);
         setBottom(false);
-
-        if (!page.current.init)
-            requestLoad();
-
+        
         page.current.id = randomNumber(100, 999);
         page.current.channel = page.current.video = 0;
         page.current.init = false;
+
+        requestLoad();
+
     }, [searchValue]);
 
+    console.log(list);
+
     return <MainLayout mainRef={mainRef} className={style.main}>
-        <ChannelBox channel={{
+        {list.map(value => {
+            if (value.type === dataType.channel) {
+                return <ChannelBox key={(value.data as channelDataType).id} channel={value.data as channelDataType} />
+            } else {
+                return <VideoBox key={(value.data as videoDataType).id} video={value.data as videoDataType} horizontal={true} />;
+            }
+        })}
+        {/* <ChannelBox channel={{
             banner: true,
             follower: 100,
             icon: true,
             id: "domi",
             name: "도미-test",
             subscribe: true
-        }} />
+        }} /> */}
         {/* <VideoBox video={{}} horizontal={true} /> */}
     </MainLayout>
 }
