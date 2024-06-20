@@ -8,8 +8,9 @@ import style from './search.module.css';
 import noProfile from '../../assets/no-profile.png';
 import { useEffect, useRef, useState } from "react";
 import { videoDataType } from "../Watch/Watch";
-import { request } from "../Utils/Fetch";
+import { request, response } from "../Utils/Fetch";
 import { useSearchParams } from "react-router-dom";
+import { randomNumber } from "../Utils/Misc";
 
 enum dataType { channel, video };
 type listType = { type: dataType, data: channelDataType | videoDataType };
@@ -23,7 +24,7 @@ export default function Search() {
     const [bottom, setBottom] = useState(false);
 
     const mainRef = useRef<HTMLElement>(null);
-    const page = useRef<{channel: number, video: number}>({ channel: 0, video: 0 });
+    const page = useRef<{channel: number, video: number, id: number, init: boolean}>({ channel: 0, video: 0, id: 0, init: false });
 
     const onScroll = function(e: Event) {
         if (mainRef.current === null) return;
@@ -32,15 +33,67 @@ export default function Search() {
 
     const requestLoad = async function() {
         if (searchValue === null || searchValue === "") return;
-        setLoading(true);
+        const ID = page.current.id;
 
-        const waitChannel = request(`/api/channel/search?v=${encodeURIComponent(searchValue)}&page=${page.current.channel}`)
+        console.log("requestLoad");
+        setLoading(true);
+        console.log("setLoading true");
+
+        let waitChannel: Promise<response | number> = new Promise(reslove => reslove(0));
+        let waitVideo: Promise<response | number> = new Promise(reslove => reslove(0));
+
+        if (page.current.channel !== -1) {
+            waitChannel = request(`/api/channel/search?v=${encodeURIComponent(searchValue)}&page=${page.current.channel}`);
+        }
+        if (page.current.video !== -1) {
+            waitVideo = request(`/api/video/search?v=${encodeURIComponent(searchValue)}&page=${page.current.video}`);
+        }
+
+        const [ channelResponse, videoResponse ] = await Promise.all([waitChannel, waitVideo]);
+
+        if (page.current.id !== ID) return; // 전 데이터
+
+        let channels: channelDataType[] = [];
+        if (page.current.channel !== -1) {
+            channels = (channelResponse as response).data;
+            console.log("d", channelResponse, channels);
+            if (channels.length < 5)
+                page.current.channel = -1;
+            else
+            page.current.channel += 1;
+        }
+    
+        let videos: channelDataType[] = [];
+        if (page.current.video !== -1) {
+            videos = (videoResponse as response).data;
+            if (videos.length < 5)
+                page.current.video = -1;
+            else
+                page.current.video += 1;
+        }
+
+        let channelIdx = 0;
+        let videoIdx = 0;
+        let loopMax = 0;
+        
+        // 최대 몇번 돌꺼임?
+        
+
+        // for (let i = 0; i < ; i++) {
+
+        // }
+
+        // setLoading(false);
+
+        console.log(channels, videos);
     }
 
     useEffect(() => {
+        console.log(loading);
         if (loading) return;
 
         if (bottom || (mainRef.current && mainRef.current.scrollHeight <= mainRef.current.clientHeight)) {
+            page.current.init = true;
             requestLoad();
         }
     }, [loading, bottom]);
@@ -56,6 +109,13 @@ export default function Search() {
         setLoading(false);
         setList([]);
         setBottom(false);
+
+        if (!page.current.init)
+            requestLoad();
+
+        page.current.id = randomNumber(100, 999);
+        page.current.channel = page.current.video = 0;
+        page.current.init = false;
     }, [searchValue]);
 
     return <MainLayout mainRef={mainRef} className={style.main}>

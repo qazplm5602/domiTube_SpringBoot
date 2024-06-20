@@ -53,3 +53,7 @@ export function secondsToHMS(seconds: number) {
 
   return `${(h >= 1 ? h.toString().padStart(2, '0') : '')}${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
 }
+
+export function randomNumber(min: number, max: number) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
