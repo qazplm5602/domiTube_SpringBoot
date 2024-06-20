@@ -6,11 +6,59 @@ import VideoBox from "../Recycle/VideoBox";
 import style from './search.module.css';
 
 import noProfile from '../../assets/no-profile.png';
+import { useEffect, useRef, useState } from "react";
+import { videoDataType } from "../Watch/Watch";
+import { request } from "../Utils/Fetch";
+import { useSearchParams } from "react-router-dom";
+
+enum dataType { channel, video };
+type listType = { type: dataType, data: channelDataType | videoDataType };
 
 export default function Search() {
+    const [searchParams, setSearchParams] = useSearchParams();
+    const searchValue = searchParams.get("v");
 
+    const [list, setList] = useState<listType[]>();
+    const [loading, setLoading] = useState(false);
+    const [bottom, setBottom] = useState(false);
 
-    return <MainLayout className={style.main}>
+    const mainRef = useRef<HTMLElement>(null);
+    const page = useRef<{channel: number, video: number}>({ channel: 0, video: 0 });
+
+    const onScroll = function(e: Event) {
+        if (mainRef.current === null) return;
+        setBottom(mainRef.current.scrollHeight - mainRef.current.clientHeight <= mainRef.current.scrollTop + 10);
+    }
+
+    const requestLoad = async function() {
+        if (searchValue === null || searchValue === "") return;
+        setLoading(true);
+
+        const waitChannel = request(`/api/channel/search?v=${encodeURIComponent(searchValue)}&page=${page.current.channel}`)
+    }
+
+    useEffect(() => {
+        if (loading) return;
+
+        if (bottom || (mainRef.current && mainRef.current.scrollHeight <= mainRef.current.clientHeight)) {
+            requestLoad();
+        }
+    }, [loading, bottom]);
+
+    useEffect(() => {
+        mainRef.current?.addEventListener("scroll", onScroll);
+        
+        return () => mainRef.current?.removeEventListener("scroll", onScroll);
+    }, [mainRef]);
+
+    // 초기화
+    useEffect(() => {
+        setLoading(false);
+        setList([]);
+        setBottom(false);
+    }, [searchValue]);
+
+    return <MainLayout mainRef={mainRef} className={style.main}>
         <ChannelBox channel={{
             banner: true,
             follower: 100,
