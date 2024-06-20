@@ -1,7 +1,25 @@
 .main {
     margin: 0 auto;
     padding: 0 15px;
-    max-width: 1500px;
+    max-width: 1300px;
+}
+
+.main > .videoBox {
+    height: 200px;
+}
+
+.main > .videoBox > div:nth-child(1) {
+    width: initial;
+    height: 185px;
+}
+
+.main > .videoBox > div:nth-child(2) > div {
+    margin-left: 10px;
+}
+
+.main > .videoBox > div:nth-child(2) > div > div:nth-child(1) {
+    font-size: 18px;
+    font-weight: 500;
 }
 
 .channelBox {

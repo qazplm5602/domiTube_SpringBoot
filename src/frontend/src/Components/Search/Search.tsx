@@ -24,7 +24,7 @@ export default function Search() {
     const [bottom, setBottom] = useState(false);
 
     const mainRef = useRef<HTMLElement>(null);
-    const page = useRef<{channel: number, video: number, id: number, init: boolean}>({ channel: 0, video: 0, id: 0, init: false });
+    const page = useRef<{channel: number, video: number, id: number, name: string}>({ channel: 0, video: 0, id: 0, name: searchValue || "" });
 
     const onScroll = function(e: Event) {
         if (mainRef.current === null) return;
@@ -102,13 +102,23 @@ export default function Search() {
     }
 
     useEffect(() => {
-        if (loading) return;
+        if (loading || searchValue === null) return;
 
-        if (bottom || (mainRef.current && mainRef.current.scrollHeight <= mainRef.current.clientHeight)) {
-            page.current.init = true;
+        let otherSearchVal = searchValue !== page.current.name;
+        if (otherSearchVal) {
+            page.current.id = randomNumber(100, 999);
+            page.current.channel = page.current.video = 0;
+
+            setLoading(false);
+            setList([]);
+            setBottom(false);
+        }
+
+        if (bottom || (mainRef.current && mainRef.current.scrollHeight <= mainRef.current.clientHeight) || otherSearchVal) {
+            page.current.name = searchValue;
             requestLoad();
         }
-    }, [loading, bottom]);
+    }, [loading, bottom, searchParams]);
 
     useEffect(() => {
         mainRef.current?.addEventListener("scroll", onScroll);
@@ -116,39 +126,14 @@ export default function Search() {
         return () => mainRef.current?.removeEventListener("scroll", onScroll);
     }, [mainRef]);
 
-    // 초기화
-    useEffect(() => {
-        setLoading(false);
-        setList([]);
-        setBottom(false);
-        
-        page.current.id = randomNumber(100, 999);
-        page.current.channel = page.current.video = 0;
-        page.current.init = false;
-
-        requestLoad();
-
-    }, [searchValue]);
-
-    console.log(list);
-
     return <MainLayout mainRef={mainRef} className={style.main}>
         {list.map(value => {
             if (value.type === dataType.channel) {
                 return <ChannelBox key={(value.data as channelDataType).id} channel={value.data as channelDataType} />
             } else {
-                return <VideoBox key={(value.data as videoDataType).id} video={value.data as videoDataType} horizontal={true} />;
+                return <VideoBox key={(value.data as videoDataType).id} video={value.data as videoDataType} horizontal={true} className={[style.videoBox]} />;
             }
         })}
-        {/* <ChannelBox channel={{
-            banner: true,
-            follower: 100,
-            icon: true,
-            id: "domi",
-            name: "도미-test",
-            subscribe: true
-        }} /> */}
-        {/* <VideoBox video={{}} horizontal={true} /> */}
     </MainLayout>
 }
 

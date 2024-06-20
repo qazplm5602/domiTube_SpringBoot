@@ -23,7 +23,11 @@ export default function VideoBox({video, channelHide = false, className = [], ho
             {!channelHide && <img className={style.channel} src="https://nng-phinf.pstatic.net/MjAyMjA2MTdfNzcg/MDAxNjU1NDYwOTk4MzIx.2GtboKl1AANbxW8mwf7_-3rl1joA5z70GdLSuhVzWssg.ubvmA6JPVkX2fRl0DLLBKY9eBbL2Gh3cN03_MMAwnuAg.PNG/1.png?type=f120_120_na" />}
             <div className={style.texts}>
                 <div className={style.title}>{video.title}</div>
-                {!channelHide && <span className={style.channelT}>도미임</span>}
+                {(!channelHide && horizontal) && <div className={style.channel}>
+                    <img className={style.icon} src="https://nng-phinf.pstatic.net/MjAyMjA2MTdfNzcg/MDAxNjU1NDYwOTk4MzIx.2GtboKl1AANbxW8mwf7_-3rl1joA5z70GdLSuhVzWssg.ubvmA6JPVkX2fRl0DLLBKY9eBbL2Gh3cN03_MMAwnuAg.PNG/1.png?type=f120_120_na" />
+                    <span>도미임</span>
+                </div>}
+                {(!channelHide && !horizontal) && <span className={style.channelT}>도미임</span>}
                 <span className={style.sub}>조회수 {numberWithKorean(video.views)}회 • {dateWithKorean(new Date(video.create))} 전</span>
             </div>
             <Button icon={otherSVG} className={style.otherBtn} />

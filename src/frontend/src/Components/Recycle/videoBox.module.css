@@ -44,7 +44,8 @@
     margin-top: 10px;
 }
 
-.main > .details > .channel {
+.main > .details > .channel,
+.main > .details > .texts > .channel > .icon {
     width: 40px;
     height: 40px;
 
@@ -71,6 +72,35 @@
 
     margin-bottom: 2px;
     word-break: break-all;
+}
+
+.main > .details > .texts > .channel {
+    display: flex;
+    align-items: center;
+
+    margin-top: 5px;
+    margin-bottom: 3px;
+
+    width: max-content;
+}
+
+.main > .details > .texts > .channel:hover > span {
+    color: white;
+}
+
+.main > .details > .texts > .channel > .icon {
+    width: 30px;
+    height: 30px;
+}
+
+.main > .details > .texts > .channel > span {
+    font-size: 13px;
+    color: rgb(178, 178, 178);
+
+    margin-left: 5px;
+}
+
+.main > .details > .texts > .channel > span {
 }
 
 .main > .details > .texts > .channelT:hover {
