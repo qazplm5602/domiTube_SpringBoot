@@ -16,10 +16,13 @@ import Spinner from "../Recycle/Spinner";
 import { useSelector } from "react-redux";
 import IStore from "../Redux/Type";
 
-export interface channelMain {
+export interface channelMin {
     id: string,
     name: string,
     icon: boolean,
+}
+
+export interface channelMain extends channelMin {
     banner: boolean,
     follower: number,
     subscribe: boolean,

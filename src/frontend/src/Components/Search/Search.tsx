@@ -1,4 +1,4 @@
-import Channel, { SubscribeButton, channelMain as channelDataType } from "../Channel/Channel";
+import Channel, { SubscribeButton, channelMain as channelDataType, channelMin } from "../Channel/Channel";
 import MainLayout from "../Layout/MainLayout";
 import Section from "../Recycle/Section";
 import VideoBox from "../Recycle/VideoBox";
@@ -10,10 +10,11 @@ import { useEffect, useRef, useState } from "react";
 import { videoDataType } from "../Watch/Watch";
 import { request, response } from "../Utils/Fetch";
 import { useSearchParams } from "react-router-dom";
-import { randomNumber } from "../Utils/Misc";
+import { numberWithKorean, randomNumber } from "../Utils/Misc";
 
 enum dataType { channel, video };
 type listType = { type: dataType, data: channelDataType | videoDataType };
+type cacheType = {[key: string]: channelMin};
 
 export default function Search() {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -25,6 +26,8 @@ export default function Search() {
 
     const mainRef = useRef<HTMLElement>(null);
     const page = useRef<{channel: number, video: number, id: number, name: string}>({ channel: 0, video: 0, id: 0, name: searchValue || "" });
+    const [cacheChannel, setCacheChannel] = useState<cacheType>({});
+    const progressChannel = useRef<{[key: string]: boolean}>({});
 
     const onScroll = function(e: Event) {
         if (mainRef.current === null) return;
@@ -32,7 +35,7 @@ export default function Search() {
     }
 
     const requestLoad = async function() {
-        if (searchValue === null || searchValue === "") return;
+        if (searchValue === null || searchValue === "" || (page.current.channel === -1 && page.current.video === -1)) return;
         const ID = page.current.id;
 
         setLoading(true);
@@ -55,6 +58,19 @@ export default function Search() {
         let channels: channelDataType[] = [];
         if (page.current.channel !== -1) {
             channels = (channelResponse as response).data;
+            
+            // 캐싱
+            const pushes: cacheType = {};
+            channels.forEach(v => {
+                if (progressChannel.current[v.id] === undefined) {
+                    progressChannel.current[v.id] = true;
+                    pushes[v.id] = v;
+                }
+            });
+
+            if (Object.keys(pushes).length > 0)
+                setCacheChannel((prev: cacheType) => ({...prev, ...pushes}));
+
             if (channels.length < 5)
                 page.current.channel = -1;
             else
@@ -126,12 +142,15 @@ export default function Search() {
         return () => mainRef.current?.removeEventListener("scroll", onScroll);
     }, [mainRef]);
 
+    // test
+    useEffect(() => console.log(cacheChannel), [cacheChannel]);
+
     return <MainLayout mainRef={mainRef} className={style.main}>
         {list.map(value => {
             if (value.type === dataType.channel) {
                 return <ChannelBox key={(value.data as channelDataType).id} channel={value.data as channelDataType} />
             } else {
-                return <VideoBox key={(value.data as videoDataType).id} video={value.data as videoDataType} horizontal={true} className={[style.videoBox]} />;
+                return <VideoBox key={(value.data as videoDataType).id} video={value.data as videoDataType} channel={cacheChannel[(value.data as videoDataType).channel]} horizontal={true} className={[style.videoBox]} />;
             }
         })}
     </MainLayout>
@@ -140,13 +159,13 @@ export default function Search() {
 export function ChannelBox({ channel }: { channel: channelDataType }) {
     return <Section className={style.channelBox}>
         <div className={style.icon_container}>
-            <img src={noProfile} />
+            <img src={channel.icon ? `/api/image/user/${channel.id}` : noProfile} />
         </div>
 
         <div className={style.info}>
-            <h1 className={style.title}>도밍</h1>
-            <div>구독자 4.7만명</div>
-            <div>채널을 설명하는 글입니다.채널을 설명하는 글입니다.채널을 설명하는 글입니다.</div>
+            <h1 className={style.title}>{channel.name}</h1>
+            <div>구독자 {numberWithKorean(channel.follower)}명</div>
+            {/* <div>채널을 설명하는 글입니다.채널을 설명하는 글입니다.채널을 설명하는 글입니다.</div> */}
         </div>
 
         <SubscribeButton className={[style.subscribe]} active={false} channel={channel.id} onChanged={() => {}} />
