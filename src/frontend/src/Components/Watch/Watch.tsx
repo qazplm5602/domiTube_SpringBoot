@@ -4,7 +4,7 @@ import Section from "../Recycle/Section";
 import style from "./watch.module.css";
 import ReactPlayer from "react-player";
 import Button from "../Recycle/Button";
-import { SubscribeButton, channelMain } from "../Channel/Channel";
+import { SubscribeButton, channelMain, channelMin } from "../Channel/Channel";
 
 import playSvg from './play.svg';
 import pauseSvg from './pause.svg';
@@ -99,7 +99,7 @@ export default function Watch() {
         </Section>
         
         <Section className={style.recommand_container}>
-            <RecommandVideo />
+            <RecommandVideo id={id} />
         </Section>
     </MainLayout>;
 }
@@ -638,13 +638,41 @@ export function ChatSubReplyInput({targetId, onAdd, onReset}: {targetId: number,
     return <ChatReplyInput value={replyVal} onChange={replyChangeValue} onPost={replyPost} onCancel={replyCancel} btnActive={true} disable={replyDisable} icon={noProfile} reply={true} />;
 }
 
-function RecommandVideo() {
+type cacheType = {[key: string]: channelMin};
+function RecommandVideo({id}: { id: string }) {
+    const [list, setList] = useState<videoDataType[]>([]);
+
+    const [cacheChannel, setCacheChannel] = useState<cacheType>({});
+    const progressChannel = useRef<{[key: string]: boolean}>({});
+
+    const loadChannel = async function(channel: string) {
+        progressChannel.current[channel] = true;
+
+        const { code, data } = await request(`/api/channel/${channel}/info?mini=1`);
+        if (code !== 200) return;
+
+        setCacheChannel((prev: cacheType) => ({...prev, [channel]: data}));
+    }
+
+    const getRandomVideo = async function() {
+        const { code, data } = await request(`/api/video/random?max=10`, { method: "POST" });
+        if (code !== 200) return;
+
+        (data as videoDataType[]).forEach(v => {
+            if (progressChannel.current[v.channel] === undefined)
+                loadChannel(v.channel);
+        });
+
+        setList(data);
+    }
+
+    useEffect(() => {
+        setList([]);
+        getRandomVideo();
+    }, [id]);
+
     return <>
-        {/* <VideoBox horizontal={true} />
-        <VideoBox horizontal={true} />
-        <VideoBox horizontal={true} />
-        <VideoBox horizontal={true} />
-        <VideoBox horizontal={true} /> */}
+        {list.map(v => <VideoBox key={v.id} video={v} channel={cacheChannel[v.channel]} horizontal={true} />)}
     </>;
 }
 

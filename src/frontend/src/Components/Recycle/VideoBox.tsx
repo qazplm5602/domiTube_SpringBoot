@@ -8,7 +8,7 @@ import { videoDataType } from '../Watch/Watch';
 import { dateWithKorean, numberWithKorean, secondsToHMS } from '../Utils/Misc';
 import { channelMin } from '../Channel/Channel';
 
-export default function VideoBox({video, channel, channelHide = false, className = [], horizontal = false}: {video: videoDataType, channel?: channelMin, channelHide?: boolean, className?: string[], horizontal?: boolean}) {
+export default function VideoBox({video, channel, channelHide = false, className = [], horizontalIcon = false, horizontal = false}: {video: videoDataType, channel?: channelMin, channelHide?: boolean, className?: string[], horizontalIcon?: boolean, horizontal?: boolean}) {
     const navigate = useNavigate();
     className.push(style.main); // default 값임
 
@@ -30,7 +30,7 @@ export default function VideoBox({video, channel, channelHide = false, className
             <div className={style.texts}>
                 <div className={style.title}>{video.title}</div>
                 {(!channelHide && horizontal) && <div className={style.channel}>
-                    <img className={style.icon} src={channelImage} />
+                    {horizontalIcon && <img className={style.icon} src={channelImage} />}
                     <span>{channel?.name || "--"}</span>
                 </div>}
                 {(!channelHide && !horizontal) && <span className={style.channelT}>{channel?.name || "--"}</span>}

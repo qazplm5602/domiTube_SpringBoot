@@ -50,6 +50,11 @@ public class VideoService {
         return videoRepository.findByTitleContainsOrDescriptionContains(value, value, pageable);
     }
 
+    public List<Video> RandomVideo(int max, String[] ignore) {
+        Pageable pageable = PageRequest.of(0, max);
+        return videoRepository.GetRandomVideo(ignore, pageable);
+    }
+
     /////// STUDIO
     public long GetAllViewCountByUser(User user) {
         Long value = videoRepository.GetAllViewCount(user);

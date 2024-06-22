@@ -184,7 +184,7 @@ export default function Search() {
                 if (value.type === dataType.channel) {
                     return <ChannelBox key={(value.data as channelDataType).id} channel={value.data as channelDataType} onSubscribeChange={subscribeChange} />
                 } else {
-                    return <VideoBox key={(value.data as videoDataType).id} video={value.data as videoDataType} channel={cacheChannel[(value.data as videoDataType).channel]} horizontal={true} className={[style.videoBox]} />;
+                    return <VideoBox key={(value.data as videoDataType).id} video={value.data as videoDataType} channel={cacheChannel[(value.data as videoDataType).channel]} horizontal={true} horizontalIcon={true} className={[style.videoBox]} />;
                 }
             })}
             {loading && <Spinner className={style.loader} />}

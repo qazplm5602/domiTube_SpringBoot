@@ -19,10 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.sql.Date;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -217,5 +214,13 @@ public class VideoController {
     @GetMapping("/search")
     ResponseEntity<List<VideoDataDTO>> GetSearchVideo(@RequestParam("v") String value, @RequestParam("page") int page) {
         return ResponseEntity.ok(videoService.SearchVideo(value, page).stream().map(VideoDataDTO::ConvertVideo).toList());
+    }
+
+    @PostMapping("/random")
+    ResponseEntity<List<VideoDataDTO>> GetRandomVideo(@RequestParam("max") int max, @RequestBody(required = false) String[] ignore) {
+        if (ignore == null)
+            ignore = new String[0];
+
+        return ResponseEntity.ok(videoService.RandomVideo(max, ignore).stream().map(VideoDataDTO::ConvertVideo).toList());
     }
 }

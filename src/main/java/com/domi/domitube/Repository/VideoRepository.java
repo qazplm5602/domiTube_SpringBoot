@@ -22,6 +22,9 @@ public interface VideoRepository extends JpaRepository<Video, Object> {
     @Query("SELECT c FROM Video c WHERE c.owner = :user ORDER BY c.created")
     List<Video> GetVideosByUserDate(@Param("user") User user, Pageable pageable);
 
+    @Query("SELECT c FROM Video c WHERE c.id NOT IN :videos ORDER BY RAND()")
+    List<Video> GetRandomVideo(@Param("videos") String[] ignore, Pageable page);
+
     List<Video> findByTitleContainsOrDescriptionContains(String title, String description, Pageable pageable);
 
     ////////// STUDIO
