@@ -188,6 +188,7 @@ export default function Search() {
                 }
             })}
             {loading && <Spinner className={style.loader} />}
+            {(!loading && list.length === 0) && <div className={style.alert}>검색 결과가 없습니다. 다른 검색어를 사용하세요.</div>}
         </article>
     </MainLayout>
 }
