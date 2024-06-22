@@ -198,7 +198,8 @@ export function SubscribeButton({ className, active, channel, onChanged }: {clas
     if (active)
         classList.push(style.active);
 
-    const clickBtn = function() {
+    const clickBtn = function(e: React.MouseEvent) {
+        e.stopPropagation();
         if (!logined) return;
 
         request("/api/user/subscribe", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ targetId: channel, active: !active }) });

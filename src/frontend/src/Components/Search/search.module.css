@@ -22,17 +22,24 @@
     font-weight: 500;
 }
 
+.main > .loader {
+    scale: 0.6;
+    opacity: 0.5;
+    
+    margin: 0 auto;
+}
+
 .channelBox {
     display: flex;
     align-items: center;
 
-    height: 150px;
-    
+    height: 150px;    
     /* border: 1px solid red; */
 }
 
 .channelBox > .icon_container {
     flex-basis: 300px;
+    cursor: pointer;
 }
 
 .channelBox > .icon_container > img {
@@ -50,6 +57,7 @@
     /* flex-shrink: 1; */
     flex-grow: 1;
     flex-basis: 500px;
+    cursor: pointer;
 }
 
 .channelBox > .info > .title {

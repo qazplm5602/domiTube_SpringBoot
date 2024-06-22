@@ -9,8 +9,9 @@ import noProfile from '../../assets/no-profile.png';
 import { useEffect, useRef, useState } from "react";
 import { videoDataType } from "../Watch/Watch";
 import { request, response } from "../Utils/Fetch";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { numberWithKorean, randomNumber } from "../Utils/Misc";
+import Spinner from "../Recycle/Spinner";
 
 enum dataType { channel, video };
 type listType = { type: dataType, data: channelDataType | videoDataType };
@@ -32,6 +33,15 @@ export default function Search() {
     const onScroll = function(e: Event) {
         if (mainRef.current === null) return;
         setBottom(mainRef.current.scrollHeight - mainRef.current.clientHeight <= mainRef.current.scrollTop + 10);
+    }
+
+    const loadChannel = async function(channel: string) {
+        progressChannel.current[channel] = true;
+
+        const { code, data } = await request(`/api/channel/${channel}/info?mini=1`);
+        if (code !== 200) return;
+
+        setCacheChannel((prev: cacheType) => ({...prev, [channel]: data}));
     }
 
     const requestLoad = async function() {
@@ -77,9 +87,14 @@ export default function Search() {
             page.current.channel += 1;
         }
     
-        let videos: channelDataType[] = [];
+        let videos: videoDataType[] = [];
         if (page.current.video !== -1) {
             videos = (videoResponse as response).data;
+            videos.forEach(v => {
+                if (progressChannel.current[v.channel] === undefined)
+                    loadChannel(v.channel);
+            });
+
             if (videos.length < 5)
                 page.current.video = -1;
             else
@@ -117,6 +132,24 @@ export default function Search() {
         setLoading(false);
     }
 
+    const subscribeChange = function(channel: string, active: boolean) {
+        console.log(channel, active);
+        let idx = -1;
+        list.forEach((v, i) => {
+            if (v.type !== dataType.channel) return;
+            
+            if ((v.data as channelDataType).id === channel) {
+                idx = i;
+                return false;
+            }
+        });
+
+        if (idx === -1) return;
+
+        (list[idx].data as channelDataType).subscribe = active;
+        setList([...list]);
+    }
+
     useEffect(() => {
         if (loading || searchValue === null) return;
 
@@ -145,19 +178,27 @@ export default function Search() {
     // test
     useEffect(() => console.log(cacheChannel), [cacheChannel]);
 
-    return <MainLayout mainRef={mainRef} className={style.main}>
-        {list.map(value => {
-            if (value.type === dataType.channel) {
-                return <ChannelBox key={(value.data as channelDataType).id} channel={value.data as channelDataType} />
-            } else {
-                return <VideoBox key={(value.data as videoDataType).id} video={value.data as videoDataType} channel={cacheChannel[(value.data as videoDataType).channel]} horizontal={true} className={[style.videoBox]} />;
-            }
-        })}
+    return <MainLayout mainRef={mainRef}>
+        <article className={style.main}>
+            {list.map(value => {
+                if (value.type === dataType.channel) {
+                    return <ChannelBox key={(value.data as channelDataType).id} channel={value.data as channelDataType} onSubscribeChange={subscribeChange} />
+                } else {
+                    return <VideoBox key={(value.data as videoDataType).id} video={value.data as videoDataType} channel={cacheChannel[(value.data as videoDataType).channel]} horizontal={true} className={[style.videoBox]} />;
+                }
+            })}
+            {loading && <Spinner className={style.loader} />}
+        </article>
     </MainLayout>
 }
 
-export function ChannelBox({ channel }: { channel: channelDataType }) {
-    return <Section className={style.channelBox}>
+export function ChannelBox({ channel, onSubscribeChange }: { channel: channelDataType, onSubscribeChange?: (channel: string, active: boolean) => void }) {
+    const navigate = useNavigate();
+    const channelClick = function() {
+        navigate(`/channel/${channel.id}`)
+    }
+
+    return <Section className={style.channelBox} onClick={channelClick}>
         <div className={style.icon_container}>
             <img src={channel.icon ? `/api/image/user/${channel.id}` : noProfile} />
         </div>
@@ -168,6 +209,6 @@ export function ChannelBox({ channel }: { channel: channelDataType }) {
             {/* <div>채널을 설명하는 글입니다.채널을 설명하는 글입니다.채널을 설명하는 글입니다.</div> */}
         </div>
 
-        <SubscribeButton className={[style.subscribe]} active={false} channel={channel.id} onChanged={() => {}} />
+        <SubscribeButton className={[style.subscribe]} active={channel.subscribe} channel={channel.id} onChanged={v => { if(onSubscribeChange) onSubscribeChange(channel.id, v)}} />
     </Section>
 }
