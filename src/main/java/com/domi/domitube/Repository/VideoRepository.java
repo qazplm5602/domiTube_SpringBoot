@@ -45,4 +45,7 @@ public interface VideoRepository extends JpaRepository<Video, Object> {
 
     @Query("SELECT c FROM Video c WHERE c.owner = :user AND ( c.title LIKE CONCAT('%', :value, '%') OR c.description LIKE CONCAT('%', :value, '%') )")
     List<Video> GetSearchVideoByUser(@Param("user") User user, @Param("value") String value);
+
+    @Query("SELECT c FROM Video c WHERE c.owner.id IN :users ORDER BY c.created DESC")
+    List<Video> GetVideoByUsersLatest(@Param("users") List<String> users, Pageable pageable);
 }

@@ -90,6 +90,11 @@ public class VideoService {
         return videoRepository.GetSearchVideoByUser(owner, value);
     }
 
+    public List<Video> GetVideoByUsers(List<String> users, int page) {
+        Pageable pageable = PageRequest.of(page, 5);
+        return videoRepository.GetVideoByUsersLatest(users, pageable);
+    }
+
     public enum SortType {
         Lastest,
         Popular,
