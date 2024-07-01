@@ -4,6 +4,7 @@ import youtubeLogo from './youtube.svg';
 import listSVG from './list.svg';
 import searchSVG from './search.svg';
 import logoutSVG from './logout.svg';
+import cameraSVG from './video.svg';
 import noProfile from '../../assets/no-profile.png';
 
 import { useState } from 'react';
@@ -89,6 +90,7 @@ function AccountMenu({ login }: { login: IloginStore }) {
 
         <div className={style.line}></div>
 
+        <LinkButton className={style.linkBtn} to="/studio" icon={cameraSVG} text="스튜디오" />
         <LinkButton className={style.linkBtn} to="/logout" icon={logoutSVG} text="로그아웃" />
     </Section>;
 }
