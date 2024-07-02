@@ -92,7 +92,7 @@ public class VideoService {
 
     public List<Video> GetVideoByUsers(List<String> users, int page) {
         Pageable pageable = PageRequest.of(page, 5);
-        return videoRepository.GetVideoByUsersLatest(users, pageable);
+        return videoRepository.GetVideoByUsersLatest(users, Video.VideoSecretType.Public, pageable);
     }
 
     public enum SortType {

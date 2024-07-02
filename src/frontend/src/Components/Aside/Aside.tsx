@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import Button from '../Recycle/Button';
 import style from './aside.module.css';
 
@@ -11,6 +11,11 @@ import { useSelector } from 'react-redux';
 import noProfile from '../../assets/no-profile.png';
 
 type minChannel = {id:string, name: string, icon: boolean};
+
+const MENU = [
+    ["홈", "/", homeSvg],
+    ["구독", "/subscribes", homeSvg],
+];
 
 export default function Aside({sideState, forceHide = false}: {forceHide?: boolean, sideState: [boolean, React.Dispatch<React.SetStateAction<boolean>>]}) {
     const logined = useSelector<IStore>(value => value.login.logined) as boolean;
@@ -60,6 +65,13 @@ export default function Aside({sideState, forceHide = false}: {forceHide?: boole
 }
 
 function DetailSide({fixed, open, subscribes}: {fixed: boolean, open: boolean, subscribes: minChannel[] | boolean}) {
+    const location = useLocation();
+    let pathname = location.pathname;
+    
+    if (pathname.length > 1 && pathname[pathname.length - 1] === "/") {
+        pathname = pathname.substring(0, pathname.length - 2);
+    }
+
     const classList = [style.side];
     if (fixed) {
         classList.push(style.fixed);
@@ -69,13 +81,9 @@ function DetailSide({fixed, open, subscribes}: {fixed: boolean, open: boolean, s
     }
 
     return <aside className={classList.join(" ")}>
-        <Link to="/">
-            <Button icon={homeSvg} className={[style.menu, style.active].join(" ")}>홈</Button>
-        </Link>
-        
-        <Link to="/">
-            <Button icon={homeSvg} className={style.menu}>구독</Button>
-        </Link>
+        {MENU.map(v => <Link to={v[1]}>
+            <Button icon={v[2]} className={[style.menu, (pathname === v[1] ? style.active : "")].join(" ")}>{v[0]}</Button>
+        </Link>)}
 
         <div className={style.line}></div>
 
@@ -90,13 +98,16 @@ function DetailSide({fixed, open, subscribes}: {fixed: boolean, open: boolean, s
 }
 
 function ShortSide() {
+    const location = useLocation();
+    let pathname = location.pathname;
+    
+    if (pathname.length > 1 && pathname[pathname.length - 1] === "/") {
+        pathname = pathname.substring(0, pathname.length - 2);
+    }
+
     return <aside className={[style.side, style.short].join(" ")}>
-        <Link to="/">
-            <Button icon={homeSvg} className={[style.menu, style.active].join(" ")}>홈</Button>
-        </Link>
-        
-        <Link to="/">
-            <Button icon={homeSvg} className={style.menu}>구독</Button>
-        </Link>
+        {MENU.map(v => <Link to={v[1]}>
+            <Button icon={v[2]} className={[style.menu, (pathname === v[1] ? style.active : "")].join(" ")}>{v[0]}</Button>
+        </Link>)}
     </aside>;
 }

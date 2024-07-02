@@ -192,7 +192,6 @@
 
 .main > .video_container > .userBox {
     display: flex;
-    align-items: center;
 }
 
 .main > .video_container > .userBox > .userIcon {

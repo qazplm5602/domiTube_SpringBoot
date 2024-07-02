@@ -9,6 +9,9 @@ import Spinner from "../Recycle/Spinner";
 import { request } from "../Utils/Fetch";
 import React from "react";
 
+import noProfile from '../../assets/no-profile.png';
+
+type channelCache = {[key: string]: channelMin};
 export default function SubscribeChannel() {
     const mainRef = useRef<HTMLElement>(null);
     const [list, setList] = useState<videoDataType[]>([]);
@@ -17,7 +20,7 @@ export default function SubscribeChannel() {
     const [page, setPage] = useState(0);
     
     const cacheProcess = useRef<{[key: string]: boolean}>({});
-    const [channels, setChannels] = useState<{[key: string]: channelMin}>({});
+    const [channels, setChannels] = useState<channelCache>({});
 
     const requestData = async function() {
         console.log("requestData");
@@ -29,13 +32,20 @@ export default function SubscribeChannel() {
         data.forEach(v => {
             if (cacheProcess.current[v.id] === undefined) {
                 cacheProcess.current[v.id] = true;
-                // ... request
+                channelLoad(v.channel);
             }
         });
         setPage(data.length >= 5 ? (page + 1) : -1);
         setList([...list, ...data]);
         setLoading(false);
         setBottom(false);   
+    }
+    
+    const channelLoad = async function(id: string) {
+        const { code, data }: { code: number, data: channelMin } = await request(`/api/channel/${id}/info?min=1`);
+        if (code !== 200) return;
+        
+        setChannels((prev: channelCache) => ({...prev, [id]: data}));
     }
     
     const onScroll = function() {
@@ -56,17 +66,18 @@ export default function SubscribeChannel() {
         return () => mainRef.current?.removeEventListener("scroll", onScroll);
     }, []);
     
+    console.log(loading)
     return <MainLayout mainRef={mainRef}>
         <article className={style.content}>
             {list.map(v => <React.Fragment key={v.id}>
-                <ChannelBar channel={{}} />
+                <ChannelBar channel={channels[v.channel] || {}} />
                 
                 <VideoBox className={[style.video]} video={v} horizontal={true} channelHide={true} />
 
                 <div className={style.line}></div>
             </React.Fragment>)}
 
-            {loading && <Spinner />}
+            {loading && <Spinner className={style.spinner} />}
         </article>
     </MainLayout>; 
 }
@@ -76,7 +87,7 @@ function ChannelBar({ channel }: {channel: channelMin}) {
     const onClick = () => navigate(`/channel/${channel.id}`);
 
     return <div onClick={onClick} className={style.channel}>
-        <img src={`/api/image/user/${channel.id}`} />
+        <img src={channel.icon ? `/api/image/user/${channel.id}` : noProfile} />
         <span>{channel.name}</span>
     </div>;
 }
